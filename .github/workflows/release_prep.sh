@@ -35,7 +35,7 @@ http_archive(
     name = "io_github_janhicken_rules_kubebuilder",
     sha256 = "${SHA}",
     strip_prefix = "${PREFIX}",
-    url = "https://github.com/myorg/rules_mylang/releases/download/${TAG}/${ARCHIVE}",
+    url = "https://github.com/janhicken/rules_mylang/releases/download/${TAG}/${ARCHIVE}",
 )
 EOF
 
