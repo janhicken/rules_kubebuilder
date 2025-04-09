@@ -1,7 +1,7 @@
 {
-  "homepage": "https://github.com/janhicken/rules_mylang",
+  "homepage": "https://github.com/janhicken/rules_kubebuilder",
   "maintainers": [],
-  "repository": ["github:janhicken/rules_mylang"],
+  "repository": ["github:janhicken/rules_kubebuilder"],
   "versions": [],
   "yanked_versions": {}
 }
