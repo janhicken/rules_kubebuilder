@@ -5,3 +5,8 @@ local_path_override(
     module_name = "io_github_janhicken_rules_kubebuilder",
     path = "../..",
 )
+
+kubebuilder = use_extension("@io_github_janhicken_rules_kubebuilder//kubebuilder:extensions.bzl", "kubebuilder")
+kubebuilder.controller_gen(version = "0.17.2")
+kubebuilder.envtest(version = "1.29.0")
+use_repo(kubebuilder, "controller_gen", "controller_gen_toolchains", "envtest")

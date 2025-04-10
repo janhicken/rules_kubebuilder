@@ -1,56 +1,62 @@
 """Extensions for bzlmod.
 
-Installs a kubebuilder toolchain.
-Every module can define a toolchain version under the default name, "kubebuilder".
-The latest of those versions will be selected (the rest discarded),
-and will always be registered by rules_kubebuilder.
+Installs kubebuilder toolchains.
+Every module can define a toolchain version under the default name, e.g. "controller_gen".
+Conflicting versions will result in build failures.
 
 Additionally, the root module can define arbitrarily many more toolchain versions under different
 names (the latest version will be picked for each name) and can register them as it sees fit,
 effectively overriding the default named toolchain due to toolchain resolution precedence.
 """
 
-load(":repositories.bzl", "kubebuilder_register_toolchains")
+load("//kubebuilder/private:extension_utils.bzl", "extension_utils")
+load(
+    ":repositories.bzl",
+    "DEFAULT_CONTROLLER_GEN_REPOSITORY",
+    "DEFAULT_CONTROLLER_GEN_VERSION",
+    "DEFAULT_ENVTEST_REPOSITORY",
+    "DEFAULT_ENVTEST_VERSION",
+    "register_controller_gen_toolchains",
+    "register_envtest_repositories",
+)
 
-_DEFAULT_NAME = "kubebuilder"
-
-kubebuilder_toolchain = tag_class(attrs = {
+controller_gen_toolchain = tag_class(attrs = {
     "name": attr.string(doc = """\
-Base name for generated repositories, allowing more than one kubebuilder toolchain to be registered.
+Base name for generated repositories, allowing more than one controller-gen toolchain to be registered.
 Overriding the default is only permitted in the root module.
-""", default = _DEFAULT_NAME),
-    "kubebuilder_version": attr.string(doc = "Explicit version of kubebuilder.", mandatory = True),
+""", default = DEFAULT_CONTROLLER_GEN_REPOSITORY),
+    "version": attr.string(doc = "Explicit version of controller-gen.", default = DEFAULT_CONTROLLER_GEN_VERSION),
 })
 
-def _toolchain_extension(module_ctx):
-    registrations = {}
-    for mod in module_ctx.modules:
-        for toolchain in mod.tags.toolchain:
-            if toolchain.name != _DEFAULT_NAME and not mod.is_root:
-                fail("""\
-                Only the root module may override the default name for the kubebuilder toolchain.
-                This prevents conflicting registrations in the global namespace of external repos.
-                """)
-            if toolchain.name not in registrations.keys():
-                registrations[toolchain.name] = []
-            registrations[toolchain.name].append(toolchain.kubebuilder_version)
-    for name, versions in registrations.items():
-        if len(versions) > 1:
-            # TODO: should be semver-aware, using MVS
-            selected = sorted(versions, reverse = True)[0]
+envtest_repositories = tag_class(attrs = {
+    "name": attr.string(doc = """\
+    Base name for generated repositories, allowing more than one envtest repositories to be registered.
+    Overriding the default is only permitted in the root module.
+    """, default = DEFAULT_ENVTEST_REPOSITORY),
+    "version": attr.string(doc = "Explicit version of envtet", default = DEFAULT_ENVTEST_VERSION),
+})
 
-            # buildifier: disable=print
-            print("NOTE: kubebuilder toolchain {} has multiple versions {}, selected {}".format(name, versions, selected))
-        else:
-            selected = versions[0]
+def _toolchains_impl(mctx):
+    extension_utils.toolchain_repos_bfs(
+        mctx = mctx,
+        get_tag_fn = lambda tags: tags.controller_gen,
+        toolchain_name = "controller_gen",
+        toolchain_repos_fn = lambda name, version: register_controller_gen_toolchains(name, version, register = False),
+    )
 
-        kubebuilder_register_toolchains(
-            name = name,
-            kubebuilder_version = selected,
-            register = False,
-        )
+    extension_utils.toolchain_repos_bfs(
+        mctx = mctx,
+        get_tag_fn = lambda tags: tags.envtest,
+        toolchain_name = "envtest",
+        toolchain_repos_fn = lambda name, version: register_envtest_repositories(name, version),
+    )
+
+    return mctx.extension_metadata(reproducible = True)
 
 kubebuilder = module_extension(
-    implementation = _toolchain_extension,
-    tag_classes = {"toolchain": kubebuilder_toolchain},
+    implementation = _toolchains_impl,
+    tag_classes = {
+        "controller_gen": controller_gen_toolchain,
+        "envtest": envtest_repositories,
+    },
 )
