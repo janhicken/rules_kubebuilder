@@ -1,0 +1,5 @@
+# Required until this is the default; expected in Bazel 7
+common --enable_bzlmod
+
+# Disable lockfile to allow tests with multiple Bazel versions
+common --lockfile_mode=off

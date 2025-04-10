@@ -9,6 +9,7 @@ names (the latest version will be picked for each name) and can register them as
 effectively overriding the default named toolchain due to toolchain resolution precedence.
 """
 
+load("@bazel_features//:features.bzl", "bazel_features")
 load("//kubebuilder/private:extension_utils.bzl", "extension_utils")
 load(
     ":repositories.bzl",
@@ -51,7 +52,10 @@ def _toolchains_impl(mctx):
         toolchain_repos_fn = lambda name, version: register_envtest_repositories(name, version),
     )
 
-    return mctx.extension_metadata(reproducible = True)
+    if bazel_features.external_deps.extension_metadata_has_reproducible:
+        return mctx.extension_metadata(reproducible = True)
+
+    return mctx.extension_metadata()
 
 kubebuilder = module_extension(
     implementation = _toolchains_impl,
