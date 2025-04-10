@@ -1,19 +1,37 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 
+package(default_visibility = ["//kubebuilder:__subpackages__"])
+
 bzl_library(
-    name = "toolchains_repo",
-    srcs = ["toolchains_repo.bzl"],
-    visibility = ["//kubebuilder:__subpackages__"],
+    name = "controller_gen",
+    srcs = ["controller_gen.bzl"],
+    deps = ["@rules_go//go:def"],
 )
 
 bzl_library(
-    name = "versions",
-    srcs = ["versions.bzl"],
-    visibility = ["//kubebuilder:__subpackages__"],
+    name = "controller_gen_toolchain",
+    srcs = ["controller_gen_toolchain.bzl"],
+    deps = ["@aspect_bazel_lib//lib:repo_utils"],
 )
 
 bzl_library(
-    name = "resolved_toolchain",
-    srcs = ["resolved_toolchain.bzl"],
-    visibility = ["//kubebuilder:__subpackages__"],
+    name = "envtest_toolchain",
+    srcs = ["envtest_toolchain.bzl"],
+    deps = [
+        ":envtest_releases",
+        "@aspect_bazel_lib//lib:base64",
+        "@aspect_bazel_lib//lib:repo_utils",
+        "@aspect_bazel_lib//lib:strings",
+        "@bazel_tools//tools/build_defs/repo:http.bzl",
+    ],
+)
+
+bzl_library(
+    name = "envtest_releases",
+    srcs = ["envtest_releases.bzl"],
+)
+
+bzl_library(
+    name = "extension_utils",
+    srcs = ["extension_utils.bzl"],
 )
