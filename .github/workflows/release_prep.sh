@@ -27,17 +27,5 @@ bazel_dep(name = "io_github_janhicken_rules_kubebuilder", version = "${TAG:1}")
 
 ## Using WORKSPACE
 
-Paste this snippet into your \`WORKSPACE.bazel\` file:
-
-\`\`\`starlark
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-http_archive(
-    name = "io_github_janhicken_rules_kubebuilder",
-    sha256 = "${SHA}",
-    strip_prefix = "${PREFIX}",
-    url = "https://github.com/janhicken/rules_kubebuilder/releases/download/${TAG}/${ARCHIVE}",
-)
+Not supported!
 EOF
-
-awk 'f;/--SNIP--/{f=1}' e2e/smoke/WORKSPACE.bazel
-echo "\`\`\`"
