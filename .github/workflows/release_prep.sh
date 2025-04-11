@@ -12,10 +12,10 @@ PREFIX="rules_kubebuilder-${TAG:1}"
 ARCHIVE="rules_kubebuilder-$TAG.tar.gz"
 
 # NB: configuration for 'git archive' is in /.gitattributes
-git archive --format=tar --prefix=${PREFIX}/ ${TAG} | gzip > $ARCHIVE
+git archive --format=tar --prefix=${PREFIX}/ ${TAG} | gzip >$ARCHIVE
 SHA=$(shasum -a 256 $ARCHIVE | awk '{print $1}')
 
-cat << EOF
+cat <<EOF
 ## Using Bzlmod with Bazel 6 or greater
 
 1. (Bazel 6 only) Enable with \`common --enable_bzlmod\` in \`.bazelrc\`.

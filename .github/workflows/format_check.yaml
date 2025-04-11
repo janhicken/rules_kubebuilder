@@ -1,4 +1,4 @@
-name: Buildifier
+name: Format Check
 # Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
@@ -14,4 +14,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: buildifier
-        run: bazel run --enable_bzlmod //.github/workflows:buildifier.check
+        run: bazel run //tools:format.check

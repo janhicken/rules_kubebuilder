@@ -7,6 +7,8 @@
 ## controller_gen_crds
 
 <pre>
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_crds")
+
 controller_gen_crds(<a href="#controller_gen_crds-name">name</a>, <a href="#controller_gen_crds-srcs">srcs</a>, <a href="#controller_gen_crds-allow_dangerous_types">allow_dangerous_types</a>, <a href="#controller_gen_crds-max_description_length">max_description_length</a>, <a href="#controller_gen_crds-kwargs">kwargs</a>)
 </pre>
 
@@ -29,6 +31,8 @@ Generates CustomResourceDefinition objects from Golang struct definitions.
 ## controller_gen_rbac
 
 <pre>
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_rbac")
+
 controller_gen_rbac(<a href="#controller_gen_rbac-name">name</a>, <a href="#controller_gen_rbac-srcs">srcs</a>, <a href="#controller_gen_rbac-role_name">role_name</a>, <a href="#controller_gen_rbac-kwargs">kwargs</a>)
 </pre>
 
