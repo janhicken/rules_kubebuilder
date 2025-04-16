@@ -1,9 +1,10 @@
-load("@bazel_skylib//rules:diff_test.bzl", "diff_test")
+load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_rbac")
 
-alias(
+filegroup(
     name = "rbac",
-    actual = "rbac.yaml",
+    srcs = glob(["*.yaml"]),
+    visibility = ["//visibility:public"],
 )
 
 controller_gen_rbac(
@@ -12,8 +13,7 @@ controller_gen_rbac(
     role_name = "manager-role",
 )
 
-diff_test(
-    name = "rbac_test",
-    file1 = ":rbac.yaml",
-    file2 = ":role.yaml",
+write_source_files(
+    name = "generate",
+    files = {"role.yaml": ":rbac.yaml"},
 )

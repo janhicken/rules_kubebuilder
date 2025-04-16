@@ -28,6 +28,7 @@ go_test(
         "webhook_suite_test.go",
     ],
     data = [
+        "//config/crd/bases",
         "//config/webhook",
         "@envtest",
     ],
