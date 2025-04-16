@@ -1,20 +1,19 @@
-load("@bazel_skylib//rules:diff_test.bzl", "diff_test")
+load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_crds")
 
-alias(
+filegroup(
     name = "bases",
-    actual = "bases.yaml",
+    srcs = ["crds.yaml"],
     visibility = ["//visibility:public"],
 )
 
 controller_gen_crds(
-    name = "bases.yaml",
+    name = "crds.yaml",
     srcs = ["//api/v1:api"],
     max_description_length = 0,
 )
 
-diff_test(
-    name = "bases_test",
-    file1 = ":bases.yaml",
-    file2 = ":batch.tutorial.kubebuilder.io_cronjobs.yaml",
+write_source_files(
+    name = "generate",
+    files = {"batch.tutorial.kubebuilder.io_cronjobs.yaml": ":crds.yaml"},
 )

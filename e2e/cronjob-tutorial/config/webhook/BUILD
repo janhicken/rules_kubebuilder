@@ -1,11 +1,11 @@
-load("@bazel_skylib//rules:diff_test.bzl", "diff_test")
+load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_webhooks")
 
 filegroup(
     name = "webhook",
     srcs = [
-        "service.yaml",
-        ":webhooks.yaml",
+        ":manifests.yaml",
+        ":service.yaml",
     ],
     visibility = ["//visibility:public"],
 )
@@ -15,8 +15,7 @@ controller_gen_webhooks(
     srcs = ["//internal/webhook/v1:webhook"],
 )
 
-diff_test(
-    name = "webhook_test",
-    file1 = ":webhooks.yaml",
-    file2 = "manifests.yaml",
+write_source_files(
+    name = "generate",
+    files = {"manifests.yaml": ":webhooks.yaml"},
 )
