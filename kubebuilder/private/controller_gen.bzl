@@ -5,7 +5,8 @@ load("@rules_go//go:def.bzl", "GoInfo", "GoPath", "go_context", "go_path")
 def _get_importpath(label):
     return label[GoInfo].importpath
 
-def _controller_gen_impl(ctx, generator_args):
+def _controller_gen_impl(ctx, generator_name, generator_args_dict):
+    output_file = ctx.actions.declare_file(ctx.label.name)
     controller_gen = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:controller_gen_toolchain"].controller_gen
 
     go = go_context(ctx)
@@ -18,13 +19,22 @@ def _controller_gen_impl(ctx, generator_args):
     go.env["GODEBUG"] = "execerrdot=0"  # allow relative path lookups
     go.env["PATH"] += ":{goroot}/bin".format(goroot = go_root_dirname)
 
-    output_file = ctx.actions.declare_file(ctx.label.name + ".yaml")
+    inputs = [go_path_dir]
+
+    # Configure generator args
+    if ctx.file.header_file:
+        inputs.append(ctx.file.header_file)
+        generator_args_dict["headerFile"] = ctx.file.header_file.path
+    if ctx.attr.year:
+        generator_args_dict["year"] = ctx.attr.year
+    generator_args = _generator_args_from_dict(ctx, generator_name, generator_args_dict)
+
     args = ctx.actions.args()
     args.add_joined(ctx.attr.srcs, join_with = ",", map_each = _get_importpath)
     args.add(output_file.path)
     ctx.actions.run_shell(
         outputs = [output_file],
-        inputs = depset([go_path_dir], transitive = [go.sdk.srcs]),
+        inputs = depset(inputs, transitive = [go.sdk.srcs]),
         tools = [controller_gen.bin, go.sdk.go, go.sdk.tools],
         mnemonic = "ControllerGen",
         command = """
@@ -49,7 +59,7 @@ GOTMPDIR="$tmpdir" \
 def _format_generator_arg(keyval):
     return "%s=%s" % keyval
 
-def _generator_args_from_dict(ctx, args_dict, generator_name):
+def _generator_args_from_dict(ctx, generator_name, args_dict):
     args = ctx.actions.args()
     if args_dict:
         return args.add_joined(
@@ -70,12 +80,18 @@ def _controller_gen_crds_impl(ctx):
     if ctx.attr.max_description_length >= 0:
         generator_args["maxDescLen"] = ctx.attr.max_description_length
 
-    return _controller_gen_impl(ctx, _generator_args_from_dict(ctx, generator_args, "crd"))
+    return _controller_gen_impl(ctx, "crd", generator_args)
+
+def _controller_gen_objects_impl(ctx):
+    additional_inputs = []
+    generator_args = {}
+
+    return _controller_gen_impl(ctx, "object", generator_args)
 
 def _controller_gen_rbac_impl(ctx):
     generator_args = {"roleName": ctx.attr.role_name}
 
-    return _controller_gen_impl(ctx, _generator_args_from_dict(ctx, generator_args, "rbac"))
+    return _controller_gen_impl(ctx, "rbac", generator_args)
 
 _COMMON_ATTRS = {
     "srcs": attr.label_list(
@@ -88,6 +104,13 @@ _COMMON_ATTRS = {
         mandatory = True,
         providers = [GoPath],
         doc = "A GoPath directory structure for all dependencies",
+    ),
+    "header_file": attr.label(
+        allow_single_file = True,
+        doc = "Specifies the header text (e.g. license) to prepend to generated files",
+    ),
+    "year": attr.int(
+        doc = """Specifies the year to substitute for " YEAR" in the header file.""",
     ),
     "_go_context_data": attr.label(
         default = "@rules_go//:go_context_data",
@@ -122,6 +145,13 @@ n indicates limit the description to at most n characters and truncate the descr
     doc = "generates CustomResourceDefinition objects",
 )
 
+_controller_gen_objects = rule(
+    implementation = _controller_gen_objects_impl,
+    attrs = _COMMON_ATTRS,
+    toolchains = _COMMON_TOOLCHAINS,
+    doc = "Generates code containing DeepCopy, DeepCopyInto and DeepCopyObject method implementations",
+)
+
 _controller_gen_rbac = rule(
     implementation = _controller_gen_rbac_impl,
     attrs = _COMMON_ATTRS | {
@@ -138,7 +168,9 @@ def controller_gen_crds(
         name,
         srcs,
         allow_dangerous_types = False,
+        header_file = None,
         max_description_length = -1,
+        year = 0,
         **kwargs):
     """Generates CustomResourceDefinition objects from Golang struct definitions.
 
@@ -146,6 +178,8 @@ def controller_gen_crds(
         name: Name of the rule.
         srcs: A list of targets that build Go packages used as a source for the generator.
         allow_dangerous_types: Allows types which are usually omitted from CRD generation because they are not recommended.
+        header_file: Specifies the header text (e.g. license) to prepend to generated files
+        year: Specifies the year to substitute for " YEAR" in the header file
 
             Currently the following additional types are allowed when this is true: `float32` and `float64`
         max_description_length: Specifies the maximum description length for fields in CRD's OpenAPI schema.
@@ -170,13 +204,52 @@ def controller_gen_crds(
         **kwargs
     )
 
-def controller_gen_rbac(name, srcs, role_name, **kwargs):
+def controller_gen_objects(
+        name,
+        srcs,
+        header_file = None,
+        year = 0,
+        **kwargs):
+    """Generates code containing DeepCopy, DeepCopyInto and DeepCopyObject method implementations.
+
+    Args:
+        name: Name of the rule
+        srcs: A list of targets that build Go packages used as a source for the generator
+        header_file: Specifies the header text (e.g. license) to prepend to generated files
+        year: Specifies the year to substitute for " YEAR" in the header file
+        **kwargs: further keyword arguments, e.g. `visibility`
+    """
+    go_path_name = name + "_go_path"
+    go_path(
+        name = go_path_name,
+        deps = srcs,
+        **kwargs
+    )
+
+    _controller_gen_objects(
+        name = name,
+        srcs = srcs,
+        go_path = go_path_name,
+        header_file = header_file,
+        year = year,
+        **kwargs
+    )
+
+def controller_gen_rbac(
+        name,
+        srcs,
+        role_name,
+        header_file = None,
+        year = 0,
+        **kwargs):
     """Generates RBAC manifests from kubebuilder:rbac markers.
 
     Args:
         name: Name of the rule.
         srcs: A list of targets that build Go packages used as a source for the generator.
+        header_file: Specifies the header text (e.g. license) to prepend to generated files
         role_name: sets the name of the generated ClusterRole
+        year: Specifies the year to substitute for " YEAR" in the header file
         **kwargs: further keyword arguments, e.g. `visibility`
     """
     go_path_name = name + "_go_path"

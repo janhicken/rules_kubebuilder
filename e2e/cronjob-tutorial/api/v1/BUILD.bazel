@@ -1,3 +1,5 @@
+load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_objects")
 load("@rules_go//go:def.bzl", "go_library")
 
 go_library(
@@ -17,4 +19,16 @@ go_library(
         "@io_k8s_apimachinery//pkg/runtime/schema",
         "@io_k8s_sigs_controller_runtime//pkg/scheme",
     ],
+)
+
+controller_gen_objects(
+    name = "deepcopy.go",
+    srcs = [":api"],
+    header_file = ":license_header.txt",
+    year = 2025,
+)
+
+write_source_files(
+    name = "generate",
+    files = {"zz_generated.deepcopy.go": ":deepcopy.go"},
 )
