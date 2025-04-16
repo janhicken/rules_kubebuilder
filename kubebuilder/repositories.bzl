@@ -17,6 +17,7 @@ load(
     "ENVTEST_PLATFORMS",
     "envtest_host_alias_repo",
     "envtest_platform_repo",
+    "envtest_toolchains_repo",
     _DEFAULT_ENVTEST_VERSION = "DEFAULT_ENVTEST_VERSION",
 )
 
@@ -75,3 +76,8 @@ def register_envtest_repositories(name = DEFAULT_ENVTEST_REPOSITORY, version = D
         )
 
     envtest_host_alias_repo(name = name)
+
+    envtest_toolchains_repo(
+        name = "%s_toolchains" % name,
+        user_repository_name = name,
+    )

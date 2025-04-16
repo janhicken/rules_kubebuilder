@@ -26,7 +26,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -103,18 +102,6 @@ var _ = BeforeSuite(func() {
 	if getFirstFoundEnvTestBinaryDir() != "" {
 		testEnv.BinaryAssetsDirectory = getFirstFoundEnvTestBinaryDir()
 	}
-	cwd, err := os.Getwd()
-	Expect(err).ToNot(HaveOccurred())
-
-	envtest_dir := os.Getenv("KUBEBUILDER_ASSETS")
-	envtest_dir_stat, err := os.Stat(envtest_dir)
-	Expect(err).ToNot(HaveOccurred(), fmt.Sprintf("no %s in %s", envtest_dir, cwd))
-	Expect(envtest_dir_stat.IsDir()).To(BeTrue())
-
-	etcd_file := filepath.Join(envtest_dir, "etcd")
-	etcd_file_stat, err := os.Stat(etcd_file)
-	Expect(err).ToNot(HaveOccurred())
-	Expect(etcd_file_stat.IsDir()).To(BeFalse())
 	/*
 		Then, we start the envtest cluster.
 	*/
