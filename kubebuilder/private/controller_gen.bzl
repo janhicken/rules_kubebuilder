@@ -5,7 +5,7 @@ load("@rules_go//go:def.bzl", "GoInfo", "GoPath", "go_context", "go_path")
 def _get_importpath(label):
     return label[GoInfo].importpath
 
-def _controller_gen_impl(ctx, generator_name, generator_args_dict):
+def _controller_gen_impl(ctx, generator_name, generator_args_dict = None):
     output_file = ctx.actions.declare_file(ctx.label.name)
     controller_gen = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:controller_gen_toolchain"].controller_gen
 
@@ -22,6 +22,7 @@ def _controller_gen_impl(ctx, generator_name, generator_args_dict):
     inputs = [go_path_dir]
 
     # Configure generator args
+    generator_args_dict = generator_args_dict or {}
     if ctx.file.header_file:
         inputs.append(ctx.file.header_file)
         generator_args_dict["headerFile"] = ctx.file.header_file.path
@@ -83,15 +84,15 @@ def _controller_gen_crds_impl(ctx):
     return _controller_gen_impl(ctx, "crd", generator_args)
 
 def _controller_gen_objects_impl(ctx):
-    additional_inputs = []
-    generator_args = {}
-
-    return _controller_gen_impl(ctx, "object", generator_args)
+    return _controller_gen_impl(ctx, "object")
 
 def _controller_gen_rbac_impl(ctx):
     generator_args = {"roleName": ctx.attr.role_name}
 
     return _controller_gen_impl(ctx, "rbac", generator_args)
+
+def _controller_gen_webhooks_impl(ctx):
+    return _controller_gen_impl(ctx, "webhook")
 
 _COMMON_ATTRS = {
     "srcs": attr.label_list(
@@ -162,6 +163,13 @@ _controller_gen_rbac = rule(
     },
     toolchains = _COMMON_TOOLCHAINS,
     doc = "generates ClusterRole objects",
+)
+
+_controller_gen_webhooks = rule(
+    implementation = _controller_gen_webhooks_impl,
+    attrs = _COMMON_ATTRS,
+    toolchains = _COMMON_TOOLCHAINS,
+    doc = "Generates (partial) {Mutating,Validating}WebhookConfiguration objects",
 )
 
 def controller_gen_crds(
@@ -264,5 +272,34 @@ def controller_gen_rbac(
         srcs = srcs,
         go_path = go_path_name,
         role_name = role_name,
+        **kwargs
+    )
+
+def controller_gen_webhooks(
+        name,
+        srcs,
+        header_file = None,
+        year = 0,
+        **kwargs):
+    """Generates (partial) {Mutating,Validating}WebhookConfiguration objects.
+
+    Args:
+        name: Name of the rule.
+        srcs: A list of targets that build Go packages used as a source for the generator.
+        header_file: Specifies the header text (e.g. license) to prepend to generated files
+        year: Specifies the year to substitute for " YEAR" in the header file
+        **kwargs: further keyword arguments, e.g. `visibility`
+    """
+    go_path_name = name + "_go_path"
+    go_path(
+        name = go_path_name,
+        deps = srcs,
+        **kwargs
+    )
+
+    _controller_gen_webhooks(
+        name = name,
+        srcs = srcs,
+        go_path = go_path_name,
         **kwargs
     )

@@ -78,3 +78,27 @@ Generates RBAC manifests from kubebuilder:rbac markers.
 | <a id="controller_gen_rbac-kwargs"></a>kwargs |  further keyword arguments, e.g. `visibility`   |  none |
 
 
+<a id="controller_gen_webhooks"></a>
+
+## controller_gen_webhooks
+
+<pre>
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_webhooks")
+
+controller_gen_webhooks(<a href="#controller_gen_webhooks-name">name</a>, <a href="#controller_gen_webhooks-srcs">srcs</a>, <a href="#controller_gen_webhooks-header_file">header_file</a>, <a href="#controller_gen_webhooks-year">year</a>, <a href="#controller_gen_webhooks-kwargs">kwargs</a>)
+</pre>
+
+Generates (partial) {Mutating,Validating}WebhookConfiguration objects.
+
+**PARAMETERS**
+
+
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="controller_gen_webhooks-name"></a>name |  Name of the rule.   |  none |
+| <a id="controller_gen_webhooks-srcs"></a>srcs |  A list of targets that build Go packages used as a source for the generator.   |  none |
+| <a id="controller_gen_webhooks-header_file"></a>header_file |  Specifies the header text (e.g. license) to prepend to generated files   |  `None` |
+| <a id="controller_gen_webhooks-year"></a>year |  Specifies the year to substitute for " YEAR" in the header file   |  `0` |
+| <a id="controller_gen_webhooks-kwargs"></a>kwargs |  further keyword arguments, e.g. `visibility`   |  none |
+
+
