@@ -25,6 +25,6 @@ bazel_dep(name = "gazelle", version = "0.42.0", dev_dependency = True)
 kubebuilder = use_extension("//kubebuilder:extensions.bzl", "kubebuilder")
 kubebuilder.controller_gen()
 kubebuilder.envtest()
-use_repo(kubebuilder, "controller_gen", "controller_gen_toolchains", "envtest")
+use_repo(kubebuilder, "controller_gen_toolchains", "envtest_toolchains")
 
-register_toolchains("@controller_gen_toolchains//:all")
+register_toolchains("@controller_gen_toolchains//:all", "@envtest_toolchains//:all")

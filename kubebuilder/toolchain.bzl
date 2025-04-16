@@ -6,6 +6,11 @@ ControllerGenInfo = provider(
     fields = {"bin": "Executable controller-gen binary"},
 )
 
+EnvtestInfo = provider(
+    doc = "Information about the envtest executables",
+    fields = {"bin_dir": "Directory containing envtest binaries"},
+)
+
 def _controller_gen_toolchain_impl(ctx):
     binary = ctx.file.bin
 
@@ -35,6 +40,35 @@ def _controller_gen_toolchain_impl(ctx):
         template_variables,
     ]
 
+def _envtest_toolchain_impl(ctx):
+    bin_dir = ctx.file.bin_dir
+
+    # Make the $(ENVTEST_BIN_DIR) variable available in places like genrules.
+    # See https://docs.bazel.build/versions/main/be/make-variables.html#custom_variables
+    template_variables = platform_common.TemplateVariableInfo({
+        "ENVTEST_BIN_DIR": bin_dir.path,
+    })
+    default = DefaultInfo(
+        files = depset([bin_dir]),
+        runfiles = ctx.runfiles(files = [bin_dir]),
+    )
+    envtest_info = EnvtestInfo(
+        bin_dir = bin_dir,
+    )
+
+    # Export all the providers inside our ToolchainInfo
+    # so the resolved_toolchain rule can grab and re-export them.
+    toolchain_info = platform_common.ToolchainInfo(
+        envtest = envtest_info,
+        template_variables = template_variables,
+        default = default,
+    )
+    return [
+        default,
+        toolchain_info,
+        template_variables,
+    ]
+
 controller_gen_toolchain = rule(
     implementation = _controller_gen_toolchain_impl,
     attrs = {
@@ -45,6 +79,20 @@ controller_gen_toolchain = rule(
         ),
     },
     doc = """Defines a controller-gen toolchain.
+
+For usage see https://docs.bazel.build/versions/main/toolchains.html#defining-toolchains.
+""",
+)
+envtest_toolchain = rule(
+    implementation = _envtest_toolchain_impl,
+    attrs = {
+        "bin_dir": attr.label(
+            doc = "The directory containing hermetically downloaded binaries.",
+            mandatory = True,
+            allow_single_file = True,
+        ),
+    },
+    doc = """Defines an envtest toolchain.
 
 For usage see https://docs.bazel.build/versions/main/toolchains.html#defining-toolchains.
 """,

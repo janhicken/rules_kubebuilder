@@ -12,6 +12,10 @@ toolchain_type(
     name = "controller_gen_toolchain",
 )
 
+toolchain_type(
+    name = "envtest_toolchain",
+)
+
 bzl_library(
     name = "repositories",
     srcs = ["repositories.bzl"],
