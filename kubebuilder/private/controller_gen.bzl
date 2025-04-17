@@ -14,9 +14,8 @@ def _controller_gen_impl(ctx, generator_name, generator_args_dict = None):
     go_root_dirname = go.sdk.root_file.dirname
 
     # Configure environment
-    go.env["GOTOOLCHAIN"] = "local"
     go.env["GO111MODULE"] = "off"
-    go.env["GODEBUG"] = "execerrdot=0"  # allow relative path lookups
+    go.env["GODEBUG"] += ",execerrdot=0"  # allow relative path lookups
     go.env["PATH"] += ":{goroot}/bin".format(goroot = go_root_dirname)
 
     inputs = [go_path_dir]
@@ -35,18 +34,16 @@ def _controller_gen_impl(ctx, generator_name, generator_args_dict = None):
     args.add(output_file.path)
     ctx.actions.run_shell(
         outputs = [output_file],
-        inputs = depset(inputs, transitive = [go.sdk.srcs]),
+        inputs = depset(inputs, transitive = [go.sdk.srcs, go.stdlib.cache_dir]),
         tools = [controller_gen.bin, go.sdk.go, go.sdk.tools],
         mnemonic = "ControllerGen",
         command = """
-tmpdir=$(mktemp -d)
-trap 'rm -rf "$tmpdir"' EXIT
-GOCACHE="$tmpdir/gocache" \
+GOCACHE="$PWD/{gocache}" \
 GOPATH="$PWD/{gopath}" \
 GOROOT="$PWD/{goroot}" \
-GOTMPDIR="$tmpdir" \
 "{controller_gen}" "$1" paths="$2" output:stdout >"$3"
 """.format(
+            gocache = go.stdlib.cache_dir.to_list()[0].path,
             gopath = go_path_dir.path,
             goroot = go_root_dirname,
             controller_gen = controller_gen.bin.path,
