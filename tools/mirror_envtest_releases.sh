@@ -11,4 +11,6 @@ readonly SOURCE_URL
 printf 'Put this in kubebuilder/private/envtest_releases.bzl:\n\n' >&2
 
 curl --fail --silent --show-error --location "$SOURCE_URL" |
-	yq --output-format=json '.releases'
+	yq --output-format=json '.releases' |
+	./transform_envtest_releases.py |
+	jq --sort-keys
