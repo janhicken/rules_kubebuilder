@@ -205,7 +205,9 @@ def controller_gen_crds(
         srcs = srcs,
         go_path = go_path_name,
         allow_dangerous_types = allow_dangerous_types,
+        header_file = header_file,
         max_description_length = max_description_length,
+        year = year,
         **kwargs
     )
 
@@ -268,6 +270,8 @@ def controller_gen_rbac(
         name = name,
         srcs = srcs,
         go_path = go_path_name,
+        header_file = header_file,
+        year = year,
         role_name = role_name,
         **kwargs
     )
@@ -298,5 +302,7 @@ def controller_gen_webhooks(
         name = name,
         srcs = srcs,
         go_path = go_path_name,
+        header_file = header_file,
+        year = year,
         **kwargs
     )
