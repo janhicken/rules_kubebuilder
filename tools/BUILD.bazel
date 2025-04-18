@@ -1,5 +1,17 @@
 load("@aspect_rules_lint//format:defs.bzl", "format_multirun")
-load("@gazelle//:def.bzl", "gazelle")
+load("@buildifier_prebuilt//:rules.bzl", "buildifier")
+load("@gazelle//:def.bzl", "gazelle", "gazelle_binary")
+
+buildifier(
+    name = "buildifier.check",
+    exclude_patterns = [
+        "./.git/*",
+        "./.ijwb/*",
+    ],
+    lint_mode = "warn",
+    lint_warnings = ["all"],
+    mode = "diff",
+)
 
 format_multirun(
     name = "format",
@@ -8,4 +20,12 @@ format_multirun(
     yaml = "@aspect_rules_lint//format:yamlfmt",
 )
 
-gazelle(name = "gazelle")
+gazelle_binary(
+    name = "gazelle_bin",
+    languages = ["@bazel_skylib_gazelle_plugin//bzl"],
+)
+
+gazelle(
+    name = "gazelle",
+    gazelle = "gazelle_bin",
+)
