@@ -7,7 +7,7 @@ load("//kubebuilder/private:controller_gen_toolchain.bzl", "CONTROLLER_GEN_VERSI
 
 def _smoke_test_impl(ctx):
     env = unittest.begin(ctx)
-    asserts.equals(env, "0.17.3", CONTROLLER_GEN_VERSIONS.keys()[0])
+    asserts.equals(env, "0.16.0", CONTROLLER_GEN_VERSIONS.keys()[0])
     return unittest.end(env)
 
 # The unittest library requires that we export the test cases as named test rules,
