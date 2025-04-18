@@ -30,7 +30,10 @@ bzl_library(
 bzl_library(
     name = "defs",
     srcs = ["defs.bzl"],
-    deps = ["//kubebuilder/private:controller_gen"],
+    deps = [
+        "//kubebuilder/private:controller_gen",
+        "//kubebuilder/private:envtest",
+    ],
 )
 
 bzl_library(

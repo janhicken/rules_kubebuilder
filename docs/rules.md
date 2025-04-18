@@ -102,3 +102,29 @@ Generates (partial) {Mutating,Validating}WebhookConfiguration objects.
 | <a id="controller_gen_webhooks-kwargs"></a>kwargs |  further keyword arguments, e.g. `visibility`   |  none |
 
 
+<a id="envtest_test"></a>
+
+## envtest_test
+
+<pre>
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "envtest_test")
+
+envtest_test(<a href="#envtest_test-name">name</a>, <a href="#envtest_test-envtest_repo">envtest_repo</a>, <a href="#envtest_test-kwargs">kwargs</a>)
+</pre>
+
+Configures a go_test with envtest binaries
+
+The envtest binaries will be available at runtime.
+The path to the binary directory will be available through the environment variable KUBEBUILDER_ASSETS.
+
+
+**PARAMETERS**
+
+
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="envtest_test-name"></a>name |  Name of the rule   |  none |
+| <a id="envtest_test-envtest_repo"></a>envtest_repo |  Name of the envtest repository to use, defaults to "@envtest"   |  `"@envtest"` |
+| <a id="envtest_test-kwargs"></a>kwargs |  further keyword arguments forwarded to go_test   |  none |
+
+
