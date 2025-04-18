@@ -124,7 +124,7 @@ The path to the binary directory will be available through the environment varia
 | Name  | Description | Default Value |
 | :------------- | :------------- | :------------- |
 | <a id="envtest_test-name"></a>name |  Name of the rule   |  none |
-| <a id="envtest_test-envtest_repo"></a>envtest_repo |  Name of the envtest repository to use, defaults to "@envtest"   |  `"@envtest"` |
+| <a id="envtest_test-envtest_repo"></a>envtest_repo |  Name of the envtest repository to use   |  `"@envtest"` |
 | <a id="envtest_test-kwargs"></a>kwargs |  further keyword arguments forwarded to go_test   |  none |
 
 

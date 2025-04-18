@@ -92,12 +92,6 @@ def _controller_gen_webhooks_impl(ctx):
     return _controller_gen_impl(ctx, "webhook")
 
 _COMMON_ATTRS = {
-    "srcs": attr.label_list(
-        allow_empty = False,
-        mandatory = True,
-        providers = [GoInfo],
-        doc = "The input for the generator",
-    ),
     "go_path": attr.label(
         mandatory = True,
         providers = [GoPath],
@@ -106,6 +100,12 @@ _COMMON_ATTRS = {
     "header_file": attr.label(
         allow_single_file = True,
         doc = "Specifies the header text (e.g. license) to prepend to generated files",
+    ),
+    "srcs": attr.label_list(
+        allow_empty = False,
+        mandatory = True,
+        providers = [GoInfo],
+        doc = "The input for the generator",
     ),
     "year": attr.int(
         doc = """Specifies the year to substitute for " YEAR" in the header file.""",

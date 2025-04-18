@@ -314,8 +314,8 @@ envtest_platform_repo = repository_rule(
     implementation = _envtest_platform_repo_impl,
     doc = "Fetch external tools needed for envtest toolchain",
     attrs = {
-        "version": attr.string(mandatory = True, values = ENVTEST_VERSIONS.keys()),
         "platform": attr.string(mandatory = True, values = ENVTEST_PLATFORMS.keys()),
+        "version": attr.string(mandatory = True, values = ENVTEST_VERSIONS.keys()),
     },
 )
 
