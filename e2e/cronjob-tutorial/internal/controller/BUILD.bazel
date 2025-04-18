@@ -1,4 +1,5 @@
-load("@rules_go//go:def.bzl", "go_library", "go_test")
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", go_test = "envtest_test")
+load("@rules_go//go:def.bzl", "go_library")
 
 go_library(
     name = "controller",
@@ -26,12 +27,8 @@ go_test(
         "cronjob_controller_test.go",
         "suite_test.go",
     ],
-    data = [
-        "//config/crd/bases",
-        "@envtest",
-    ],
+    data = ["//config/crd/bases"],
     embed = [":controller"],
-    env = {"KUBEBUILDER_ASSETS": "../../$(rootpath @envtest)"},
     deps = [
         "//api/v1:api",
         "@com_github_onsi_ginkgo_v2//:ginkgo",
