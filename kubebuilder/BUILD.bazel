@@ -33,6 +33,7 @@ bzl_library(
     deps = [
         "//kubebuilder/private:controller_gen",
         "//kubebuilder/private:envtest",
+        "//kubebuilder/private:kubectl",
     ],
 )
 

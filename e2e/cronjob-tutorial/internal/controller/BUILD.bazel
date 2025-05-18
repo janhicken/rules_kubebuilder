@@ -27,7 +27,7 @@ go_test(
         "cronjob_controller_test.go",
         "suite_test.go",
     ],
-    data = ["//config/crd/bases"],
+    data = ["//config/crd"],
     embed = [":controller"],
     deps = [
         "//api/v1:api",

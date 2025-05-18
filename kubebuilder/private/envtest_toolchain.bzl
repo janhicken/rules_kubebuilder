@@ -307,7 +307,13 @@ exports_files(
     ["envtest"],
     visibility = ["//visibility:public"],
 )
-envtest_toolchain(name = "envtest_toolchain", bin_dir = "envtest", visibility = ["//visibility:public"])
+envtest_toolchain(
+    name = "envtest_toolchain",
+    etcd = "envtest/etcd",
+    kube_apiserver = "envtest/kube-apiserver",
+    kubectl = "envtest/kubectl",
+    visibility = ["//visibility:public"]
+)
 """)
 
 envtest_platform_repo = repository_rule(
