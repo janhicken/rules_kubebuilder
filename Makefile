@@ -15,6 +15,10 @@ fmt:
 lint:
 	bazel run -- //tools:buildifier.check
 
+.PHONY: lintfix
+lintfix:
+	bazel run -- //tools:buildifier
+
 .PHONY: gazelle
 gazelle:
 	bazel run //tools:gazelle

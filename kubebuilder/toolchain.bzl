@@ -8,7 +8,11 @@ ControllerGenInfo = provider(
 
 EnvtestInfo = provider(
     doc = "Information about the envtest executables",
-    fields = {"bin_dir": "Directory containing envtest binaries"},
+    fields = {
+        "etcd": "Executable etcd binary",
+        "kube_apiserver": "Executable kube-apiserver binary",
+        "kubectl": "Executable kubectl binary",
+    },
 )
 
 def _controller_gen_toolchain_impl(ctx):
@@ -41,19 +45,23 @@ def _controller_gen_toolchain_impl(ctx):
     ]
 
 def _envtest_toolchain_impl(ctx):
-    bin_dir = ctx.file.bin_dir
+    binaries = [ctx.executable.etcd, ctx.executable.kube_apiserver, ctx.executable.kubectl]
 
-    # Make the $(ENVTEST_BIN_DIR) variable available in places like genrules.
+    # Make the $(*_BIN) variables available in places like genrules.
     # See https://docs.bazel.build/versions/main/be/make-variables.html#custom_variables
     template_variables = platform_common.TemplateVariableInfo({
-        "ENVTEST_BIN_DIR": bin_dir.path,
+        "ETCD_BIN": ctx.executable.etcd.path,
+        "KUBECTL_BIN": ctx.executable.kubectl.path,
+        "KUBE_APISERVER_BIN": ctx.executable.kube_apiserver.path,
     })
     default = DefaultInfo(
-        files = depset([bin_dir]),
-        runfiles = ctx.runfiles(files = [bin_dir]),
+        files = depset(binaries),
+        runfiles = ctx.runfiles(files = binaries),
     )
     envtest_info = EnvtestInfo(
-        bin_dir = bin_dir,
+        etcd = ctx.executable.etcd,
+        kubectl = ctx.executable.kubectl,
+        kube_apiserver = ctx.executable.kube_apiserver,
     )
 
     # Export all the providers inside our ToolchainInfo
@@ -86,10 +94,26 @@ For usage see https://docs.bazel.build/versions/main/toolchains.html#defining-to
 envtest_toolchain = rule(
     implementation = _envtest_toolchain_impl,
     attrs = {
-        "bin_dir": attr.label(
-            doc = "The directory containing hermetically downloaded binaries.",
+        "etcd": attr.label(
+            doc = "The kube-apiserver binary",
             mandatory = True,
             allow_single_file = True,
+            executable = True,
+            cfg = "exec",
+        ),
+        "kube_apiserver": attr.label(
+            doc = "The kube-apiserver binary",
+            mandatory = True,
+            allow_single_file = True,
+            executable = True,
+            cfg = "exec",
+        ),
+        "kubectl": attr.label(
+            doc = "The kube-apiserver binary",
+            mandatory = True,
+            allow_single_file = True,
+            executable = True,
+            cfg = "exec",
         ),
     },
     doc = """Defines an envtest toolchain.

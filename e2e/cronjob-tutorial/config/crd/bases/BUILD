@@ -1,4 +1,4 @@
-load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
+load("@aspect_bazel_lib//lib:diff_test.bzl", "diff_test")
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_crds")
 
 filegroup(
@@ -13,7 +13,8 @@ controller_gen_crds(
     max_description_length = 0,
 )
 
-write_source_files(
-    name = "generate",
-    files = {"batch.tutorial.kubebuilder.io_cronjobs.yaml": ":crds.yaml"},
+diff_test(
+    name = "crds_diff",
+    file1 = ":crds.yaml",
+    file2 = ":crds_expected.yaml",
 )

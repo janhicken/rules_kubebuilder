@@ -3,6 +3,17 @@ load("@buildifier_prebuilt//:rules.bzl", "buildifier")
 load("@gazelle//:def.bzl", "gazelle", "gazelle_binary")
 
 buildifier(
+    name = "buildifier",
+    exclude_patterns = [
+        "./.git/*",
+        "./.ijwb/*",
+    ],
+    lint_mode = "fix",
+    lint_warnings = ["all"],
+    mode = "fix",
+)
+
+buildifier(
     name = "buildifier.check",
     exclude_patterns = [
         "./.git/*",
