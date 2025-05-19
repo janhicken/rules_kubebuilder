@@ -1,0 +1,23 @@
+apiVersion: batch.tutorial.kubebuilder.io/v1
+kind: CronJob
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: project
+  name: cronjob-sample
+spec:
+  concurrencyPolicy: Allow
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - args:
+            - /bin/sh
+            - -c
+            - date; echo Hello from the Kubernetes cluster
+            image: busybox
+            name: hello
+          restartPolicy: OnFailure
+  schedule: '*/1 * * * *'
+  startingDeadlineSeconds: 60

@@ -4,8 +4,26 @@ apply_template = """#!/bin/sh
 exec "{kubectl_bin}" apply --filename="{manifests_filename}"
 """
 
+KustomizeInfo = provider(
+    "Info about kustomize configuration",
+    fields = {
+        "configurations": "depset of transformer configuration files.",
+    },
+)
+
 def _kustomization_impl(ctx):
     envtest = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain"].envtest
+
+    # Build depset of all transformer configurations
+    transitive_configuration_deps = [
+        resource[KustomizeInfo].configurations
+        for resource in ctx.attr.resources
+        if KustomizeInfo in resource
+    ]
+    configuration_deps = depset(
+        ctx.files.configurations,
+        transitive = transitive_configuration_deps,
+    )
 
     # Create kustomization.yaml
     kustomization_yaml = ctx.actions.declare_file("kustomization.yaml")
@@ -13,17 +31,28 @@ def _kustomization_impl(ctx):
         "apiVersion": "kustomize.config.k8s.io/v1beta1",
         "configurations": [
             relative_file(configuration.path, kustomization_yaml.path)
-            for configuration in ctx.files.configurations
+            for configuration in configuration_deps.to_list()
         ],
         "kind": "Kustomization",
+        "namePrefix": ctx.attr.name_prefix or None,
+        "namespace": ctx.attr.namespace or None,
+        "patches": [
+            {
+                "path": relative_file(patch.path, kustomization_yaml.path),
+                "target": json.decode(target_json),
+            }
+            for patch_target, target_json in ctx.attr.patches.items()
+            for patch in patch_target.files.to_list()
+        ],
+        "replacements": [
+            {"path": relative_file(replacement.path, kustomization_yaml.path)}
+            for replacement in ctx.files.replacements
+        ],
         "resources": [
             relative_file(resource.path, kustomization_yaml.path)
             for resource in ctx.files.resources
         ],
     }
-
-    if ctx.attr.namespace:
-        kustomization_spec["namespace"] = ctx.attr.namespace
 
     # Write kustomization
     ctx.actions.write(
@@ -46,7 +75,10 @@ def _kustomization_impl(ctx):
     args.add(output_file, format = "--output=%s")
     ctx.actions.run(
         outputs = [output_file],
-        inputs = [kustomization_yaml] + ctx.files.resources + ctx.files.configurations,
+        inputs = depset(
+            direct = [kustomization_yaml] + ctx.files.resources + ctx.files.configurations + ctx.files.replacements,
+            transitive = [patch_target.files for patch_target in ctx.attr.patches.keys()] + transitive_configuration_deps,
+        ),
         executable = envtest.kubectl,
         arguments = [args],
         mnemonic = "KustomizeBuild",
@@ -63,11 +95,14 @@ def _kustomization_impl(ctx):
         is_executable = True,
     )
 
-    return DefaultInfo(
-        files = depset([output_file]),
-        executable = apply_script,
-        runfiles = ctx.runfiles(files = [envtest.kubectl, output_file]),
-    )
+    return [
+        DefaultInfo(
+            files = depset([output_file]),
+            executable = apply_script,
+            runfiles = ctx.runfiles(files = [envtest.kubectl, output_file]),
+        ),
+        KustomizeInfo(configurations = configuration_deps),
+    ]
 
 kustomization = rule(
     implementation = _kustomization_impl,
@@ -77,8 +112,19 @@ kustomization = rule(
             allow_files = [".yml", ".yaml"],
             doc = "A list of transformer configuration files.",
         ),
+        "name_prefix": attr.string(
+            doc = "Prepends the value to the names of all resources and references. As namePrefix is self explanatory, it helps adding prefix to names in the defined yaml files.",
+        ),
         "namespace": attr.string(
             doc = "Adds namespace to all resources. Will override the existing namespace if it is set on a resource, or add it if it is not set on a resource.",
+        ),
+        "patches": attr.label_keyed_string_dict(
+            allow_files = [".yml", ".yaml", ".json"],
+            doc = "Patches to be applied to resources. Expects a dictionary of patches to target specs. Keys must be a label to (a) patch file(s), values shall be a JSON string of a target spec.",
+        ),
+        "replacements": attr.label_list(
+            allow_files = [".yml", ".yaml"],
+            doc = "Substitute field(s) in N target(s) with a field from a source. Replacements are used to copy fields from one source into any number of specified targets.",
         ),
         "resources": attr.label_list(
             mandatory = True,

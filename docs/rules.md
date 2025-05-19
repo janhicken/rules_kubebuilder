@@ -9,7 +9,7 @@
 <pre>
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kustomization")
 
-kustomization(<a href="#kustomization-name">name</a>, <a href="#kustomization-resources">resources</a>, <a href="#kustomization-configurations">configurations</a>, <a href="#kustomization-namespace">namespace</a>)
+kustomization(<a href="#kustomization-name">name</a>, <a href="#kustomization-resources">resources</a>, <a href="#kustomization-configurations">configurations</a>, <a href="#kustomization-name_prefix">name_prefix</a>, <a href="#kustomization-namespace">namespace</a>, <a href="#kustomization-patches">patches</a>, <a href="#kustomization-replacements">replacements</a>)
 </pre>
 
 Build a set of KRM resources similar to a kustomization.yaml
@@ -22,7 +22,10 @@ Build a set of KRM resources similar to a kustomization.yaml
 | <a id="kustomization-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
 | <a id="kustomization-resources"></a>resources |  Resources to include. Each entry in this list must be a path to a YAML file.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | required |  |
 | <a id="kustomization-configurations"></a>configurations |  A list of transformer configuration files.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="kustomization-name_prefix"></a>name_prefix |  Prepends the value to the names of all resources and references. As namePrefix is self explanatory, it helps adding prefix to names in the defined yaml files.   | String | optional |  `""`  |
 | <a id="kustomization-namespace"></a>namespace |  Adds namespace to all resources. Will override the existing namespace if it is set on a resource, or add it if it is not set on a resource.   | String | optional |  `""`  |
+| <a id="kustomization-patches"></a>patches |  Patches to be applied to resources. Expects a dictionary of patches to target specs. Keys must be a label to (a) patch file(s), values shall be a JSON string of a target spec.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: Label -> String</a> | optional |  `{}`  |
+| <a id="kustomization-replacements"></a>replacements |  Substitute field(s) in N target(s) with a field from a source. Replacements are used to copy fields from one source into any number of specified targets.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
 
 
 <a id="controller_gen_crds"></a>
