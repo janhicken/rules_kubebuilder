@@ -1,5 +1,9 @@
 load("@aspect_bazel_lib//lib:paths.bzl", "relative_file")
 
+apply_template = """#!/bin/sh
+exec "{kubectl_bin}" apply --filename="{manifests_filename}"
+"""
+
 def _kustomization_impl(ctx):
     envtest = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain"].envtest
 
@@ -48,12 +52,26 @@ def _kustomization_impl(ctx):
         mnemonic = "KustomizeBuild",
     )
 
+    # Create runnable apply script
+    apply_script = ctx.actions.declare_file(ctx.label.name + "_apply.sh")
+    ctx.actions.write(
+        output = apply_script,
+        content = apply_template.format(
+            kubectl_bin = envtest.kubectl.short_path,
+            manifests_filename = output_file.short_path,
+        ),
+        is_executable = True,
+    )
+
     return DefaultInfo(
         files = depset([output_file]),
+        executable = apply_script,
+        runfiles = ctx.runfiles(files = [envtest.kubectl, output_file]),
     )
 
 kustomization = rule(
     implementation = _kustomization_impl,
+    executable = True,
     attrs = {
         "configurations": attr.label_list(
             allow_files = [".yml", ".yaml"],
