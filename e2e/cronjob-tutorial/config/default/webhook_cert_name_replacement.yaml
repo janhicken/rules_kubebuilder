@@ -1,0 +1,23 @@
+source:
+  kind: Certificate
+  group: cert-manager.io
+  version: v1
+  name: serving-cert
+  fieldPath: .metadata.name
+targets:
+  - select:
+      kind: ValidatingWebhookConfiguration
+    fieldPaths:
+      - .metadata.annotations.[cert-manager.io/inject-ca-from]
+    options:
+      delimiter: '/'
+      index: 1
+      create: true
+  - select:
+      kind: MutatingWebhookConfiguration
+    fieldPaths:
+      - .metadata.annotations.[cert-manager.io/inject-ca-from]
+    options:
+      delimiter: '/'
+      index: 1
+      create: true

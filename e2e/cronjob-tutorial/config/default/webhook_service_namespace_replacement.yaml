@@ -1,0 +1,18 @@
+source:
+  kind: Service
+  version: v1
+  name: webhook-service
+  fieldPath: .metadata.namespace # Namespace of the service
+targets:
+  - select:
+      kind: Certificate
+      group: cert-manager.io
+      version: v1
+      name: serving-cert
+    fieldPaths:
+      - .spec.dnsNames.0
+      - .spec.dnsNames.1
+    options:
+      delimiter: '.'
+      index: 1
+      create: true
