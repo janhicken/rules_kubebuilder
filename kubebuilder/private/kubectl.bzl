@@ -1,5 +1,53 @@
 load("@aspect_bazel_lib//lib:paths.bzl", "relative_file")
 
+def _config_map_impl(ctx):
+    envtest = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain"].envtest
+    output_file = ctx.actions.declare_file(ctx.label.name + ".yaml")
+
+    args = ctx.actions.args()
+    args.add(output_file)
+    args.add_all([ctx.attr.config_map_name, "--dry-run=client", "--output=yaml"])
+    args.add(str(ctx.attr.append_hash).lower(), format = "--append-hash=%s")
+    args.add_all(ctx.files.srcs, format_each = "--from-file=%s")
+    if ctx.attr.namespace:
+        args.add(ctx.attr.namespace, format = "--namespace=%s")
+
+    ctx.actions.run_shell(
+        outputs = [output_file],
+        inputs = ctx.files.srcs,
+        tools = [envtest.kubectl],
+        command = """out=$1; shift; {kubectl} create configmap "$@" >"$out";""".format(kubectl = envtest.kubectl.path),
+        arguments = [args],
+        mnemonic = "CreateConfigMap",
+    )
+
+    return DefaultInfo(files = depset([output_file]))
+
+config_map = rule(
+    implementation = _config_map_impl,
+    attrs = {
+        "append_hash": attr.bool(
+            default = False,
+            doc = "Append a hash of the configmap to its name.",
+        ),
+        "config_map_name": attr.string(
+            mandatory = True,
+            doc = "The config map's name",
+        ),
+        "namespace": attr.string(
+            doc = "The config map's namespace",
+        ),
+        "srcs": attr.label_list(
+            allow_files = True,
+            doc = "A list of source files for the config map. The files' basename will be used as key, using its content as value.",
+        ),
+    },
+    toolchains = [
+        "@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain",
+    ],
+    doc = "Creates a ConfigMap manifest based on files.",
+)
+
 apply_template = """#!/bin/sh
 exec "{kubectl_bin}" apply --filename="{manifests_filename}"
 """
@@ -29,11 +77,13 @@ def _kustomization_impl(ctx):
     kustomization_yaml = ctx.actions.declare_file("kustomization.yaml")
     kustomization_spec = {
         "apiVersion": "kustomize.config.k8s.io/v1beta1",
+        "commonAnnotations": ctx.attr.annotations,
         "configurations": [
             relative_file(configuration.path, kustomization_yaml.path)
             for configuration in configuration_deps.to_list()
         ],
         "kind": "Kustomization",
+        "labels": [{"pairs": ctx.attr.labels}],
         "namePrefix": ctx.attr.name_prefix or None,
         "namespace": ctx.attr.namespace or None,
         "patches": [
@@ -108,9 +158,15 @@ kustomization = rule(
     implementation = _kustomization_impl,
     executable = True,
     attrs = {
+        "annotations": attr.string_dict(
+            doc = "Add annotations to add all resources.",
+        ),
         "configurations": attr.label_list(
             allow_files = [".yml", ".yaml"],
             doc = "A list of transformer configuration files.",
+        ),
+        "labels": attr.string_dict(
+            doc = "Add labels and optionally selectors to all resources.",
         ),
         "name_prefix": attr.string(
             doc = "Prepends the value to the names of all resources and references. As namePrefix is self explanatory, it helps adding prefix to names in the defined yaml files.",

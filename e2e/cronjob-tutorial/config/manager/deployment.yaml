@@ -3,10 +3,6 @@ kind: Deployment
 metadata:
   name: controller-manager
   namespace: system
-  labels:
-    control-plane: controller-manager
-    app.kubernetes.io/name: project
-    app.kubernetes.io/managed-by: kustomize
 spec:
   selector:
     matchLabels:
