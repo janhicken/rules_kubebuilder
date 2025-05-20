@@ -2,6 +2,30 @@
 
 # Kubebuilder Rules
 
+<a id="config_map"></a>
+
+## config_map
+
+<pre>
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "config_map")
+
+config_map(<a href="#config_map-name">name</a>, <a href="#config_map-srcs">srcs</a>, <a href="#config_map-append_hash">append_hash</a>, <a href="#config_map-config_map_name">config_map_name</a>, <a href="#config_map-namespace">namespace</a>)
+</pre>
+
+Creates a ConfigMap manifest based on files.
+
+**ATTRIBUTES**
+
+
+| Name  | Description | Type | Mandatory | Default |
+| :------------- | :------------- | :------------- | :------------- | :------------- |
+| <a id="config_map-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
+| <a id="config_map-srcs"></a>srcs |  A list of source files for the config map. The files' basename will be used as key, using its content as value.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="config_map-append_hash"></a>append_hash |  Append a hash of the configmap to its name.   | Boolean | optional |  `False`  |
+| <a id="config_map-config_map_name"></a>config_map_name |  The config map's name   | String | required |  |
+| <a id="config_map-namespace"></a>namespace |  The config map's namespace   | String | optional |  `""`  |
+
+
 <a id="kustomization"></a>
 
 ## kustomization
@@ -9,7 +33,8 @@
 <pre>
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kustomization")
 
-kustomization(<a href="#kustomization-name">name</a>, <a href="#kustomization-resources">resources</a>, <a href="#kustomization-configurations">configurations</a>, <a href="#kustomization-name_prefix">name_prefix</a>, <a href="#kustomization-namespace">namespace</a>, <a href="#kustomization-patches">patches</a>, <a href="#kustomization-replacements">replacements</a>)
+kustomization(<a href="#kustomization-name">name</a>, <a href="#kustomization-resources">resources</a>, <a href="#kustomization-annotations">annotations</a>, <a href="#kustomization-configurations">configurations</a>, <a href="#kustomization-labels">labels</a>, <a href="#kustomization-name_prefix">name_prefix</a>, <a href="#kustomization-namespace">namespace</a>, <a href="#kustomization-patches">patches</a>,
+              <a href="#kustomization-replacements">replacements</a>)
 </pre>
 
 Build a set of KRM resources similar to a kustomization.yaml
@@ -21,7 +46,9 @@ Build a set of KRM resources similar to a kustomization.yaml
 | :------------- | :------------- | :------------- | :------------- | :------------- |
 | <a id="kustomization-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
 | <a id="kustomization-resources"></a>resources |  Resources to include. Each entry in this list must be a path to a YAML file.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | required |  |
+| <a id="kustomization-annotations"></a>annotations |  Add annotations to add all resources.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  `{}`  |
 | <a id="kustomization-configurations"></a>configurations |  A list of transformer configuration files.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="kustomization-labels"></a>labels |  Add labels and optionally selectors to all resources.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  `{}`  |
 | <a id="kustomization-name_prefix"></a>name_prefix |  Prepends the value to the names of all resources and references. As namePrefix is self explanatory, it helps adding prefix to names in the defined yaml files.   | String | optional |  `""`  |
 | <a id="kustomization-namespace"></a>namespace |  Adds namespace to all resources. Will override the existing namespace if it is set on a resource, or add it if it is not set on a resource.   | String | optional |  `""`  |
 | <a id="kustomization-patches"></a>patches |  Patches to be applied to resources. Expects a dictionary of patches to target specs. Keys must be a label to (a) patch file(s), values shall be a JSON string of a target spec.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: Label -> String</a> | optional |  `{}`  |

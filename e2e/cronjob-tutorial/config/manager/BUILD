@@ -3,6 +3,11 @@ load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kustomizat
 
 kustomization(
     name = "manager",
+    labels = {
+        "app.kubernetes.io/managed-by": "kustomize",
+        "app.kubernetes.io/name": "project",
+        "control-plane": "controller-manager",
+    },
     resources = [
         ":deployment.yaml",
         ":ns.yaml",
