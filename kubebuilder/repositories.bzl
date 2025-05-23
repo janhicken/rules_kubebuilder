@@ -7,28 +7,52 @@ See https://docs.bazel.build/versions/main/skylark/deploying.html#dependencies
 load(
     "//kubebuilder/private:controller_gen_toolchain.bzl",
     "CONTROLLER_GEN_PLATFORMS",
+    "KUBERNETES_VERSION_MAPPING",
     "controller_gen_host_alias_repo",
     "controller_gen_platform_repo",
     "controller_gen_toolchains_repo",
-    _DEFAULT_CONTROLLER_GEN_VERSION = "DEFAULT_CONTROLLER_GEN_VERSION",
 )
 load(
     "//kubebuilder/private:envtest_toolchain.bzl",
     "ENVTEST_PLATFORMS",
+    "ENVTEST_VERSIONS",
     "envtest_host_alias_repo",
     "envtest_platform_repo",
     "envtest_toolchains_repo",
-    _DEFAULT_ENVTEST_VERSION = "DEFAULT_ENVTEST_VERSION",
 )
+
+KUBERNETES_VERSIONS = ENVTEST_VERSIONS.keys()
+DEFAULT_KUBERNETES_VERSION = "1.31.0"
+
+def register_kubebuilder_repositories_and_toolchains(name = "", kubernetes_version = DEFAULT_KUBERNETES_VERSION, register = True):
+    """
+    Registers Kubebuilder repositories and toolchain
+
+    Args:
+        name: a common prefix for all generated repositories
+        kubernetes_version: the target Kubernetes version to pick toolchain versions for
+        register: whether to call through to native.register_toolchains.
+            Should be True for WORKSPACE users, but false when used under bzlmod extension
+    """
+    k8s_version_major_minor = kubernetes_version.rpartition(".")[0]
+
+    if k8s_version_major_minor not in KUBERNETES_VERSION_MAPPING:
+        fail("Unsupported Kubernetes version {k8s_version}, major.minor must match one of: {available}".format(
+            k8s_version = kubernetes_version,
+            available = KUBERNETES_VERSION_MAPPING.keys(),
+        ))
+    controller_gen_version = KUBERNETES_VERSION_MAPPING[k8s_version_major_minor]
+    register_controller_gen_toolchains(name + DEFAULT_CONTROLLER_GEN_REPOSITORY, controller_gen_version, register)
+
+    register_envtest_repositories(name + DEFAULT_ENVTEST_REPOSITORY, kubernetes_version)
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                               controller-gen                               ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
 DEFAULT_CONTROLLER_GEN_REPOSITORY = "controller_gen"
-DEFAULT_CONTROLLER_GEN_VERSION = _DEFAULT_CONTROLLER_GEN_VERSION
 
-def register_controller_gen_toolchains(name = DEFAULT_CONTROLLER_GEN_REPOSITORY, version = DEFAULT_CONTROLLER_GEN_VERSION, register = True):
+def register_controller_gen_toolchains(name, version, register = True):
     """Registers controller-gen toolchain and repositories
 
     Args:
@@ -59,9 +83,8 @@ def register_controller_gen_toolchains(name = DEFAULT_CONTROLLER_GEN_REPOSITORY,
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
 DEFAULT_ENVTEST_REPOSITORY = "envtest"
-DEFAULT_ENVTEST_VERSION = _DEFAULT_ENVTEST_VERSION
 
-def register_envtest_repositories(name = DEFAULT_ENVTEST_REPOSITORY, version = DEFAULT_ENVTEST_VERSION):
+def register_envtest_repositories(name, version):
     """Registers envtest repositories
 
     Args:

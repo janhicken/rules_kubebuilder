@@ -50,6 +50,7 @@ local_path_override(
 )
 
 kubebuilder = use_extension("@io_github_janhicken_rules_kubebuilder//kubebuilder:extensions.bzl", "kubebuilder")
-kubebuilder.controller_gen(version = "0.17.2")
-kubebuilder.envtest(version = "1.31.0")
-use_repo(kubebuilder, "envtest")
+kubebuilder.for_kubernetes(version = "1.31.0")
+use_repo(kubebuilder, "controller_gen_toolchains", "envtest", "envtest_toolchains")
+
+register_toolchains("@controller_gen_toolchains//:all", "@envtest_toolchains//:all")

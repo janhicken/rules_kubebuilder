@@ -10,47 +10,54 @@ effectively overriding the default named toolchain due to toolchain resolution p
 """
 
 load("@bazel_features//:features.bzl", "bazel_features")
-load("//kubebuilder/private:extension_utils.bzl", "extension_utils")
 load(
     ":repositories.bzl",
-    "DEFAULT_CONTROLLER_GEN_REPOSITORY",
-    "DEFAULT_CONTROLLER_GEN_VERSION",
-    "DEFAULT_ENVTEST_REPOSITORY",
-    "DEFAULT_ENVTEST_VERSION",
-    "register_controller_gen_toolchains",
-    "register_envtest_repositories",
+    "KUBERNETES_VERSIONS",
+    "register_kubebuilder_repositories_and_toolchains",
 )
 
-controller_gen_toolchain = tag_class(attrs = {
-    "name": attr.string(doc = """\
-Base name for generated repositories, allowing more than one controller-gen toolchain to be registered.
+kubernetes_target = tag_class(attrs = {
+    "prefix": attr.string(
+        default = "",
+        doc = """\
+Prefix for generated repositories, allowing more than one kubebuilder toolchain to be registered.
 Overriding the default is only permitted in the root module.
-""", default = DEFAULT_CONTROLLER_GEN_REPOSITORY),
-    "version": attr.string(doc = "Explicit version of controller-gen.", default = DEFAULT_CONTROLLER_GEN_VERSION),
+""",
+    ),
+    "version": attr.string(
+        mandatory = True,
+        values = KUBERNETES_VERSIONS,
+        doc = "The Kubernetes version to target.",
+    ),
 })
 
-envtest_repositories = tag_class(attrs = {
-    "name": attr.string(doc = """\
-    Base name for generated repositories, allowing more than one envtest repositories to be registered.
-    Overriding the default is only permitted in the root module.
-    """, default = DEFAULT_ENVTEST_REPOSITORY),
-    "version": attr.string(doc = "Explicit version of envtet", default = DEFAULT_ENVTEST_VERSION),
-})
+def _kubebuilder_impl(mctx):
+    targets = {}
+    for mod in mctx.modules:
+        for k8s_target in mod.tags.for_kubernetes:
+            prefix = k8s_target.prefix
+            version = k8s_target.version
+            if prefix and not mod.is_root:
+                fail("Only the root module may provide a prefix for the kubernetes target.")
 
-def _toolchains_impl(mctx):
-    extension_utils.toolchain_repos_bfs(
-        mctx = mctx,
-        get_tag_fn = lambda tags: tags.controller_gen,
-        toolchain_name = "controller_gen",
-        toolchain_repos_fn = lambda name, version: register_controller_gen_toolchains(name, version, register = False),
-    )
+            if prefix in targets.keys():
+                if not prefix:
+                    # Prioritize the root-most registration of the default toolchain version and
+                    # ignore any further registrations (modules are processed breadth-first)
+                    continue
+                if version == targets[prefix]:
+                    # No problem to register a matching toolchain twice
+                    continue
+                fail("Multiple conflicting kubernetes targets declared for prefix {} ({} and {})".format(
+                    prefix,
+                    version,
+                    targets[prefix],
+                ))
+            else:
+                targets[prefix] = version
 
-    extension_utils.toolchain_repos_bfs(
-        mctx = mctx,
-        get_tag_fn = lambda tags: tags.envtest,
-        toolchain_name = "envtest",
-        toolchain_repos_fn = lambda name, version: register_envtest_repositories(name, version),
-    )
+    for prefix, version in targets.items():
+        register_kubebuilder_repositories_and_toolchains(prefix, version, register = False)
 
     if bazel_features.external_deps.extension_metadata_has_reproducible:
         return mctx.extension_metadata(reproducible = True)
@@ -58,9 +65,6 @@ def _toolchains_impl(mctx):
     return mctx.extension_metadata()
 
 kubebuilder = module_extension(
-    implementation = _toolchains_impl,
-    tag_classes = {
-        "controller_gen": controller_gen_toolchain,
-        "envtest": envtest_repositories,
-    },
+    implementation = _kubebuilder_impl,
+    tag_classes = {"for_kubernetes": kubernetes_target},
 )
