@@ -31,8 +31,3 @@ bzl_library(
     srcs = ["kubectl.bzl"],
     deps = ["@aspect_bazel_lib//lib:paths"],
 )
-
-bzl_library(
-    name = "extension_utils",
-    srcs = ["extension_utils.bzl"],
-)

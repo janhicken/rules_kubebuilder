@@ -48,7 +48,12 @@ CONTROLLER_GEN_PLATFORMS = {
     ),
 }
 
-DEFAULT_CONTROLLER_GEN_VERSION = "0.17.3"
+KUBERNETES_VERSION_MAPPING = {
+    "1.30": "0.16.0",  # FIXME: we should theoretically use 0.15.0, but there are no binaries available for download
+    "1.31": "0.16.5",
+    "1.32": "0.17.3",
+    "1.33": "0.18.0",
+}
 
 CONTROLLER_GEN_VERSIONS = {
     "0.16.0": {
@@ -140,6 +145,15 @@ CONTROLLER_GEN_VERSIONS = {
         "linux_ppc64le": "sha384-uuPHUoAC1m63DvkaMfgGT+DBy+jvWeP7lWqAepE18UmZo7jqI8VNQekkrBjlbcja",
         "linux_s390x": "sha384-gAaq3mNGy3sAAOUkqCqqkMTiKlEy0d1+pqf+1bJOFnBy/0JwTsCNOkz7JnaPP0Fr",
         "windows_amd64": "sha384-QbtaGOdRbZ3xDsPGWCijUliLzOU7Z1aYfUfC+UqJWmgy+iXxqEEvw9r7EZB1eLQK",
+    },
+    "0.18.0": {
+        "darwin_amd64": "sha384-bVVHwzMOh+lrzMpteNYSBV7Mq5MSYSPQ4M2j/adLV0rVxkqVV/nhpAvV48aQVS6V",
+        "darwin_arm64": "sha384-Gjfse8ifYVHoqYIwh+OmQXN/KdOjQHr3O0e6gfgIBQXB50OtZntEs7JSHDLDReRj",
+        "linux_amd64": "sha384-jMZzGpPYGU55fclPofAqHxyd37yXFAB4u5S/7yiH6VuBwFY22nMFY7kqfnsDoLXv",
+        "linux_arm64": "sha384-NiC4boKh0iY8nFqIUdLpSJY4qwN5dXmWSPVWeMF2UJmj3HHGRA8fUnnjiZVQoTDT",
+        "linux_ppc64le": "sha384-95LDfZKmZfmZK6pGYkC3aWTAVhk7PStDdAQrHcZTV6zivu9tdozOTmvQDOEtgZq/",
+        "linux_s390x": "sha384-qA0zRT0NRmO6N8HhzTxbmTvx/t9SOCoIpxyalYKXIk1zvYFd8br8mJyUJ2XEbbRv",
+        "windows_amd64": "sha384-NSGhVYQnN+BdgzvodcWr5fFmMfGUQdotb+4Xxexn8L1P2JJvTMKczLXIWT9ZdEDJ",
     },
 }
 
