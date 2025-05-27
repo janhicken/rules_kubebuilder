@@ -25,7 +25,7 @@ jobs:
       # Builds without bzlmod are not supported
       exclude: |
         [
-          {"folder": ".", "bzlmodEnabled": false}
+          {"folder": ".", "bzlmodEnabled": false},
           {"folder": "e2e/cronjob-tutorial", "bzlmodEnabled": false}
         ]
   # For branch protection settings, this job provides a "stable" name that can be used to gate PR merges
