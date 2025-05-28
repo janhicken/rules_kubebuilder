@@ -1,3 +1,5 @@
+"Bazel Rules for kubectl"
+
 load("@aspect_bazel_lib//lib:paths.bzl", "relative_file")
 
 def _config_map_impl(ctx):
