@@ -23,9 +23,11 @@ jobs:
           "e2e/cronjob-tutorial"
         ]
       # Builds without bzlmod are not supported
+      # This issue prevents stardoc to function properly with Bazel 8: https://github.com/bazelbuild/rules_cc/issues/279
       exclude: |
         [
-          {"bzlmodEnabled": false}
+          {"bzlmodEnabled": false},
+          {"bazelversion": "8.0.0", "folder": "."}
         ]
       exclude_windows: true
   # For branch protection settings, this job provides a "stable" name that can be used to gate PR merges
