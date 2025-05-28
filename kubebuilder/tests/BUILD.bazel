@@ -1,5 +1,7 @@
 load("@aspect_bazel_lib//lib:diff_test.bzl", "diff_test")
-load("//kubebuilder/private:kubectl.bzl", "config_map")
+load("//kubebuilder/private:kubectl.bzl", "config_map", "kustomization")
+
+package(default_testonly = True)
 
 config_map(
     name = "logging_config",
@@ -12,4 +14,30 @@ diff_test(
     name = "logging_config_diff",
     file1 = ":logging_config",
     file2 = ":expected_config_map_logging.yaml",
+)
+
+kustomization(
+    name = "myapp",
+    image_tags = {"myapp": "${STABLE_TEST_VERSION}"},
+    resources = [":deployment.yaml"],
+    stamp = 0,
+)
+
+diff_test(
+    name = "myapp_diff",
+    file1 = ":myapp",
+    file2 = ":expected_myapp.yaml",
+)
+
+kustomization(
+    name = "myapp_versioned",
+    image_tags = {"myapp": "${STABLE_TEST_VERSION}"},
+    resources = [":deployment.yaml"],
+    stamp = 1,
+)
+
+diff_test(
+    name = "myapp_versioned_diff",
+    file1 = ":myapp_versioned",
+    file2 = ":expected_myapp_versioned.yaml",
 )

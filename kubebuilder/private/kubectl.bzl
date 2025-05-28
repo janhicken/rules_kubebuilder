@@ -1,6 +1,7 @@
 "Bazel Rules for kubectl"
 
 load("@aspect_bazel_lib//lib:paths.bzl", "relative_file")
+load("@aspect_bazel_lib//lib:stamping.bzl", "STAMP_ATTRS", "maybe_stamp")
 
 def _config_map_impl(ctx):
     envtest = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain"].envtest
@@ -63,6 +64,7 @@ KustomizeInfo = provider(
 
 def _kustomization_impl(ctx):
     envtest = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain"].envtest
+    yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
 
     # Build depset of all transformer configurations
     transitive_configuration_deps = [
@@ -76,13 +78,17 @@ def _kustomization_impl(ctx):
     )
 
     # Create kustomization.yaml
-    kustomization_yaml = ctx.actions.declare_file("kustomization.yaml")
+    kustomization_yaml = ctx.actions.declare_file(ctx.label.name + "/kustomization.yaml")
     kustomization_spec = {
         "apiVersion": "kustomize.config.k8s.io/v1beta1",
         "commonAnnotations": ctx.attr.annotations,
         "configurations": [
             relative_file(configuration.path, kustomization_yaml.path)
             for configuration in configuration_deps.to_list()
+        ],
+        "images": [
+            {"name": name, "newTag": new_tag}
+            for name, new_tag in ctx.attr.image_tags.items()
         ],
         "kind": "Kustomization",
         "labels": [{"pairs": ctx.attr.labels}],
@@ -106,10 +112,29 @@ def _kustomization_impl(ctx):
         ],
     }
 
-    # Write kustomization
+    # Write raw version first
+    raw_kustomization_yaml = ctx.actions.declare_file(ctx.label.name + "/raw.yaml")
     ctx.actions.write(
-        output = kustomization_yaml,
+        output = raw_kustomization_yaml,
         content = json.encode(kustomization_spec),
+    )
+
+    # Expand stamp attributes
+    expand_stamp_attrs_inputs = [raw_kustomization_yaml]
+    expand_stamp_attrs_args = [raw_kustomization_yaml.path, kustomization_yaml.path]
+    stamp = maybe_stamp(ctx)
+    if stamp:
+        expand_stamp_attrs_inputs.append(stamp.stable_status_file)
+        expand_stamp_attrs_args.append(stamp.stable_status_file.path)
+    ctx.actions.run(
+        outputs = [kustomization_yaml],
+        inputs = expand_stamp_attrs_inputs,
+        executable = ctx.executable._expand_stamp_attrs,
+        tools = [yq_toolchain.yqinfo.bin],
+        arguments = expand_stamp_attrs_args,
+        mnemonic = "ExpandStampAttrs",
+        env = yq_toolchain.template_variables.variables,
+        toolchain = "@aspect_bazel_lib//lib:yq_toolchain_type",
     )
 
     # Run kubectl kustomize
@@ -134,6 +159,7 @@ def _kustomization_impl(ctx):
         executable = envtest.kubectl,
         arguments = [args],
         mnemonic = "KustomizeBuild",
+        toolchain = "@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain",
     )
 
     # Create runnable apply script
@@ -167,6 +193,9 @@ kustomization = rule(
             allow_files = [".yml", ".yaml"],
             doc = "A list of transformer configuration files.",
         ),
+        "image_tags": attr.string_dict(
+            doc = "Modify the tags and/or digest for certain images.",
+        ),
         "labels": attr.string_dict(
             doc = "Add labels and optionally selectors to all resources.",
         ),
@@ -189,8 +218,10 @@ kustomization = rule(
             allow_files = [".yml", ".yaml"],
             doc = "Resources to include. Each entry in this list must be a path to a YAML file.",
         ),
-    },
+        "_expand_stamp_attrs": attr.label(default = Label(":expand_stamp_attrs.sh"), allow_files = True, executable = True, cfg = "exec"),
+    } | STAMP_ATTRS,
     toolchains = [
+        "@aspect_bazel_lib//lib:yq_toolchain_type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain",
     ],
     doc = "Build a set of KRM resources similar to a kustomization.yaml",
