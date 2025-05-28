@@ -33,8 +33,8 @@ Creates a ConfigMap manifest based on files.
 <pre>
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kustomization")
 
-kustomization(<a href="#kustomization-name">name</a>, <a href="#kustomization-resources">resources</a>, <a href="#kustomization-annotations">annotations</a>, <a href="#kustomization-configurations">configurations</a>, <a href="#kustomization-labels">labels</a>, <a href="#kustomization-name_prefix">name_prefix</a>, <a href="#kustomization-namespace">namespace</a>, <a href="#kustomization-patches">patches</a>,
-              <a href="#kustomization-replacements">replacements</a>)
+kustomization(<a href="#kustomization-name">name</a>, <a href="#kustomization-resources">resources</a>, <a href="#kustomization-annotations">annotations</a>, <a href="#kustomization-configurations">configurations</a>, <a href="#kustomization-image_tags">image_tags</a>, <a href="#kustomization-labels">labels</a>, <a href="#kustomization-name_prefix">name_prefix</a>,
+              <a href="#kustomization-namespace">namespace</a>, <a href="#kustomization-patches">patches</a>, <a href="#kustomization-replacements">replacements</a>, <a href="#kustomization-stamp">stamp</a>)
 </pre>
 
 Build a set of KRM resources similar to a kustomization.yaml
@@ -48,11 +48,13 @@ Build a set of KRM resources similar to a kustomization.yaml
 | <a id="kustomization-resources"></a>resources |  Resources to include. Each entry in this list must be a path to a YAML file.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | required |  |
 | <a id="kustomization-annotations"></a>annotations |  Add annotations to add all resources.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  `{}`  |
 | <a id="kustomization-configurations"></a>configurations |  A list of transformer configuration files.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="kustomization-image_tags"></a>image_tags |  Modify the tags and/or digest for certain images.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  `{}`  |
 | <a id="kustomization-labels"></a>labels |  Add labels and optionally selectors to all resources.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  `{}`  |
 | <a id="kustomization-name_prefix"></a>name_prefix |  Prepends the value to the names of all resources and references. As namePrefix is self explanatory, it helps adding prefix to names in the defined yaml files.   | String | optional |  `""`  |
 | <a id="kustomization-namespace"></a>namespace |  Adds namespace to all resources. Will override the existing namespace if it is set on a resource, or add it if it is not set on a resource.   | String | optional |  `""`  |
 | <a id="kustomization-patches"></a>patches |  Patches to be applied to resources. Expects a dictionary of patches to target specs. Keys must be a label to (a) patch file(s), values shall be a JSON string of a target spec.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: Label -> String</a> | optional |  `{}`  |
 | <a id="kustomization-replacements"></a>replacements |  Substitute field(s) in N target(s) with a field from a source. Replacements are used to copy fields from one source into any number of specified targets.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="kustomization-stamp"></a>stamp |  Whether to encode build information into the output. Possible values:<br><br>- `stamp = 1`: Always stamp the build information into the output, even in     [--nostamp](https://docs.bazel.build/versions/main/user-manual.html#flag--stamp) builds.     This setting should be avoided, since it is non-deterministic.     It potentially causes remote cache misses for the target and     any downstream actions that depend on the result. - `stamp = 0`: Never stamp, instead replace build information by constant values.     This gives good build result caching. - `stamp = -1`: Embedding of build information is controlled by the     [--[no]stamp](https://docs.bazel.build/versions/main/user-manual.html#flag--stamp) flag.     Stamped targets are not rebuilt unless their dependencies change.   | Integer | optional |  `-1`  |
 
 
 <a id="controller_gen_crds"></a>

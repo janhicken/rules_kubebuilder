@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  namespace: test
+spec:
+  selector:
+    matchLabels:
+      kubernetes.io/app: myapp
+  template:
+    metadata:
+      labels:
+        kubernetes.io/app: myapp
+    spec:
+      containers:
+      - image: myapp:latest
+        name: main
