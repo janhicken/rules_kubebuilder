@@ -55,6 +55,5 @@ jobs:
           bazelrc: |
             import ${{ github.workspace }}/.github/workflows/ci.bazelrc
       - run: make e2e-test
-        working-directory: e2e/cronjob-tutorial
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel-version }}
