@@ -22,3 +22,9 @@ bazel_dep(name = "aspect_rules_lint", version = "1.3.1", dev_dependency = True)
 bazel_dep(name = "bazel_skylib_gazelle_plugin", version = "1.4.1", dev_dependency = True)
 bazel_dep(name = "buildifier_prebuilt", version = "8.0.3", dev_dependency = True)
 bazel_dep(name = "gazelle", version = "0.42.0", dev_dependency = True)
+
+kubebuilder = use_extension("@io_github_janhicken_rules_kubebuilder//kubebuilder:extensions.bzl", "kubebuilder")
+kubebuilder.for_kubernetes(version = "1.32.0")
+use_repo(kubebuilder, "controller_gen_toolchains", "envtest_toolchains")
+
+register_toolchains("@controller_gen_toolchains//:all", "@envtest_toolchains//:all")

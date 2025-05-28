@@ -1,0 +1,37 @@
+apiVersion: v1
+data:
+  logging.properties: "############################################################\n#
+    \ \tDefault Logging Configuration File\n#\n# You can use a different file by specifying
+    a filename\n# with the java.util.logging.config.file system property.\n# For example,
+    java -Djava.util.logging.config.file=myfile\n############################################################\n\n############################################################\n#
+    \ \tGlobal properties\n############################################################\n\n#
+    \"handlers\" specifies a comma-separated list of log Handler\n# classes.  These
+    handlers will be installed during VM startup.\n# Note that these classes must
+    be on the system classpath.\n# By default we only configure a ConsoleHandler,
+    which will only\n# show messages at the INFO and above levels.\nhandlers= java.util.logging.ConsoleHandler\n\n#
+    To also add the FileHandler, use the following line instead.\n#handlers= java.util.logging.FileHandler,
+    java.util.logging.ConsoleHandler\n\n# Default global logging level.\n# This specifies
+    which kinds of events are logged across\n# all loggers.  For any given facility
+    this global level\n# can be overridden by a facility-specific level\n# Note that
+    the ConsoleHandler also has a separate level\n# setting to limit messages printed
+    to the console.\n.level= INFO\n\n############################################################\n#
+    Handler specific properties.\n# Describes specific configuration info for Handlers.\n############################################################\n\n#
+    default file output is in user's home directory.\njava.util.logging.FileHandler.pattern
+    = %h/java%u.log\njava.util.logging.FileHandler.limit = 50000\njava.util.logging.FileHandler.count
+    = 1\n# Default number of locks FileHandler can obtain synchronously.\n# This specifies
+    maximum number of attempts to obtain lock file by FileHandler\n# implemented by
+    incrementing the unique field %u as per FileHandler API documentation.\njava.util.logging.FileHandler.maxLocks
+    = 100\njava.util.logging.FileHandler.formatter = java.util.logging.XMLFormatter\n\n#
+    Limit the messages that are printed on the console to INFO and above.\njava.util.logging.ConsoleHandler.level
+    = INFO\njava.util.logging.ConsoleHandler.formatter = java.util.logging.SimpleFormatter\n\n#
+    Example to customize the SimpleFormatter output format\n# to print one-line log
+    message like this:\n#     <level>: <log message> [<date/time>]\n#\n# java.util.logging.SimpleFormatter.format=%4$s:
+    %5$s [%1$tc]%n\n\n############################################################\n#
+    Facility-specific properties.\n# Provides extra control for each logger.\n############################################################\n\n#
+    For example, set the com.xyz.foo logger to only log SEVERE\n# messages:\n# com.xyz.foo.level
+    = SEVERE\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: logging
+  namespace: test

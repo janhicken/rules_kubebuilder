@@ -1,3 +1,15 @@
-load(":versions_test.bzl", "versions_test_suite")
+load("@aspect_bazel_lib//lib:diff_test.bzl", "diff_test")
+load("//kubebuilder/private:kubectl.bzl", "config_map")
 
-versions_test_suite(name = "versions_test")
+config_map(
+    name = "logging_config",
+    srcs = [":logging.properties"],
+    config_map_name = "logging",
+    namespace = "test",
+)
+
+diff_test(
+    name = "logging_config_diff",
+    file1 = ":logging_config",
+    file2 = ":expected_config_map_logging.yaml",
+)
