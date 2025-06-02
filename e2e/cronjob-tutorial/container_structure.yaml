@@ -1,0 +1,21 @@
+schemaVersion: 2.0.0
+
+metadataTest:
+  exposedPorts:
+    - "8080"
+    - "8081"
+  entrypoint:
+    - /manager
+  user: 65532
+
+fileExistenceTests:
+  - name: CA Certificates
+    path: /etc/ssl/certs/ca-certificates.crt
+    shouldExist: true
+  - name: Entrypoint
+    path: /manager
+    shouldExist: true
+    permissions: "-rwxr-xr-x"
+  - name: No Shell
+    path: /bin/sh
+    shouldExist: false

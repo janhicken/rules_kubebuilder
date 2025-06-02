@@ -51,10 +51,6 @@ config_map = rule(
     doc = "Creates a ConfigMap manifest based on files.",
 )
 
-apply_template = """#!/bin/sh
-exec "{kubectl_bin}" apply --filename="{manifests_filename}"
-"""
-
 KustomizeInfo = provider(
     "Info about kustomize configuration",
     fields = {
@@ -164,12 +160,14 @@ def _kustomization_impl(ctx):
 
     # Create runnable apply script
     apply_script = ctx.actions.declare_file(ctx.label.name + "_apply.sh")
-    ctx.actions.write(
+    ctx.actions.expand_template(
+        template = ctx.executable._apply,
         output = apply_script,
-        content = apply_template.format(
-            kubectl_bin = envtest.kubectl.short_path,
-            manifests_filename = output_file.short_path,
-        ),
+        substitutions = {
+            "{kubectl_bin_path}": envtest.kubectl.short_path,
+            "{manifests_file_path}": output_file.short_path,
+            "{yq_bin_path}": yq_toolchain.yqinfo.bin.short_path,
+        },
         is_executable = True,
     )
 
@@ -177,7 +175,7 @@ def _kustomization_impl(ctx):
         DefaultInfo(
             files = depset([output_file]),
             executable = apply_script,
-            runfiles = ctx.runfiles(files = [envtest.kubectl, output_file]),
+            runfiles = ctx.runfiles(files = [envtest.kubectl, output_file, yq_toolchain.yqinfo.bin]),
         ),
         KustomizeInfo(configurations = configuration_deps),
     ]
@@ -218,7 +216,18 @@ kustomization = rule(
             allow_files = [".yml", ".yaml"],
             doc = "Resources to include. Each entry in this list must be a path to a YAML file.",
         ),
-        "_expand_stamp_attrs": attr.label(default = Label(":expand_stamp_attrs.sh"), allow_files = True, executable = True, cfg = "exec"),
+        "_apply": attr.label(
+            default = Label(":apply.sh"),
+            allow_files = True,
+            executable = True,
+            cfg = "exec",
+        ),
+        "_expand_stamp_attrs": attr.label(
+            default = Label(":expand_stamp_attrs.sh"),
+            allow_files = True,
+            executable = True,
+            cfg = "exec",
+        ),
     } | STAMP_ATTRS,
     toolchains = [
         "@aspect_bazel_lib//lib:yq_toolchain_type",
