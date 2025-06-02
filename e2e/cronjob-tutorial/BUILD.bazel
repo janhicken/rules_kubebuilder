@@ -1,3 +1,56 @@
+load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
+load("@container_structure_test//:defs.bzl", "container_structure_test")
 load("@gazelle//:def.bzl", "gazelle")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
 
 gazelle(name = "gazelle")
+
+tar(
+    name = "cmd_layer",
+    srcs = ["//cmd:cmd_linux"],
+    compress = "zstd",
+    mtree = ["manager uid=0 gid=0 mode=0755 time=0 type=file content=$(location //cmd:cmd_linux)"],
+)
+
+# Image for host platform
+oci_image(
+    name = "manager",
+    base = "@distroless_static",
+    entrypoint = ["/manager"],
+    exposed_ports = [
+        "8080/tcp",
+        "8081/tcp",
+    ],
+    tars = [":cmd_layer"],
+    visibility = ["//visibility:public"],
+)
+
+# Image for x86_64
+platform_transition_filegroup(
+    name = "manager_x86_64",
+    srcs = [":manager"],
+    target_platform = "//cfg:linux_x86_64",
+    visibility = ["//visibility:public"],
+)
+
+oci_load(
+    name = "docker_load",
+    image = "//:manager",
+    repo_tags = ["controller:local"],
+)
+
+filegroup(
+    name = "manager.tar",
+    srcs = [":docker_load"],
+    output_group = "tarball",
+    visibility = ["//visibility:public"],
+)
+
+container_structure_test(
+    name = "container_structure",
+    size = "small",
+    configs = [":container_structure.yaml"],
+    driver = "tar",
+    image = ":manager.tar",
+)

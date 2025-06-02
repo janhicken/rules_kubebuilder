@@ -4,14 +4,42 @@ module(name = "cronjob-tutorial")
 # ║                                  General                                   ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
-bazel_dep(name = "aspect_bazel_lib", version = "2.14.0", dev_dependency = True)
-bazel_dep(name = "bazel_skylib", version = "1.7.1", dev_dependency = True)
+bazel_dep(name = "aspect_bazel_lib", version = "2.14.0")
+
 bazel_dep(name = "gazelle", version = "0.42.0", dev_dependency = True)
+bazel_dep(name = "platforms", version = "1.0.0", dev_dependency = True)
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║                                 Manifests                                  ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
+http_file(
+    name = "cert-manager",
+    downloaded_file_path = "cert-manager.yaml",
+    sha256 = "16b8868f9def78a872853b481be34db5e534ffcf92c245ab96f66b8f21771ec4",
+    url = "https://github.com/cert-manager/cert-manager/releases/download/v1.12.17/cert-manager.yaml",
+)
+
+http_file(
+    name = "metrics-server",
+    downloaded_file_path = "components.yaml",
+    sha256 = "f103539a54ed72efe66616afc74a8bfaed651703cb3918797599046af5617441",
+    url = "https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.7.2/components.yaml",
+)
+
+http_file(
+    name = "prometheus",
+    downloaded_file_path = "bundle.yaml",
+    sha256 = "6ca6245f81c4868b90411498549ad91c667d16b9e3f4b1f7898b3e7802b8d2e5",
+    url = "https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.82.2/bundle.yaml",
+)
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                     Go                                     ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
-bazel_dep(name = "rules_go", version = "0.54.0", dev_dependency = True)
+bazel_dep(name = "rules_go", version = "0.54.0")
 
 # Setup Go toolchain
 go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
@@ -37,13 +65,36 @@ use_repo(
     "io_k8s_apimachinery",
     "io_k8s_client_go",
     "io_k8s_sigs_controller_runtime",
+    "io_k8s_sigs_kind",
+    "io_k8s_utils",
 )
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║                                 Container                                  ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+bazel_dep(name = "rules_oci", version = "2.2.6")
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+oci.pull(
+    name = "distroless_static",
+    digest = "sha256:188ddfb9e497f861177352057cb21913d840ecae6c843d39e00d44fa64daa51c",
+    image = "gcr.io/distroless/static-debian12",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64/v8",
+    ],
+    tag = "nonroot",
+)
+use_repo(oci, "distroless_static", "distroless_static_linux_amd64", "distroless_static_linux_arm64_v8")
+
+bazel_dep(name = "container_structure_test", version = "1.19.1", dev_dependency = True)
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                Kubebuilder                                 ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
-bazel_dep(name = "io_github_janhicken_rules_kubebuilder", version = "0.0.0", dev_dependency = True)
+bazel_dep(name = "io_github_janhicken_rules_kubebuilder", version = "0.0.0")
 local_path_override(
     module_name = "io_github_janhicken_rules_kubebuilder",
     path = "../..",

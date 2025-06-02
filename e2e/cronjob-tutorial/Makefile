@@ -4,38 +4,13 @@ build:
 	bazel build //...
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
-# ║                                   Check                                    ║
-# ╚════════════════════════════════════════════════════════════════════════════╝
-
-.PHONY: fmtcheck
-fmtcheck:
-	bazel run -- //tools:format.check
-
-.PHONY: lint
-lint:
-	bazel run -- //tools:buildifier.check
-
-.PHONY: check
-check: fmtcheck lint
-
-# ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                    Tidy                                    ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
-.PHONY: fmt
-fmt:
-	bazel run -- //tools:format
-
-.PHONY: lintfix
-lintfix:
-	bazel run -- //tools:buildifier
-
-.PHONY: gazelle
-gazelle:
-	bazel run //tools:gazelle
-
 .PHONY: tidy
-tidy: fmt lintfix gazelle
+tidy:
+	bazel run @rules_go//go mod tidy
+	bazel run //:gazelle
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                    Test                                    ║
@@ -43,11 +18,8 @@ tidy: fmt lintfix gazelle
 
 .PHONY: test
 test:
-	bazel test //...
+	bazel test --test_size_filters=small //...
 
 .PHONY: e2e-test
 e2e-test:
-	make -C e2e/cronjob-tutorial test
-
-.PHONY: ci
-ci: check test e2e-test
+	bazel test --test_size_filters=medium,large,enormous //...

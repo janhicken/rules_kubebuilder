@@ -2,7 +2,10 @@ load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 
 package(default_visibility = ["//kubebuilder:__subpackages__"])
 
-exports_files(["expand_stamp_attrs.sh"])
+exports_files([
+    "apply.sh",
+    "expand_stamp_attrs.sh",
+])
 
 bzl_library(
     name = "controller_gen",
