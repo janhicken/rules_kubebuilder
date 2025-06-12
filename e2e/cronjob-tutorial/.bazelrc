@@ -3,3 +3,6 @@ common --enable_bzlmod
 
 # Disable lockfile to allow tests with multiple Bazel versions
 common --lockfile_mode=off
+
+# Forward DOCKER_HOST environment variable to all tests
+test --test_env=DOCKER_HOST

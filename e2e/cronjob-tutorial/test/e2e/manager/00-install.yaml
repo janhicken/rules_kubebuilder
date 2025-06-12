@@ -1,0 +1,43 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: project-metrics-binding
+roleRef:
+  apiGroup: ""
+  kind: ClusterRole
+  name: project-metrics-reader
+subjects:
+  - kind: ServiceAccount
+    namespace: project-system
+    name: project-controller-manager
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: project-system
+  name: curl-metrics
+spec:
+  restartPolicy: OnFailure
+  serviceAccountName: project-controller-manager
+  containers:
+    - name: curl
+      image: curlimages/curl
+      command: [curl]
+      args:
+        - --verbose
+        - --fail
+        - --insecure
+        - --variable
+        - 'token@/var/run/secrets/kubernetes.io/serviceaccount/token'
+        - --expand-oauth2-bearer
+        - '{{token}}'
+        - 'https://project-controller-manager-metrics-service.project-system.svc.cluster.local:8443/metrics'
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: [ALL]
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault

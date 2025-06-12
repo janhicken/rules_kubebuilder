@@ -15,6 +15,19 @@ EnvtestInfo = provider(
     },
 )
 
+KindInfo = provider(
+    doc = "Information about the kind executable",
+    fields = {
+        "bin": "Executable kind binary",
+        "node_image": "Node Docker image name to use",
+    },
+)
+
+KuttlInfo = provider(
+    doc = "Information about the kuttl executbale",
+    fields = {"bin": "Executable kuttl binary"},
+)
+
 def _controller_gen_toolchain_impl(ctx):
     binary = ctx.file.bin
 
@@ -77,6 +90,25 @@ def _envtest_toolchain_impl(ctx):
         template_variables,
     ]
 
+def _kind_toolchain_impl(ctx):
+    toolchain_info = platform_common.ToolchainInfo(
+        kind = KindInfo(
+            bin = ctx.executable.bin,
+            node_image = ctx.attr.node_image,
+        ),
+    )
+
+    return [toolchain_info]
+
+def _kuttl_toolchain_impl(ctx):
+    toolchain_info = platform_common.ToolchainInfo(
+        kuttl = KuttlInfo(
+            bin = ctx.executable.bin,
+        ),
+    )
+
+    return [toolchain_info]
+
 controller_gen_toolchain = rule(
     implementation = _controller_gen_toolchain_impl,
     attrs = {
@@ -120,4 +152,42 @@ envtest_toolchain = rule(
 
 For usage see https://docs.bazel.build/versions/main/toolchains.html#defining-toolchains.
 """,
+)
+
+kind_toolchain = rule(
+    implementation = _kind_toolchain_impl,
+    attrs = {
+        "bin": attr.label(
+            doc = "A hermetically downloaded executable binary for the target platform.",
+            mandatory = True,
+            allow_single_file = True,
+            executable = True,
+            cfg = "exec",
+        ),
+        "node_image": attr.string(
+            doc = "Node Docker image name to use",
+            mandatory = True,
+        ),
+    },
+    doc = """Defines a kind toolchain.
+
+For usage see https://docs.bazel.build/versions/main/toolchains.html#defining-toolchains.
+    """,
+)
+
+kuttl_toolchain = rule(
+    implementation = _kuttl_toolchain_impl,
+    attrs = {
+        "bin": attr.label(
+            doc = "A hermetically downloaded executable binary for the target platform.",
+            mandatory = True,
+            allow_single_file = True,
+            executable = True,
+            cfg = "exec",
+        ),
+    },
+    doc = """Defines a kuttl toolchain.
+
+For usage see https://docs.bazel.build/versions/main/toolchains.html#defining-toolchains.
+        """,
 )
