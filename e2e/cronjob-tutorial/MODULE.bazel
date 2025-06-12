@@ -64,8 +64,6 @@ use_repo(
     "io_k8s_apimachinery",
     "io_k8s_client_go",
     "io_k8s_sigs_controller_runtime",
-    "io_k8s_sigs_kind",
-    "io_k8s_utils",
 )
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
@@ -100,5 +98,8 @@ local_path_override(
 )
 
 kubebuilder = use_extension("@io_github_janhicken_rules_kubebuilder//kubebuilder:extensions.bzl", "kubebuilder")
-kubebuilder.for_kubernetes(version = "1.31.0")
+kubebuilder.for_kubernetes(
+    kind_version = "0.29.0",
+    version = "1.31.0",
+)
 use_repo(kubebuilder, "envtest")

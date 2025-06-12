@@ -12,11 +12,25 @@ effectively overriding the default named toolchain due to toolchain resolution p
 load("@bazel_features//:features.bzl", "bazel_features")
 load(
     ":repositories.bzl",
+    "DEFAULT_KIND_VERSION",
+    "DEFAULT_KUTTL_VERSION",
+    "KIND_VERSIONS",
     "KUBERNETES_VERSIONS",
+    "KUTTL_VERSIONS",
     "register_kubebuilder_repositories_and_toolchains",
 )
 
 kubernetes_target = tag_class(attrs = {
+    "kind_version": attr.string(
+        doc = "The kind version to use",
+        default = DEFAULT_KIND_VERSION,
+        values = KIND_VERSIONS,
+    ),
+    "kuttl_version": attr.string(
+        doc = "The kuttl version to use",
+        default = DEFAULT_KUTTL_VERSION,
+        values = KUTTL_VERSIONS,
+    ),
     "prefix": attr.string(
         default = "",
         doc = """\
@@ -37,6 +51,8 @@ def _kubebuilder_impl(mctx):
         for k8s_target in mod.tags.for_kubernetes:
             prefix = k8s_target.prefix
             version = k8s_target.version
+            kind_version = k8s_target.kind_version
+            kuttl_version = k8s_target.kuttl_version
             if prefix and not mod.is_root:
                 fail("Only the root module may provide a prefix for the kubernetes target.")
 
@@ -54,10 +70,20 @@ def _kubebuilder_impl(mctx):
                     targets[prefix],
                 ))
             else:
-                targets[prefix] = version
+                targets[prefix] = {
+                    "kind_version": kind_version,
+                    "kuttl_version": kuttl_version,
+                    "version": version,
+                }
 
-    for prefix, version in targets.items():
-        register_kubebuilder_repositories_and_toolchains(prefix, version, register = False)
+    for prefix, versions in targets.items():
+        register_kubebuilder_repositories_and_toolchains(
+            prefix,
+            versions["version"],
+            versions["kind_version"],
+            versions["kuttl_version"],
+            register = False,
+        )
 
     if bazel_features.external_deps.extension_metadata_has_reproducible:
         return mctx.extension_metadata(reproducible = True)

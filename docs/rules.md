@@ -57,6 +57,31 @@ Build a set of KRM resources similar to a kustomization.yaml
 | <a id="kustomization-stamp"></a>stamp |  Whether to encode build information into the output. Possible values:<br><br>- `stamp = 1`: Always stamp the build information into the output, even in     [--nostamp](https://docs.bazel.build/versions/main/user-manual.html#flag--stamp) builds.     This setting should be avoided, since it is non-deterministic.     It potentially causes remote cache misses for the target and     any downstream actions that depend on the result. - `stamp = 0`: Never stamp, instead replace build information by constant values.     This gives good build result caching. - `stamp = -1`: Embedding of build information is controlled by the     [--[no]stamp](https://docs.bazel.build/versions/main/user-manual.html#flag--stamp) flag.     Stamped targets are not rebuilt unless their dependencies change.   | Integer | optional |  `-1`  |
 
 
+<a id="kuttl_test"></a>
+
+## kuttl_test
+
+<pre>
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kuttl_test")
+
+kuttl_test(<a href="#kuttl_test-name">name</a>, <a href="#kuttl_test-srcs">srcs</a>, <a href="#kuttl_test-crds">crds</a>, <a href="#kuttl_test-images">images</a>, <a href="#kuttl_test-kind_node_image">kind_node_image</a>, <a href="#kuttl_test-manifests">manifests</a>)
+</pre>
+
+
+
+**ATTRIBUTES**
+
+
+| Name  | Description | Type | Mandatory | Default |
+| :------------- | :------------- | :------------- | :------------- | :------------- |
+| <a id="kuttl_test-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
+| <a id="kuttl_test-srcs"></a>srcs |  Test suite files to run.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | required |  |
+| <a id="kuttl_test-crds"></a>crds |  Custom resource definition manifests to install before running tests.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="kuttl_test-images"></a>images |  OCI image tarballs to load into the kind cluster once it is started.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="kuttl_test-kind_node_image"></a>kind_node_image |  Override the node Docker image to use for booting the kind cluster   | String | optional |  `""`  |
+| <a id="kuttl_test-manifests"></a>manifests |  Manifests to install before running tests.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+
+
 <a id="controller_gen_crds"></a>
 
 ## controller_gen_crds
