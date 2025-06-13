@@ -1,6 +1,6 @@
 # Bazel Rules for Kubebuilder
 
-This repository proves Bazel rules for the ecosystem of Kubebuilder-style Kubernetes controllers.
+This repository provides Bazel rules for the ecosystem of Kubebuilder-style Kubernetes controllers.
 
 ## Features
 
@@ -184,7 +184,7 @@ OCI container image tarballs can be loaded into the Kind cluster before test exe
 
 **IMPORTANT**: The tag `supports-graceful-termination` is required on the target in order to have Bazel allow the test
 to terminate gracefully and clean up the kind cluster when interrupted.
-Pressing Ctrl-C might be a source for such an interruption. See the example below on how to set the tag.
+Pressing Ctrl+C might be a source for such an interruption. See the example below on how to set the tag.
 
 The rule currently requires the test suite directory structure to be relative to the package containing the `kuttl_test`
 rule, like this:
