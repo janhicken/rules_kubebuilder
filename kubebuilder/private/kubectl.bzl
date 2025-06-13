@@ -120,8 +120,8 @@ def _kustomization_impl(ctx):
     expand_stamp_attrs_args = [raw_kustomization_yaml.path, kustomization_yaml.path]
     stamp = maybe_stamp(ctx)
     if stamp:
-        expand_stamp_attrs_inputs.append(stamp.stable_status_file)
-        expand_stamp_attrs_args.append(stamp.stable_status_file.path)
+        expand_stamp_attrs_inputs += [stamp.stable_status_file, stamp.volatile_status_file]
+        expand_stamp_attrs_args += [stamp.stable_status_file.path, stamp.volatile_status_file.path]
     ctx.actions.run(
         outputs = [kustomization_yaml],
         inputs = expand_stamp_attrs_inputs,
@@ -233,5 +233,9 @@ kustomization = rule(
         "@aspect_bazel_lib//lib:yq_toolchain_type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain",
     ],
-    doc = "Build a set of KRM resources similar to a kustomization.yaml",
+    doc = """Build a set of KRM resources similar to a kustomization.yaml.
+
+All attributes support interpolation of stamp variables, if stamping is enabled.
+The stamp variable needs to be referenced using the syntax like `${STABLE_VAR_NAME}` or `${BUILD_TIMESTAMP}`.
+""",
 )

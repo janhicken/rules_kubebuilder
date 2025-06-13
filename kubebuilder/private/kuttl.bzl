@@ -33,6 +33,11 @@ def _kuttl_test_impl(ctx):
 
 kuttl_test = rule(
     implementation = _kuttl_test_impl,
+    doc = """Define a KuTTL test suite that runs on a kind cluster.
+
+Please remember to set the tag `supports-graceful-termination` on the target to allow the test runner to export the
+kind cluster's logs and shut it down.
+""",
     test = True,
     attrs = {
         "crds": attr.label_list(
