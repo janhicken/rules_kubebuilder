@@ -37,7 +37,10 @@ kustomization(<a href="#kustomization-name">name</a>, <a href="#kustomization-re
               <a href="#kustomization-namespace">namespace</a>, <a href="#kustomization-patches">patches</a>, <a href="#kustomization-replacements">replacements</a>, <a href="#kustomization-stamp">stamp</a>)
 </pre>
 
-Build a set of KRM resources similar to a kustomization.yaml
+Build a set of KRM resources similar to a kustomization.yaml.
+
+All attributes support interpolation of stamp variables, if stamping is enabled.
+The stamp variable needs to be referenced using the syntax like `${STABLE_VAR_NAME}` or `${BUILD_TIMESTAMP}`.
 
 **ATTRIBUTES**
 
@@ -67,7 +70,10 @@ load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kuttl_test
 kuttl_test(<a href="#kuttl_test-name">name</a>, <a href="#kuttl_test-srcs">srcs</a>, <a href="#kuttl_test-crds">crds</a>, <a href="#kuttl_test-images">images</a>, <a href="#kuttl_test-kind_node_image">kind_node_image</a>, <a href="#kuttl_test-manifests">manifests</a>)
 </pre>
 
+Define a KuTTL test suite that runs on a kind cluster.
 
+Please remember to set the tag `supports-graceful-termination` on the target to allow the test runner to export the
+kind cluster's logs and shut it down.
 
 **ATTRIBUTES**
 
