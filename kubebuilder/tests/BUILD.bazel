@@ -1,5 +1,5 @@
 load("@aspect_bazel_lib//lib:diff_test.bzl", "diff_test")
-load("//kubebuilder/private:kubectl.bzl", "config_map", "kustomization")
+load("//kubebuilder/private:kubectl.bzl", "config_map", "generic_secret", "kustomization", "tls_secret")
 
 package(default_testonly = True)
 
@@ -40,4 +40,29 @@ diff_test(
     name = "myapp_versioned_diff",
     file1 = ":myapp_versioned",
     file2 = ":expected_myapp_versioned.yaml",
+)
+
+tls_secret(
+    name = "my_tls_secret",
+    cert = ":cert.pem",
+    key = ":key.pem",
+    secret_name = "my-tls-secret",
+)
+
+diff_test(
+    name = "my_tls_secret_diff",
+    file1 = ":my_tls_secret",
+    file2 = ":expected_my_tls_secret.yaml",
+)
+
+generic_secret(
+    name = "my_secret",
+    srcs = [":some_credentials.txt"],
+    secret_name = "my-secret",
+)
+
+diff_test(
+    name = "my_secret_diff",
+    file1 = ":my_secret",
+    file2 = ":expected_my_secret.yaml",
 )

@@ -107,14 +107,16 @@ When running [`env.Start()`](https://pkg.go.dev/sigs.k8s.io/controller-runtime/p
 test implementation, the envtest toolchain is detected through the `KUBEBUILDER_ASSETS` environment variable that the
 `envtest_test` rule sets up.
 
-### `kustomize`
+### `kustomization`
 
-The `kustomize` rule works like calling `kustomize build`. Instead of writing the `kustomization.yaml` yourself,
-the directives are specified in your build. This way, dependencies to other rules' outputs can be specified easily.
-For example, the output of the `controller_gen_rbac` rule can be included into a full set of manifests.
+The [`kustomization`](./docs/rules.md#kustomization) rule works like calling `kustomize build`. Instead of writing a
+`kustomization.yaml` spec, the directives are specified in your build. This way, dependencies to other rules'
+outputs can be specified easily. For example, the output of the `controller_gen_rbac` rule can be included into a full
+set of manifests.
 
-Furthermore, config maps can be created based on other file targets using the `config_map` rule.
-Creating secrets in a similar approach is not yet supported.
+Furthermore, config maps can be created based on other file targets using the [`config_map`](./docs/rules.md#config_map)
+rule. Similarly, generic or TLS secrets can be created using the rules
+[`generic_secret`](./docs/rules.md#generic_secret) and [`tls_secret`](./docs/rules.md#tls_secret), respectively.
 
 The following example creates a config map with the file contents of `config_a.txt` and `context_b.txt`. The resulting
 config and the `deployment.yaml` is then grouped to a set of manifests. The namespace for all resources is set to

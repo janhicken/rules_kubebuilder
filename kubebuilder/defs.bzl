@@ -14,7 +14,9 @@ load(
 load(
     "//kubebuilder/private:kubectl.bzl",
     _config_map = "config_map",
+    _generic_secret = "generic_secret",
     _kustomization = "kustomization",
+    _tls_secret = "tls_secret",
 )
 load(
     "//kubebuilder/private:kuttl.bzl",
@@ -29,6 +31,8 @@ controller_gen_webhooks = _controller_gen_webhooks
 envtest_test = _envtest_test
 
 config_map = _config_map
+generic_secret = _generic_secret
 kustomization = _kustomization
+tls_secret = _tls_secret
 
 kuttl_test = _kuttl_test
