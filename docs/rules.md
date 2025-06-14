@@ -26,6 +26,30 @@ Creates a ConfigMap manifest based on files.
 | <a id="config_map-namespace"></a>namespace |  The config map's namespace   | String | optional |  `""`  |
 
 
+<a id="generic_secret"></a>
+
+## generic_secret
+
+<pre>
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "generic_secret")
+
+generic_secret(<a href="#generic_secret-name">name</a>, <a href="#generic_secret-srcs">srcs</a>, <a href="#generic_secret-append_hash">append_hash</a>, <a href="#generic_secret-namespace">namespace</a>, <a href="#generic_secret-secret_name">secret_name</a>)
+</pre>
+
+Creates a secret manifest based on files.
+
+**ATTRIBUTES**
+
+
+| Name  | Description | Type | Mandatory | Default |
+| :------------- | :------------- | :------------- | :------------- | :------------- |
+| <a id="generic_secret-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
+| <a id="generic_secret-srcs"></a>srcs |  A list of source files for the secret. The files' basename will be used as key, using its content as value.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="generic_secret-append_hash"></a>append_hash |  Append a hash of the secret to its name.   | Boolean | optional |  `False`  |
+| <a id="generic_secret-namespace"></a>namespace |  The secret's namespace   | String | optional |  `""`  |
+| <a id="generic_secret-secret_name"></a>secret_name |  The secret's name   | String | required |  |
+
+
 <a id="kustomization"></a>
 
 ## kustomization
@@ -86,6 +110,34 @@ kind cluster's logs and shut it down.
 | <a id="kuttl_test-images"></a>images |  OCI image tarballs to load into the kind cluster once it is started.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
 | <a id="kuttl_test-kind_node_image"></a>kind_node_image |  Override the node Docker image to use for booting the kind cluster   | String | optional |  `""`  |
 | <a id="kuttl_test-manifests"></a>manifests |  Manifests to install before running tests.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+
+
+<a id="tls_secret"></a>
+
+## tls_secret
+
+<pre>
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "tls_secret")
+
+tls_secret(<a href="#tls_secret-name">name</a>, <a href="#tls_secret-append_hash">append_hash</a>, <a href="#tls_secret-cert">cert</a>, <a href="#tls_secret-key">key</a>, <a href="#tls_secret-namespace">namespace</a>, <a href="#tls_secret-secret_name">secret_name</a>)
+</pre>
+
+Creates a TLS secret manifest from the given public/private key pair.
+
+The public/private key pair must exist beforehand. The public key certificate must be PEM-encoded and match the given
+private key.
+
+**ATTRIBUTES**
+
+
+| Name  | Description | Type | Mandatory | Default |
+| :------------- | :------------- | :------------- | :------------- | :------------- |
+| <a id="tls_secret-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
+| <a id="tls_secret-append_hash"></a>append_hash |  Append a hash of the secret to its name.   | Boolean | optional |  `False`  |
+| <a id="tls_secret-cert"></a>cert |  Label to PEM-encoded public key certificate   | <a href="https://bazel.build/concepts/labels">Label</a> | required |  |
+| <a id="tls_secret-key"></a>key |  Label to private key associated with the given certificate   | <a href="https://bazel.build/concepts/labels">Label</a> | required |  |
+| <a id="tls_secret-namespace"></a>namespace |  The secret's namespace   | String | optional |  `""`  |
+| <a id="tls_secret-secret_name"></a>secret_name |  The secret's name   | String | required |  |
 
 
 <a id="controller_gen_crds"></a>
