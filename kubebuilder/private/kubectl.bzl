@@ -277,9 +277,9 @@ def _kustomization_impl(ctx):
         template = ctx.executable._apply,
         output = apply_script,
         substitutions = {
-            "{kubectl_bin_path}": envtest.kubectl.short_path,
-            "{manifests_file_path}": output_file.short_path,
-            "{yq_bin_path}": yq_toolchain.yqinfo.bin.short_path,
+            "%kubectl_bin%": envtest.kubectl.short_path,
+            "%manifests_file%": output_file.short_path,
+            "%yq_bin%": yq_toolchain.yqinfo.bin.short_path,
         },
         is_executable = True,
     )
