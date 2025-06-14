@@ -351,4 +351,5 @@ kustomization = rule(
 All attributes support interpolation of stamp variables, if stamping is enabled.
 The stamp variable needs to be referenced using the syntax like `${STABLE_VAR_NAME}` or `${BUILD_TIMESTAMP}`.
 """,
+    provides = [DefaultInfo, KustomizeInfo],
 )
