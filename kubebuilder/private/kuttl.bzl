@@ -63,8 +63,6 @@ kind cluster's logs and shut it down.
         "_kuttl_sh": attr.label(
             default = Label(":kuttl.sh"),
             allow_single_file = True,
-            executable = True,
-            cfg = "exec",
         ),
     },
     toolchains = [

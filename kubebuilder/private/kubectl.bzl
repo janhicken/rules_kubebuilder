@@ -274,7 +274,7 @@ def _kustomization_impl(ctx):
     # Create runnable apply script
     apply_script = ctx.actions.declare_file(ctx.label.name + "_apply.sh")
     ctx.actions.expand_template(
-        template = ctx.executable._apply,
+        template = ctx.file._apply,
         output = apply_script,
         substitutions = {
             "%kubectl_bin%": envtest.kubectl.short_path,
@@ -331,13 +331,10 @@ kustomization = rule(
         ),
         "_apply": attr.label(
             default = Label(":apply.sh"),
-            allow_files = True,
-            executable = True,
-            cfg = "exec",
+            allow_single_file = True,
         ),
         "_expand_stamp_attrs": attr.label(
-            default = Label(":expand_stamp_attrs.sh"),
-            allow_files = True,
+            default = Label(":expand_stamp_attrs"),
             executable = True,
             cfg = "exec",
         ),

@@ -21,12 +21,12 @@ readonly kuttl_bin=%kuttl_bin%
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
 # Copy all CRD manifests into a single directory
-crd_dir="$TEST_TMPDIR"/crds
+readonly crd_dir="$TEST_TMPDIR"/crds
 mkdir "$crd_dir"
 cp -t "$crd_dir" "${crd_files[@]}"
 
 # Copy all manifests into a single directory
-manifest_dir="$TEST_TMPDIR"/manifests
+readonly manifest_dir="$TEST_TMPDIR"/manifests
 mkdir "$manifest_dir"
 cp -t "$manifest_dir" "${manifest_files[@]}"
 

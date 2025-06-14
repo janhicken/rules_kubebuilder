@@ -1,12 +1,22 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
 
 package(default_visibility = ["//kubebuilder:__subpackages__"])
 
-exports_files([
-    "apply.sh",
-    "expand_stamp_attrs.sh",
-    "kuttl.sh",
-])
+sh_binary(
+    name = "apply",
+    srcs = [":apply.sh"],
+)
+
+sh_binary(
+    name = "expand_stamp_attrs",
+    srcs = [":expand_stamp_attrs.sh"],
+)
+
+sh_binary(
+    name = "kuttl_runner",
+    srcs = [":kuttl.sh"],
+)
 
 bzl_library(
     name = "controller_gen",
