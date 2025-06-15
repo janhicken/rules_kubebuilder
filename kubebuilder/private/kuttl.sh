@@ -21,18 +21,37 @@ readonly kuttl_bin=%kuttl_bin%
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
 # Copy all CRD manifests into a single directory
-readonly crd_dir="$TEST_TMPDIR"/crds
+readonly crd_dir=$TEST_TMPDIR/crds
 mkdir "$crd_dir"
 ln -s "${crd_files[@]/#/$PWD/}" "$crd_dir"
 
 # Copy all manifests into a single directory
-readonly manifest_dir="$TEST_TMPDIR"/manifests
+readonly manifest_dir=$TEST_TMPDIR/manifests
 mkdir "$manifest_dir"
 ln -s "${manifest_files[@]/#/$PWD/}" "$manifest_dir"
 
 # Configure kind
-readonly kind_cluster_name=${TEST_WORKSPACE//[^a-z0-9.-]/}${TEST_TARGET//[^a-z0-9.-]/}
+readonly kind_cluster_name=bzl${TEST_TARGET//[^a-z0-9.-]/-}
 readonly kubeconfig_path=$TEST_TMPDIR/kubeconfig.yaml
+
+# Create Docker volume for caching node data
+readonly volume_name=kind-${kind_cluster_name}-0
+docker volume create "$volume_name" >/dev/null
+mountpoint=$(docker volume inspect --format '{{ .Mountpoint }}' "$volume_name")
+readonly mountpoint
+
+readonly kind_config_file=$TEST_TMPDIR/kind-config.yaml
+cat >"$kind_config_file" <<EOF
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+name: "$kind_cluster_name"
+nodes:
+  - role: control-plane
+    image: "$kind_node_image"
+    extraMounts:
+      - hostPath: $mountpoint
+        containerPath: /var/lib/containerd
+EOF
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                    Run                                     ║
@@ -45,9 +64,8 @@ shutdown_kind_cluster() {
 
 trap shutdown_kind_cluster EXIT
 "$kind_bin" create cluster \
-	--name "$kind_cluster_name" \
-	--kubeconfig "$kubeconfig_path" \
-	--image "$kind_node_image"
+	--config "$kind_config_file" \
+	--kubeconfig "$kubeconfig_path"
 
 for image_archive in "${image_archives[@]}"; do
 	printf 'Loading image archive %s...\n' "$image_archive" >&2
