@@ -23,12 +23,12 @@ readonly kuttl_bin=%kuttl_bin%
 # Copy all CRD manifests into a single directory
 readonly crd_dir="$TEST_TMPDIR"/crds
 mkdir "$crd_dir"
-cp -t "$crd_dir" "${crd_files[@]}"
+ln -s "${crd_files[@]/#/$PWD/}" "$crd_dir"
 
 # Copy all manifests into a single directory
 readonly manifest_dir="$TEST_TMPDIR"/manifests
 mkdir "$manifest_dir"
-cp -t "$manifest_dir" "${manifest_files[@]}"
+ln -s "${manifest_files[@]/#/$PWD/}" "$manifest_dir"
 
 # Configure kind
 readonly kind_cluster_name=${TEST_WORKSPACE//[^a-z0-9.-]/}${TEST_TARGET//[^a-z0-9.-]/}
