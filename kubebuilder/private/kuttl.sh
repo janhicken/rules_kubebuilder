@@ -53,12 +53,19 @@ nodes:
         containerPath: /var/lib/containerd
 EOF
 
+# Configure kuttl
+readonly artifacts_dir=$TEST_LOGSPLITTER_OUTPUT_FILE
+readonly kuttl_report_path=$artifacts_dir/kuttl-report.xml
+
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                    Run                                     ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
 shutdown_kind_cluster() {
 	"$kind_bin" export logs "$TEST_LOGSPLITTER_OUTPUT_FILE" --name "$kind_cluster_name" || :
+	if [[ -f "$kuttl_report_path" ]]; then
+		mv "$kuttl_report_path" "$XML_OUTPUT_FILE"
+	fi
 	"$kind_bin" delete cluster --name "$kind_cluster_name" --kubeconfig "$kubeconfig_path"
 }
 
@@ -73,10 +80,11 @@ for image_archive in "${image_archives[@]}"; do
 done
 
 KUBECONFIG="$kubeconfig_path" "$kuttl_bin" test "$test_dir" \
-	--artifacts-dir "$TEST_LOGSPLITTER_OUTPUT_FILE" \
+	--artifacts-dir "$artifacts_dir" \
 	--crd-dir "$crd_dir" \
 	--kind-context "$kind_cluster_name" \
 	--manifest-dir "$manifest_dir" \
+	--report XML \
 	--timeout $((TEST_TIMEOUT / 2)) &
 readonly kuttl_pid=$!
 
