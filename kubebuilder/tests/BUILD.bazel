@@ -77,3 +77,15 @@ diff_test(
     file1 = ":my_secret",
     file2 = ":expected_my_secret.yaml",
 )
+
+kustomization(
+    name = "with_name_suffix",
+    name_suffix = "-with-suffix",
+    resources = [":deployment.yaml"],
+)
+
+diff_test(
+    name = "with_name_suffix_diff",
+    file1 = ":with_name_suffix",
+    file2 = ":expected_name_suffix.yaml",
+)

@@ -202,6 +202,7 @@ def _kustomization_impl(ctx):
         "kind": "Kustomization",
         "labels": [{"pairs": ctx.attr.labels}],
         "namePrefix": ctx.attr.name_prefix or None,
+        "nameSuffix": ctx.attr.name_suffix or None,
         "namespace": ctx.attr.namespace or None,
         "patches": [
             {
@@ -312,6 +313,9 @@ kustomization = rule(
         ),
         "name_prefix": attr.string(
             doc = "Prepends the value to the names of all resources and references. As namePrefix is self explanatory, it helps adding prefix to names in the defined yaml files.",
+        ),
+        "name_suffix": attr.string(
+            doc = "Appends the value to the names of all resources and references. As nameSuffix is self explanatory, it helps adding suffix to names in the defined yaml files.",
         ),
         "namespace": attr.string(
             doc = "Adds namespace to all resources. Will override the existing namespace if it is set on a resource, or add it if it is not set on a resource.",
