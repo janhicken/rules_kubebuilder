@@ -52,7 +52,7 @@ GOROOT="$PWD/{goroot}" \
         env = go.env,
     )
 
-    return DefaultInfo(files = depset([output_file]))
+    return [DefaultInfo(files = depset([output_file]))]
 
 def _format_generator_arg(keyval):
     return "%s=%s" % keyval

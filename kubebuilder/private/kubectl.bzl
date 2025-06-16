@@ -28,7 +28,7 @@ def _config_map_impl(ctx):
         mnemonic = "CreateConfigMap",
     )
 
-    return DefaultInfo(files = depset([output_file]))
+    return [DefaultInfo(files = depset([output_file]))]
 
 config_map = rule(
     implementation = _config_map_impl,
@@ -78,7 +78,7 @@ def _generic_secret_impl(ctx):
         mnemonic = "CreateGenericSecret",
     )
 
-    return DefaultInfo(files = depset([output_file]))
+    return [DefaultInfo(files = depset([output_file]))]
 
 generic_secret = rule(
     implementation = _generic_secret_impl,
@@ -125,7 +125,7 @@ def _tls_secret_impl(ctx):
         mnemonic = "CreateTLSSecret",
     )
 
-    return DefaultInfo(files = depset([output_file]))
+    return [DefaultInfo(files = depset([output_file]))]
 
 tls_secret = rule(
     implementation = _tls_secret_impl,
