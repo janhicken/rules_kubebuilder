@@ -10,6 +10,7 @@ shellcheck_test(
     srcs = [
         "//kubebuilder/private:apply",
         "//kubebuilder/private:expand_stamp_attrs",
+        "//kubebuilder/private:kind_env_sh",
         "//kubebuilder/private:kuttl_runner",
     ],
 )

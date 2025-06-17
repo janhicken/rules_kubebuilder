@@ -2,6 +2,7 @@ load("@aspect_bazel_lib//lib:tar.bzl", "tar")
 load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
 load("@container_structure_test//:defs.bzl", "container_structure_test")
 load("@gazelle//:def.bzl", "gazelle")
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kind_env")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
 
 gazelle(name = "gazelle")
@@ -53,4 +54,11 @@ container_structure_test(
     configs = [":container_structure.yaml"],
     driver = "tar",
     image = ":manager.tar",
+)
+
+kind_env(
+    name = "kind_env",
+    cluster_name = "cronjob-tutorial",
+    images = ["//:manager.tar"],
+    kustomization = "//config/local",
 )

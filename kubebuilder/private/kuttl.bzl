@@ -1,7 +1,6 @@
 "Bazel Rules for kuttl"
 
-def _space_separated(files):
-    return " ".join([file.short_path for file in files])
+load(":utils.bzl", "space_separated")
 
 def _kuttl_test_impl(ctx):
     kind = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"].kind
@@ -12,12 +11,12 @@ def _kuttl_test_impl(ctx):
         template = ctx.file._kuttl_sh,
         output = executable,
         substitutions = {
-            "%crd_files%": _space_separated(ctx.files.crds),
-            "%image_archives%": _space_separated(ctx.files.images),
+            "%crd_files%": space_separated(ctx.files.crds),
+            "%image_archives%": space_separated(ctx.files.images),
             "%kind_bin%": kind.bin.short_path,
             "%kind_node_image%": ctx.attr.kind_node_image or kind.node_image,
             "%kuttl_bin%": kuttl.bin.short_path,
-            "%manifest_files%": _space_separated(ctx.files.manifests),
+            "%manifest_files%": space_separated(ctx.files.manifests),
             "%test_dir%": ctx.label.package,
         },
         is_executable = True,

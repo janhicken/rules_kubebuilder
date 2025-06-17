@@ -11,6 +11,7 @@ load(
     "//kubebuilder/private:envtest.bzl",
     _envtest_test = "envtest_test",
 )
+load("//kubebuilder/private:kind_env.bzl", _kind_env = "kind_env")
 load(
     "//kubebuilder/private:kubectl.bzl",
     _config_map = "config_map",
@@ -29,6 +30,8 @@ controller_gen_rbac = _controller_gen_rbac
 controller_gen_webhooks = _controller_gen_webhooks
 
 envtest_test = _envtest_test
+
+kind_env = _kind_env
 
 config_map = _config_map
 generic_secret = _generic_secret

@@ -50,6 +50,37 @@ Creates a secret manifest based on files.
 | <a id="generic_secret-secret_name"></a>secret_name |  The secret's name   | String | required |  |
 
 
+<a id="kind_env"></a>
+
+## kind_env
+
+<pre>
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kind_env")
+
+kind_env(<a href="#kind_env-name">name</a>, <a href="#kind_env-cluster_name">cluster_name</a>, <a href="#kind_env-images">images</a>, <a href="#kind_env-kustomization">kustomization</a>)
+</pre>
+
+Creates a local dev environment with kind using the given kustomization and images.
+
+The container images downloaded by containerd will be stored in a dedicated Docker volume attached to the kind node.
+All clusters with the same name created by this rule will share the same volume.
+This way, container images do not have to be re-downloaded every time the cluster is started.
+
+A kubeconfig for the cluster will be written to a filed named `${cluster_name}-kubeconfig.yaml` in the workspace root.
+
+Running the rule multiple times is idempotent.
+
+**ATTRIBUTES**
+
+
+| Name  | Description | Type | Mandatory | Default |
+| :------------- | :------------- | :------------- | :------------- | :------------- |
+| <a id="kind_env-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
+| <a id="kind_env-cluster_name"></a>cluster_name |  The kind cluster name.   | String | required |  |
+| <a id="kind_env-images"></a>images |  OCI image tarballs to load into the kind cluster.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="kind_env-kustomization"></a>kustomization |  Kustomization to apply to the cluster.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `None`  |
+
+
 <a id="kustomization"></a>
 
 ## kustomization

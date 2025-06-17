@@ -8,6 +8,7 @@ This repository proves Bazel rules for the ecosystem of Kubebuilder-style Kubern
   using [controller-gen](https://github.com/kubernetes-sigs/kubebuilder/blob/master/docs/book/src/reference/controller-gen.md)
 * Testing with [envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest)
 * Configuration management using [kustomize](https://kustomize.io/)
+* Creating local dev environments using [kind](https://kind.sigs.k8s.io/)
 * Testing with [kuttl](https://kuttl.dev/) on [kind](https://kind.sigs.k8s.io/) clusters
 
 ## Installation
@@ -148,6 +149,30 @@ See the `kustomization` rule's [documentation](./docs/rules.md#kustomization) fo
 
 `kustomization` targets are runnable, causing the manifest to be applied to the currently selected `kubectl` context.
 When applying, CRDs are applied first and awaited to be `Established`, before all other resources get applied.
+
+### `kind_env`
+
+The [`kind_env`](./docs/rules.md#kind_env) rule can be used to define a local dev environment.
+
+When running the rule with `bazel run`, it will
+
+1. create a kind cluster with the given name, if not existing yet,
+2. write a [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file named `${cluster}-kubeconfig.yaml` to the repository root,
+3. load all OCI container image tarballs specified into the cluster and
+4. apply a kustomization, if given.
+
+Running the rule multiple times is idempotent.
+
+```starlark
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kind_env")
+
+kind_env(
+    name = "kind_env",
+    cluster_name = "my-project",
+    images = ["//:my-image.tar"],
+    kustomization = "//config/local",
+)
+```
 
 ### `kuttl_test`
 

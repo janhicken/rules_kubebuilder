@@ -14,6 +14,11 @@ sh_binary(
 )
 
 sh_binary(
+    name = "kind_env_sh",
+    srcs = [":kind_env.sh"],
+)
+
+sh_binary(
     name = "kuttl_runner",
     srcs = [":kuttl.sh"],
 )
@@ -58,11 +63,26 @@ bzl_library(
 )
 
 bzl_library(
+    name = "kind_env",
+    srcs = ["kind_env.bzl"],
+    deps = [
+        ":kubectl",
+        ":utils",
+    ],
+)
+
+bzl_library(
     name = "kuttl",
     srcs = ["kuttl.bzl"],
+    deps = [":utils"],
 )
 
 bzl_library(
     name = "kuttl_toolchain",
     srcs = ["kuttl_toolchain.bzl"],
+)
+
+bzl_library(
+    name = "utils",
+    srcs = ["utils.bzl"],
 )
