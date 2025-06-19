@@ -45,19 +45,12 @@ EOF
 # ║                                    Run                                     ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
-# Usage cluster_exists CLUSTER_NAME
-cluster_exists() {
-	local search cluster
-	search=$1
-	while read -r cluster; do
-		if [[ "$cluster" == "$search" ]]; then
-			return 0
-		fi
-	done < <("$kind_bin" get clusters)
-	return 1
-}
+declare -A existing_clusters
+while read -r existing_cluster; do
+	existing_clusters[$existing_cluster]=""
+done < <("$kind_bin" get clusters)
 
-if cluster_exists "$kind_cluster_name"; then
+if [[ -v existing_clusters[$kind_cluster_name] ]]; then
 	"$kind_bin" export kubeconfig --kubeconfig "$kubeconfig_path" --name "$kind_cluster_name"
 else
 	"$kind_bin" create cluster --config "$kind_config_file" --kubeconfig "$kubeconfig_path"
