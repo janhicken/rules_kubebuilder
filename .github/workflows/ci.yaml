@@ -21,7 +21,7 @@ jobs:
         with:
           bazelisk-cache: true
           bazelrc: |
-            import ${{ github.workspace }}/.github/workflows/ci.bazelrc
+            import ${{ github.workspace }}/.aspect/bazelrc/ci.bazelrc
       - run: make check
   test:
     name: Test
@@ -33,7 +33,7 @@ jobs:
           bazelisk-cache: true
           disk-cache: ${{ github.job }}
           bazelrc: |
-            import ${{ github.workspace }}/.github/workflows/ci.bazelrc
+            import ${{ github.workspace }}/.aspect/bazelrc/ci.bazelrc
       - run: make test
   e2e:
     name: E2E Test
@@ -49,7 +49,7 @@ jobs:
           bazelisk-cache: true
           disk-cache: ${{ github.job }}-${{ matrix.os }}-${{ matrix.bazel-version }}
           bazelrc: |
-            import ${{ github.workspace }}/.github/workflows/ci.bazelrc
+            import ${{ github.workspace }}/.aspect/bazelrc/ci.bazelrc
       - run: make e2e-test
         env:
           USE_BAZEL_VERSION: ${{ matrix.bazel-version }}

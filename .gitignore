@@ -1,4 +1,4 @@
-bazel-*
-.bazelrc.user
+.aspect/bazelrc/user.bazelrc
 .idea/
 .ijwb/
+bazel-*

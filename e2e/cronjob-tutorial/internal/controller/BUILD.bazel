@@ -29,6 +29,7 @@ go_test(
     ],
     data = ["//config/crd"],
     embed = [":controller"],
+    tags = ["requires-network"],
     deps = [
         "//api/v1:api",
         "@com_github_onsi_ginkgo_v2//:ginkgo",

@@ -4,7 +4,7 @@ package(default_testonly = True)
 
 kuttl_test(
     name = "e2e",
-    size = "large",
+    size = "medium",
     srcs = [
         "manager/00-assert.yaml",
         "manager/00-install.yaml",
@@ -12,5 +12,8 @@ kuttl_test(
     crds = ["//config/crd"],
     images = ["//:manager.tar"],
     manifests = ["//config/local"],
-    tags = ["supports-graceful-termination"],
+    tags = [
+        "requires-network",
+        "supports-graceful-termination",
+    ],
 )
