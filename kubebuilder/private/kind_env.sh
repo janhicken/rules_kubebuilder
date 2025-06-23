@@ -10,8 +10,10 @@ readonly image_archives=(%image_archives%)
 readonly kustomization_apply_bin=%kustomization_apply_bin%
 
 readonly kind_bin=%kind_bin%
+readonly kind_config_file=%kind_config_file%
 readonly kind_cluster_name=%kind_cluster_name%
-readonly kind_node_image=%kind_node_image%
+
+readonly yq_bin=%yq_bin%
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                  Prepare                                   ║
@@ -26,20 +28,13 @@ docker volume create "$volume_name" >/dev/null
 mountpoint=$(docker volume inspect --format '{{ .Mountpoint }}' "$volume_name")
 readonly mountpoint
 
-kind_config_file=$(mktemp)
-readonly kind_config_file
-trap 'rm $kind_config_file' EXIT
-cat >"$kind_config_file" <<EOF
-apiVersion: kind.x-k8s.io/v1alpha4
-kind: Cluster
-name: "$kind_cluster_name"
-nodes:
-  - role: control-plane
-    image: "$kind_node_image"
-    extraMounts:
-      - hostPath: $mountpoint
-        containerPath: /var/lib/containerd
-EOF
+# Add volume mount to kind config
+final_kind_config_file=$(mktemp)
+readonly final_kind_config_file
+trap 'rm $final_kind_config_file' EXIT
+
+DOCKER_VOLUME_PATH="$mountpoint" "$yq_bin" '(.. | select(tag == "!!str")) |= envsubst' \
+	"$kind_config_file" >"$final_kind_config_file"
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                    Run                                     ║
@@ -51,9 +46,12 @@ while read -r existing_cluster; do
 done < <("$kind_bin" get clusters)
 
 if [[ -v existing_clusters[$kind_cluster_name] ]]; then
+	printf 'Reusing existing kind cluster named "%s"\n' "$kind_cluster_name"
 	"$kind_bin" export kubeconfig --kubeconfig "$kubeconfig_path" --name "$kind_cluster_name"
 else
-	"$kind_bin" create cluster --config "$kind_config_file" --kubeconfig "$kubeconfig_path"
+	printf 'Creating new kind cluster with config:\n'
+	"$yq_bin" --prettyPrint "$final_kind_config_file"
+	"$kind_bin" create cluster --config "$final_kind_config_file" --kubeconfig "$kubeconfig_path"
 fi
 
 for image_archive in "${image_archives[@]}"; do

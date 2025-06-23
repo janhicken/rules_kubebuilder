@@ -5,14 +5,37 @@ load(":utils.bzl", "space_separated")
 
 def _kind_env_impl(ctx):
     kind = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"].kind
-    runfiles = ctx.runfiles(ctx.files.images + [kind.bin])
+    yq = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"].yqinfo
 
+    # Configure kind Cluster
+    cluster = {
+        "apiVersion": "kind.x-k8s.io/v1alpha4",
+        "kind": "Cluster",
+        "name": ctx.attr.cluster_name,
+        "nodes": [{
+            "extraMounts": [{
+                "containerPath": "/var/lib/containerd",
+                "hostPath": "${DOCKER_VOLUME_PATH}",
+            }],
+            "image": kind.node_image,
+            "role": "control-plane",
+        }],
+    }
+    config_file = ctx.actions.declare_file(ctx.label.name + ".json")
+    ctx.actions.write(
+        output = config_file,
+        content = json.encode(cluster),
+    )
+
+    # Configure runfiles
+    runfiles = ctx.runfiles(ctx.files.images + [config_file, kind.bin, yq.bin])
     if ctx.executable.kustomization:
         runfiles = runfiles.merge(ctx.attr.kustomization[DefaultInfo].default_runfiles)
         kustomization_apply_bin = ctx.executable.kustomization.short_path
     else:
         kustomization_apply_bin = None
 
+    # Prepare executable script
     executable = ctx.actions.declare_file(ctx.label.name + ".sh")
     ctx.actions.expand_template(
         template = ctx.file._kind_env,
@@ -21,13 +44,15 @@ def _kind_env_impl(ctx):
             "%image_archives%": space_separated(ctx.files.images),
             "%kind_bin%": kind.bin.short_path,
             "%kind_cluster_name%": ctx.attr.cluster_name,
-            "%kind_node_image%": kind.node_image,
+            "%kind_config_file%": config_file.short_path,
             "%kustomization_apply_bin%": kustomization_apply_bin or "",
+            "%yq_bin%": yq.bin.short_path,
         },
         is_executable = True,
     )
 
     return [DefaultInfo(
+        files = depset([config_file, executable]),
         executable = executable,
         runfiles = runfiles,
     )]
@@ -56,6 +81,7 @@ kind_env = rule(
     },
     executable = True,
     toolchains = [
+        "@aspect_bazel_lib//lib:yq_toolchain_type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain",
     ],
     doc = """Creates a local dev environment with kind using the given kustomization and images.
