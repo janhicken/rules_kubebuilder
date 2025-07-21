@@ -57,6 +57,7 @@ bzl_library(
     name = "kubectl",
     srcs = ["kubectl.bzl"],
     deps = [
+        ":utils",
         "@aspect_bazel_lib//lib:paths",
         "@aspect_bazel_lib//lib:stamping",
     ],
@@ -78,11 +79,12 @@ bzl_library(
 )
 
 bzl_library(
-    name = "kuttl_toolchain",
-    srcs = ["kuttl_toolchain.bzl"],
+    name = "utils",
+    srcs = ["utils.bzl"],
+    deps = ["@bazel_skylib//lib:paths"],
 )
 
 bzl_library(
-    name = "utils",
-    srcs = ["utils.bzl"],
+    name = "kuttl_toolchain",
+    srcs = ["kuttl_toolchain.bzl"],
 )

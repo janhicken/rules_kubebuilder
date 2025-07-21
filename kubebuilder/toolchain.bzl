@@ -142,7 +142,7 @@ KindInfo = provider(
 def _kind_toolchain_impl(ctx):
     default = DefaultInfo(
         files = ctx.attr.bin[DefaultInfo].files,
-        runfiles = ctx.attr.bin[DefaultInfo].default_runfiles,
+        runfiles = ctx.runfiles(files = [ctx.file.bin]),
     )
 
     toolchain_info = platform_common.ToolchainInfo(
@@ -186,7 +186,7 @@ KuttlInfo = provider(
 def _kuttl_toolchain_impl(ctx):
     default = DefaultInfo(
         files = ctx.attr.bin[DefaultInfo].files,
-        runfiles = ctx.attr.bin[DefaultInfo].default_runfiles,
+        runfiles = ctx.runfiles(files = [ctx.file.bin]),
     )
 
     toolchain_info = platform_common.ToolchainInfo(

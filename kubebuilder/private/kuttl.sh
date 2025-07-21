@@ -7,14 +7,14 @@ set -o monitor
 # ║                             Template Variables                             ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
+readonly PATH=%PATH%:$PATH
+
 readonly crd_files=(%crd_files%)
 readonly manifest_files=(%manifest_files%)
 readonly image_archives=(%image_archives%)
 readonly test_dir=%test_dir%
 
-readonly kind_bin=%kind_bin%
 readonly kind_node_image=%kind_node_image%
-readonly kuttl_bin=%kuttl_bin%
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                  Prepare                                   ║
@@ -22,13 +22,13 @@ readonly kuttl_bin=%kuttl_bin%
 
 # Copy all CRD manifests into a single directory
 readonly crd_dir=$TEST_TMPDIR/crds
-mkdir "$crd_dir"
-ln -s "${crd_files[@]/#/$PWD/}" "$crd_dir"
+coreutils mkdir "$crd_dir"
+coreutils ln -s "${crd_files[@]/#/$PWD/}" "$crd_dir"
 
 # Copy all manifests into a single directory
 readonly manifest_dir=$TEST_TMPDIR/manifests
-mkdir "$manifest_dir"
-ln -s "${manifest_files[@]/#/$PWD/}" "$manifest_dir"
+coreutils mkdir "$manifest_dir"
+coreutils ln -s "${manifest_files[@]/#/$PWD/}" "$manifest_dir"
 
 # Configure kind
 readonly kind_cluster_name=bzl${TEST_TARGET//[^a-z0-9.-]/-}
@@ -62,24 +62,24 @@ readonly kuttl_report_path=$artifacts_dir/kuttl-report.xml
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
 shutdown_kind_cluster() {
-	"$kind_bin" export logs "$TEST_LOGSPLITTER_OUTPUT_FILE" --name "$kind_cluster_name" || :
+	kind export logs "$TEST_LOGSPLITTER_OUTPUT_FILE" --name "$kind_cluster_name" || :
 	if [[ -f "$kuttl_report_path" ]]; then
-		mv "$kuttl_report_path" "$XML_OUTPUT_FILE"
+		coreutils mv "$kuttl_report_path" "$XML_OUTPUT_FILE"
 	fi
-	"$kind_bin" delete cluster --name "$kind_cluster_name" --kubeconfig "$kubeconfig_path"
+	kind delete cluster --name "$kind_cluster_name" --kubeconfig "$kubeconfig_path"
 }
 
 trap shutdown_kind_cluster EXIT
-"$kind_bin" create cluster \
+kind create cluster \
 	--config "$kind_config_file" \
 	--kubeconfig "$kubeconfig_path"
 
 for image_archive in "${image_archives[@]}"; do
 	printf 'Loading image archive %s...\n' "$image_archive" >&2
-	"$kind_bin" load image-archive --name "$kind_cluster_name" "$image_archive"
+	kind load image-archive --name "$kind_cluster_name" "$image_archive"
 done
 
-KUBECONFIG="$kubeconfig_path" "$kuttl_bin" test "$test_dir" \
+KUBECONFIG="$kubeconfig_path" kubectl-kuttl test "$test_dir" \
 	--artifacts-dir "$artifacts_dir" \
 	--crd-dir "$crd_dir" \
 	--kind-context "$kind_cluster_name" \

@@ -1,21 +1,26 @@
 "Bazel Rules for kuttl"
 
-load(":utils.bzl", "space_separated")
+load(":utils.bzl", "join_path", "space_separated")
 
 def _kuttl_test_impl(ctx):
-    kind = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"].kind
-    kuttl = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kuttl_toolchain"].kuttl
+    coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
+    kind_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"]
+    kuttl_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kuttl_toolchain"]
 
     executable = ctx.actions.declare_file(ctx.label.name + ".sh")
+    command_path = join_path(ctx, [
+        coreutils_toolchain.coreutils_info.bin,
+        kind_toolchain.kind.bin,
+        kuttl_toolchain.kuttl.bin,
+    ])
     ctx.actions.expand_template(
         template = ctx.file._kuttl_sh,
         output = executable,
         substitutions = {
+            "%PATH%": command_path,
             "%crd_files%": space_separated(ctx.files.crds),
             "%image_archives%": space_separated(ctx.files.images),
-            "%kind_bin%": kind.bin.short_path,
-            "%kind_node_image%": ctx.attr.kind_node_image or kind.node_image,
-            "%kuttl_bin%": kuttl.bin.short_path,
+            "%kind_node_image%": ctx.attr.kind_node_image or kind_toolchain.kind.node_image,
             "%manifest_files%": space_separated(ctx.files.manifests),
             "%test_dir%": ctx.label.package,
         },
@@ -23,9 +28,12 @@ def _kuttl_test_impl(ctx):
     )
 
     runfiles = ctx.runfiles(
-        ctx.files.srcs + ctx.files.crds + ctx.files.manifests + ctx.files.images +
-        [kind.bin, kuttl.bin],
-    )
+        ctx.files.srcs + ctx.files.crds + ctx.files.manifests + ctx.files.images,
+    ).merge_all([
+        coreutils_toolchain.default.default_runfiles,
+        kind_toolchain.default.default_runfiles,
+        kuttl_toolchain.default.default_runfiles,
+    ])
     return [
         DefaultInfo(executable = executable, runfiles = runfiles),
     ]
@@ -65,6 +73,7 @@ kind cluster's logs and shut it down.
         ),
     },
     toolchains = [
+        "@aspect_bazel_lib//lib:coreutils_toolchain_type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kuttl_toolchain",
     ],

@@ -1,11 +1,12 @@
 "Bazel Rules for creating a local dev environment with kind"
 
 load(":kubectl.bzl", "KustomizeInfo")
-load(":utils.bzl", "space_separated")
+load(":utils.bzl", "join_path", "space_separated")
 
 def _kind_env_impl(ctx):
+    coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
     kind = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"].kind
-    yq = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"].yqinfo
+    yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
 
     # Configure kind Cluster
     cluster = {
@@ -28,12 +29,20 @@ def _kind_env_impl(ctx):
     )
 
     # Configure runfiles
-    runfiles = ctx.runfiles(ctx.files.images + [config_file, kind.bin, yq.bin])
+    runfiles = ctx.runfiles(ctx.files.images + [config_file, kind.bin]).merge_all([
+        coreutils_toolchain.default.default_runfiles,
+        yq_toolchain.default.default_runfiles,
+    ])
     if ctx.executable.kustomization:
         runfiles = runfiles.merge(ctx.attr.kustomization[DefaultInfo].default_runfiles)
         kustomization_apply_bin = ctx.executable.kustomization.short_path
     else:
         kustomization_apply_bin = None
+    command_path = join_path(ctx, [
+        coreutils_toolchain.coreutils_info.bin,
+        kind.bin,
+        yq_toolchain.yqinfo.bin,
+    ])
 
     # Prepare executable script
     executable = ctx.actions.declare_file(ctx.label.name + ".sh")
@@ -41,12 +50,11 @@ def _kind_env_impl(ctx):
         template = ctx.file._kind_env,
         output = executable,
         substitutions = {
+            "%PATH%": command_path,
             "%image_archives%": space_separated(ctx.files.images),
-            "%kind_bin%": kind.bin.short_path,
             "%kind_cluster_name%": ctx.attr.cluster_name,
             "%kind_config_file%": config_file.short_path,
             "%kustomization_apply_bin%": kustomization_apply_bin or "",
-            "%yq_bin%": yq.bin.short_path,
         },
         is_executable = True,
     )
@@ -81,6 +89,7 @@ kind_env = rule(
     },
     executable = True,
     toolchains = [
+        "@aspect_bazel_lib//lib:coreutils_toolchain_type",
         "@aspect_bazel_lib//lib:yq_toolchain_type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain",
     ],
