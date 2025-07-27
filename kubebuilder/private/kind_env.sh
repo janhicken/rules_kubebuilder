@@ -6,7 +6,8 @@ set -o nounset
 # ║                             Template Variables                             ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
-readonly PATH=%PATH%:$PATH
+readonly PATH=%PATH%
+export GODEBUG=',execerrdot=0' # allow relative PATH lookups
 
 readonly image_archives=(%image_archives%)
 readonly kustomization_apply_bin=%kustomization_apply_bin%
@@ -19,7 +20,7 @@ readonly kind_cluster_name=%kind_cluster_name%
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
 # Configure kind
-readonly kubeconfig_path=$BUILD_WORKSPACE_DIRECTORY/${kind_cluster_name}-kubeconfig.yaml
+export KUBECONFIG=$BUILD_WORKSPACE_DIRECTORY/${kind_cluster_name}-kubeconfig.yaml
 
 # Create Docker volume for caching node data
 readonly volume_name=kind-${kind_cluster_name}-0
@@ -30,7 +31,7 @@ readonly mountpoint
 # Add volume mount to kind config
 final_kind_config_file=$(coreutils mktemp --suffix .yaml)
 readonly final_kind_config_file
-trap 'rm $final_kind_config_file' EXIT
+trap 'coreutils rm $final_kind_config_file' EXIT
 
 DOCKER_VOLUME_PATH="$mountpoint" yq '(.. | select(tag == "!!str")) |= envsubst' \
 	"$kind_config_file" >"$final_kind_config_file"
@@ -46,11 +47,11 @@ done < <(kind get clusters)
 
 if [[ -v existing_clusters[$kind_cluster_name] ]]; then
 	printf 'Reusing existing kind cluster named "%s"\n' "$kind_cluster_name"
-	kind export kubeconfig --kubeconfig "$kubeconfig_path" --name "$kind_cluster_name"
+	kind export kubeconfig --name "$kind_cluster_name"
 else
 	printf 'Creating new kind cluster with config:\n'
 	yq --prettyPrint "$final_kind_config_file"
-	kind create cluster --config "$final_kind_config_file" --kubeconfig "$kubeconfig_path"
+	kind create cluster --config "$final_kind_config_file"
 fi
 
 for image_archive in "${image_archives[@]}"; do
@@ -59,5 +60,5 @@ for image_archive in "${image_archives[@]}"; do
 done
 
 if [[ -n "$kustomization_apply_bin" ]]; then
-	KUBECONFIG="$kubeconfig_path" "$kustomization_apply_bin"
+	"$BASH" "$kustomization_apply_bin"
 fi

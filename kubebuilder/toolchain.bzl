@@ -50,6 +50,54 @@ controller_gen_toolchain = rule(
 )
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
+# ║                                   Docker                                   ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+DockerInfo = provider(
+    doc = "Information about the Docker toolchain",
+    fields = {"docker": "Executable Docker CLI binary"},
+)
+
+def _docker_toolchain_impl(ctx):
+    default = DefaultInfo(
+        files = ctx.attr.docker[DefaultInfo].files,
+        runfiles = ctx.runfiles(files = [ctx.file.docker]),
+    )
+
+    # Make the $(DOCKER_CLI_BIN) variable available in places like genrules.
+    # See https://docs.bazel.build/versions/main/be/make-variables.html#custom_variables
+    template_variables = platform_common.TemplateVariableInfo({
+        "DOCKER_CLI_BIN": ctx.file.docker.path,
+    })
+
+    # Export all the providers inside our ToolchainInfo
+    # so the resolved_toolchain rule can grab and re-export them.
+    toolchain_info = platform_common.ToolchainInfo(
+        default = default,
+        template_variables = template_variables,
+        docker = DockerInfo(
+            docker = ctx.file.docker,
+        ),
+    )
+
+    return [default, template_variables, toolchain_info]
+
+docker_toolchain = rule(
+    implementation = _docker_toolchain_impl,
+    attrs = {
+        "docker": attr.label(
+            doc = "Executable Docker CLI binary",
+            executable = True,
+            allow_single_file = True,
+            mandatory = True,
+            cfg = "exec",
+        ),
+    },
+    doc = "Defines a Docker toolchain.",
+    provides = [DefaultInfo, platform_common.ToolchainInfo, platform_common.TemplateVariableInfo],
+)
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                  envtest                                   ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 

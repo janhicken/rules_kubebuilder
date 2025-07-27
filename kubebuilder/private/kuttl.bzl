@@ -4,12 +4,14 @@ load(":utils.bzl", "join_path", "space_separated")
 
 def _kuttl_test_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
+    docker_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain"]
     kind_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"]
     kuttl_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kuttl_toolchain"]
 
     executable = ctx.actions.declare_file(ctx.label.name + ".sh")
     command_path = join_path(ctx, [
         coreutils_toolchain.coreutils_info.bin,
+        docker_toolchain.docker.docker,
         kind_toolchain.kind.bin,
         kuttl_toolchain.kuttl.bin,
     ])
@@ -31,6 +33,7 @@ def _kuttl_test_impl(ctx):
         ctx.files.srcs + ctx.files.crds + ctx.files.manifests + ctx.files.images,
     ).merge_all([
         coreutils_toolchain.default.default_runfiles,
+        docker_toolchain.default.default_runfiles,
         kind_toolchain.default.default_runfiles,
         kuttl_toolchain.default.default_runfiles,
     ])
@@ -74,6 +77,7 @@ kind cluster's logs and shut it down.
     },
     toolchains = [
         "@aspect_bazel_lib//lib:coreutils_toolchain_type",
+        "@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kuttl_toolchain",
     ],

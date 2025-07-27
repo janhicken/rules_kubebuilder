@@ -12,8 +12,10 @@ effectively overriding the default named toolchain due to toolchain resolution p
 load("@bazel_features//:features.bzl", "bazel_features")
 load(
     ":repositories.bzl",
+    "DEFAULT_DOCKER_VERSION",
     "DEFAULT_KIND_VERSION",
     "DEFAULT_KUTTL_VERSION",
+    "DOCKER_VERSIONS",
     "KIND_VERSIONS",
     "KUBERNETES_VERSIONS",
     "KUTTL_VERSIONS",
@@ -21,6 +23,11 @@ load(
 )
 
 kubernetes_target = tag_class(attrs = {
+    "docker_version": attr.string(
+        doc = "The Docker version to use",
+        default = DEFAULT_DOCKER_VERSION,
+        values = DOCKER_VERSIONS,
+    ),
     "kind_version": attr.string(
         doc = "The kind version to use",
         default = DEFAULT_KIND_VERSION,
@@ -51,6 +58,7 @@ def _kubebuilder_impl(mctx):
         for k8s_target in mod.tags.for_kubernetes:
             prefix = k8s_target.prefix
             version = k8s_target.version
+            docker_version = k8s_target.docker_version
             kind_version = k8s_target.kind_version
             kuttl_version = k8s_target.kuttl_version
             if prefix and not mod.is_root:
@@ -71,6 +79,7 @@ def _kubebuilder_impl(mctx):
                 ))
             else:
                 targets[prefix] = {
+                    "docker_version": docker_version,
                     "kind_version": kind_version,
                     "kuttl_version": kuttl_version,
                     "version": version,
@@ -80,6 +89,7 @@ def _kubebuilder_impl(mctx):
         register_kubebuilder_repositories_and_toolchains(
             prefix,
             versions["version"],
+            versions["docker_version"],
             versions["kind_version"],
             versions["kuttl_version"],
             register = False,

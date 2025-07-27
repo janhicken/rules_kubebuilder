@@ -7,7 +7,8 @@ set -o monitor
 # ║                             Template Variables                             ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
-readonly PATH=%PATH%:$PATH
+readonly PATH=%PATH%
+export GODEBUG=',execerrdot=0' # allow relative PATH lookups
 
 readonly crd_files=(%crd_files%)
 readonly manifest_files=(%manifest_files%)
@@ -32,7 +33,7 @@ coreutils ln -s "${manifest_files[@]/#/$PWD/}" "$manifest_dir"
 
 # Configure kind
 readonly kind_cluster_name=bzl${TEST_TARGET//[^a-z0-9.-]/-}
-readonly kubeconfig_path=$TEST_TMPDIR/kubeconfig.yaml
+export KUBECONFIG=$TEST_TMPDIR/kubeconfig.yaml
 
 # Create Docker volume for caching node data
 readonly volume_name=kind-${kind_cluster_name}-0
@@ -41,7 +42,7 @@ mountpoint=$(docker volume inspect --format '{{ .Mountpoint }}' "$volume_name")
 readonly mountpoint
 
 readonly kind_config_file=$TEST_TMPDIR/kind-config.yaml
-cat >"$kind_config_file" <<EOF
+coreutils cat >"$kind_config_file" <<EOF
 apiVersion: kind.x-k8s.io/v1alpha4
 kind: Cluster
 name: "$kind_cluster_name"
@@ -66,20 +67,18 @@ shutdown_kind_cluster() {
 	if [[ -f "$kuttl_report_path" ]]; then
 		coreutils mv "$kuttl_report_path" "$XML_OUTPUT_FILE"
 	fi
-	kind delete cluster --name "$kind_cluster_name" --kubeconfig "$kubeconfig_path"
+	kind delete cluster --name "$kind_cluster_name"
 }
 
 trap shutdown_kind_cluster EXIT
-kind create cluster \
-	--config "$kind_config_file" \
-	--kubeconfig "$kubeconfig_path"
+kind create cluster --config "$kind_config_file"
 
 for image_archive in "${image_archives[@]}"; do
 	printf 'Loading image archive %s...\n' "$image_archive" >&2
 	kind load image-archive --name "$kind_cluster_name" "$image_archive"
 done
 
-KUBECONFIG="$kubeconfig_path" kubectl-kuttl test "$test_dir" \
+kubectl-kuttl test "$test_dir" \
 	--artifacts-dir "$artifacts_dir" \
 	--crd-dir "$crd_dir" \
 	--kind-context "$kind_cluster_name" \

@@ -5,6 +5,7 @@ load(":utils.bzl", "join_path", "space_separated")
 
 def _kind_env_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
+    docker_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain"]
     kind = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"].kind
     yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
 
@@ -31,6 +32,7 @@ def _kind_env_impl(ctx):
     # Configure runfiles
     runfiles = ctx.runfiles(ctx.files.images + [config_file, kind.bin]).merge_all([
         coreutils_toolchain.default.default_runfiles,
+        docker_toolchain.default.default_runfiles,
         yq_toolchain.default.default_runfiles,
     ])
     if ctx.executable.kustomization:
@@ -40,6 +42,7 @@ def _kind_env_impl(ctx):
         kustomization_apply_bin = None
     command_path = join_path(ctx, [
         coreutils_toolchain.coreutils_info.bin,
+        docker_toolchain.docker.docker,
         kind.bin,
         yq_toolchain.yqinfo.bin,
     ])
@@ -91,6 +94,7 @@ kind_env = rule(
     toolchains = [
         "@aspect_bazel_lib//lib:coreutils_toolchain_type",
         "@aspect_bazel_lib//lib:yq_toolchain_type",
+        "@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain",
     ],
     doc = """Creates a local dev environment with kind using the given kustomization and images.

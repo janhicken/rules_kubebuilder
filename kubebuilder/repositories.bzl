@@ -13,6 +13,14 @@ load(
     "controller_gen_toolchains_repo",
 )
 load(
+    "//kubebuilder/private:docker_toolchain.bzl",
+    "DOCKER_PLATFORMS",
+    "docker_platform_repo",
+    "docker_toolchains_repo",
+    _DEFAULT_DOCKER_VERSION = "DEFAULT_DOCKER_VERSION",
+    _DOCKER_VERSIONS = "DOCKER_VERSIONS",
+)
+load(
     "//kubebuilder/private:envtest_toolchain.bzl",
     "ENVTEST_PLATFORMS",
     "ENVTEST_VERSIONS",
@@ -40,14 +48,17 @@ load(
 
 KUBERNETES_VERSIONS = ENVTEST_VERSIONS.keys()
 DEFAULT_KUBERNETES_VERSION = "1.31.0"
+DOCKER_VERSIONS = _DOCKER_VERSIONS.keys()
 KIND_VERSIONS = _KIND_VERSIONS.keys()
 KUTTL_VERSIONS = _KUTTL_VERSIONS.keys()
+DEFAULT_DOCKER_VERSION = _DEFAULT_DOCKER_VERSION
 DEFAULT_KIND_VERSION = _DEFAULT_KIND_VERSION
 DEFAULT_KUTTL_VERSION = _DEFAULT_KUTTL_VERSION
 
 def register_kubebuilder_repositories_and_toolchains(
         name = "",
         kubernetes_version = DEFAULT_KUBERNETES_VERSION,
+        docker_version = DEFAULT_DOCKER_VERSION,
         kind_version = _DEFAULT_KIND_VERSION,
         kuttl_version = _DEFAULT_KUTTL_VERSION,
         register = True):
@@ -57,6 +68,7 @@ def register_kubebuilder_repositories_and_toolchains(
     Args:
         name: a common prefix for all generated repositories
         kubernetes_version: the target Kubernetes version to pick toolchain versions for
+        docker_version: the Docker version to use
         kind_version: the kind version to use
         kuttl_version: the kuttl version to use
         register: whether to call through to native.register_toolchains.
@@ -71,7 +83,7 @@ def register_kubebuilder_repositories_and_toolchains(
         ))
     controller_gen_version = KUBERNETES_VERSION_MAPPING[k8s_version_major_minor]
     register_controller_gen_toolchains(name + DEFAULT_CONTROLLER_GEN_REPOSITORY, controller_gen_version, register)
-
+    register_docker_repositories(name + DEFAULT_DOCKER_REPOSITORY, docker_version)
     register_envtest_repositories(name + DEFAULT_ENVTEST_REPOSITORY, kubernetes_version)
 
     register_kind_repositories(name + DEFAULT_KIND_REPOSITORY, kind_version, k8s_version_major_minor)
@@ -105,6 +117,31 @@ def register_controller_gen_toolchains(name, version, register = True):
     controller_gen_host_alias_repo(name = name)
 
     controller_gen_toolchains_repo(
+        name = "%s_toolchains" % name,
+        user_repository_name = name,
+    )
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║                                   Docker                                   ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+DEFAULT_DOCKER_REPOSITORY = "docker"
+
+def register_docker_repositories(name, version):
+    """Registers Docker repositories
+
+    Args:
+        name: override the prefix for the generated repositories
+        version: the version of Docker to use (see https://docs.docker.com/engine/release-notes)
+    """
+    for platform in DOCKER_PLATFORMS.keys():
+        docker_platform_repo(
+            name = "%s_%s" % (name, platform),
+            platform = platform,
+            version = version,
+        )
+
+    docker_toolchains_repo(
         name = "%s_toolchains" % name,
         user_repository_name = name,
     )
