@@ -174,6 +174,12 @@ kind_env(
 )
 ```
 
+The kind cluster can be deleted by giving `delete` as an argument, for example:
+
+```shell
+bazel run :kind_env delete
+```
+
 ### `kuttl_test`
 
 The `kuttl_test` rule runs [kuttl](https://kuttl.dev/) tests hermetically.

@@ -22,6 +22,11 @@ readonly kind_cluster_name=%kind_cluster_name%
 # Configure kind
 export KUBECONFIG=$BUILD_WORKSPACE_DIRECTORY/${kind_cluster_name}-kubeconfig.yaml
 
+if [[ "${1:-}" == "delete" ]]; then
+	kind delete cluster --name "$kind_cluster_name"
+	exit
+fi
+
 # Create Docker volume for caching node data
 readonly volume_name=kind-${kind_cluster_name}-0
 docker volume create "$volume_name" >/dev/null
