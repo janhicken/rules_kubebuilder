@@ -1,7 +1,8 @@
 "Bazel Rules for creating a local dev environment with kind"
 
+load("@bazel_skylib//lib:shell.bzl", "shell")
 load(":kubectl.bzl", "KustomizeInfo")
-load(":utils.bzl", "join_path", "space_separated")
+load(":utils.bzl", "join_path", "runfiles_path_array_literal")
 
 def _kind_env_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
@@ -53,11 +54,11 @@ def _kind_env_impl(ctx):
         template = ctx.file._kind_env,
         output = executable,
         substitutions = {
-            "%PATH%": command_path,
-            "%image_archives%": space_separated(ctx.files.images),
-            "%kind_cluster_name%": ctx.attr.cluster_name,
-            "%kind_config_file%": config_file.short_path,
-            "%kustomization_apply_bin%": kustomization_apply_bin or "",
+            "%PATH%": shell.quote(command_path),
+            "%image_archives%": runfiles_path_array_literal(ctx.files.images),
+            "%kind_cluster_name%": shell.quote(ctx.attr.cluster_name),
+            "%kind_config_file%": shell.quote(config_file.short_path),
+            "%kustomization_apply_bin%": shell.quote(kustomization_apply_bin or ""),
         },
         is_executable = True,
     )

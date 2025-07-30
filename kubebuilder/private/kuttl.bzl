@@ -1,6 +1,7 @@
 "Bazel Rules for kuttl"
 
-load(":utils.bzl", "join_path", "space_separated")
+load("@bazel_skylib//lib:shell.bzl", "shell")
+load(":utils.bzl", "join_path", "runfiles_path_array_literal")
 
 def _kuttl_test_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
@@ -19,12 +20,12 @@ def _kuttl_test_impl(ctx):
         template = ctx.file._kuttl_sh,
         output = executable,
         substitutions = {
-            "%PATH%": command_path,
-            "%crd_files%": space_separated(ctx.files.crds),
-            "%image_archives%": space_separated(ctx.files.images),
-            "%kind_node_image%": ctx.attr.kind_node_image or kind_toolchain.kind.node_image,
-            "%manifest_files%": space_separated(ctx.files.manifests),
-            "%test_dir%": ctx.label.package,
+            "%PATH%": shell.quote(command_path),
+            "%crd_files%": runfiles_path_array_literal(ctx.files.crds),
+            "%image_archives%": runfiles_path_array_literal(ctx.files.images),
+            "%kind_node_image%": shell.quote(ctx.attr.kind_node_image or kind_toolchain.kind.node_image),
+            "%manifest_files%": runfiles_path_array_literal(ctx.files.manifests),
+            "%test_dir%": shell.quote(ctx.label.package),
         },
         is_executable = True,
     )

@@ -2,6 +2,7 @@
 
 load("@aspect_bazel_lib//lib:paths.bzl", "relative_file")
 load("@aspect_bazel_lib//lib:stamping.bzl", "STAMP_ATTRS", "maybe_stamp")
+load("@bazel_skylib//lib:shell.bzl", "shell")
 load(":utils.bzl", "join_path")
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
@@ -285,8 +286,8 @@ def _kustomization_impl(ctx):
         template = ctx.file._apply,
         output = apply_script,
         substitutions = {
-            "%PATH%": command_path,
-            "%manifests_file%": output_file.short_path,
+            "%PATH%": shell.quote(command_path),
+            "%manifests_file%": shell.quote(output_file.short_path),
         },
         is_executable = True,
     )

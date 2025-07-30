@@ -9,7 +9,7 @@ set -o nounset
 readonly PATH=%PATH%
 export GODEBUG=',execerrdot=0' # allow relative PATH lookups
 
-readonly image_archives=(%image_archives%)
+readonly -a image_archives=%image_archives%
 readonly kustomization_apply_bin=%kustomization_apply_bin%
 
 readonly kind_config_file=%kind_config_file%

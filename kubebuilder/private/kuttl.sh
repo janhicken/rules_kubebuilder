@@ -10,9 +10,9 @@ set -o monitor
 readonly PATH=%PATH%
 export GODEBUG=',execerrdot=0' # allow relative PATH lookups
 
-readonly crd_files=(%crd_files%)
-readonly manifest_files=(%manifest_files%)
-readonly image_archives=(%image_archives%)
+readonly -a crd_files=%crd_files%
+readonly -a manifest_files=%manifest_files%
+readonly -a image_archives=%image_archives%
 readonly test_dir=%test_dir%
 
 readonly kind_node_image=%kind_node_image%
