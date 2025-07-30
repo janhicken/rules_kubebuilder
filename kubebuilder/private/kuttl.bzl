@@ -1,7 +1,7 @@
 "Bazel Rules for kuttl"
 
 load("@bazel_skylib//lib:shell.bzl", "shell")
-load(":utils.bzl", "join_path", "runfiles_path_array_literal")
+load(":utils.bzl", "runfiles_path_array_literal", "use_runtime_toolchains")
 
 def _kuttl_test_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
@@ -30,14 +30,20 @@ def _kuttl_test_impl(ctx):
         content = json.encode(cluster),
     )
 
-    executable = ctx.actions.declare_file(ctx.label.name + ".sh")
-    command_path = join_path(ctx, [
-        coreutils_toolchain.coreutils_info.bin,
-        docker_toolchain.docker.docker,
-        kind_toolchain.kind.bin,
-        kuttl_toolchain.kuttl.bin,
-        yq_toolchain.yqinfo.bin,
+    # Configure runfiles
+    command_path, tools_runfiles = use_runtime_toolchains(ctx, [
+        coreutils_toolchain,
+        docker_toolchain,
+        kind_toolchain,
+        kuttl_toolchain,
+        yq_toolchain,
     ])
+    runfiles = ctx.runfiles(
+        ctx.files.srcs + ctx.files.crds + ctx.files.manifests + ctx.files.images + [kind_config_file],
+    ).merge(tools_runfiles)
+
+    # Prepare executable script
+    executable = ctx.actions.declare_file(ctx.label.name + ".sh")
     ctx.actions.expand_template(
         template = ctx.file._kuttl_sh,
         output = executable,
@@ -53,18 +59,11 @@ def _kuttl_test_impl(ctx):
         is_executable = True,
     )
 
-    runfiles = ctx.runfiles(
-        ctx.files.srcs + ctx.files.crds + ctx.files.manifests + ctx.files.images + [kind_config_file],
-    ).merge_all([
-        coreutils_toolchain.default.default_runfiles,
-        docker_toolchain.default.default_runfiles,
-        kind_toolchain.default.default_runfiles,
-        kuttl_toolchain.default.default_runfiles,
-        yq_toolchain.default.default_runfiles,
-    ])
-    return [
-        DefaultInfo(executable = executable, runfiles = runfiles),
-    ]
+    return [DefaultInfo(
+        files = depset([kind_config_file, executable]),
+        executable = executable,
+        runfiles = runfiles,
+    )]
 
 kuttl_test = rule(
     implementation = _kuttl_test_impl,

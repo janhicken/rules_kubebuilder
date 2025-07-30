@@ -3,7 +3,7 @@
 load("@aspect_bazel_lib//lib:paths.bzl", "relative_file")
 load("@aspect_bazel_lib//lib:stamping.bzl", "STAMP_ATTRS", "maybe_stamp")
 load("@bazel_skylib//lib:shell.bzl", "shell")
-load(":utils.bzl", "join_path")
+load(":utils.bzl", "use_runtime_toolchains")
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                 config_map                                 ║
@@ -175,7 +175,7 @@ KustomizeInfo = provider(
 
 def _kustomization_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
-    envtest = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain"].envtest
+    envtest_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain"]
     yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
 
     # Build depset of all transformer configurations
@@ -269,7 +269,7 @@ def _kustomization_impl(ctx):
             direct = [kustomization_yaml] + ctx.files.resources + ctx.files.configurations + ctx.files.replacements,
             transitive = [patch_target.files for patch_target in ctx.attr.patches.keys()] + transitive_configuration_deps,
         ),
-        executable = envtest.kubectl,
+        executable = envtest_toolchain.envtest.kubectl,
         arguments = [args],
         mnemonic = "KustomizeBuild",
         toolchain = "@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain",
@@ -277,10 +277,10 @@ def _kustomization_impl(ctx):
 
     # Create runnable apply script
     apply_script = ctx.actions.declare_file(ctx.label.name + "_apply.sh")
-    command_path = join_path(ctx, [
-        coreutils_toolchain.coreutils_info.bin,
-        envtest.kubectl,
-        yq_toolchain.yqinfo.bin,
+    command_path, tools_runfiles = use_runtime_toolchains(ctx, [
+        coreutils_toolchain,
+        envtest_toolchain,
+        yq_toolchain,
     ])
     ctx.actions.expand_template(
         template = ctx.file._apply,
@@ -291,10 +291,7 @@ def _kustomization_impl(ctx):
         },
         is_executable = True,
     )
-    runfiles = ctx.runfiles(files = [output_file, envtest.kubectl]).merge_all([
-        coreutils_toolchain.default.default_runfiles,
-        yq_toolchain.default.default_runfiles,
-    ])
+    runfiles = ctx.runfiles(files = [output_file]).merge(tools_runfiles)
 
     return [
         DefaultInfo(

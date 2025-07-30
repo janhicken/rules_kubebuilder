@@ -2,12 +2,12 @@
 
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load(":kubectl.bzl", "KustomizeInfo")
-load(":utils.bzl", "join_path", "runfiles_path_array_literal")
+load(":utils.bzl", "runfiles_path_array_literal", "use_runtime_toolchains")
 
 def _kind_env_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
     docker_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain"]
-    kind = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"].kind
+    kind_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"]
     yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
 
     # Configure kind Cluster
@@ -20,7 +20,7 @@ def _kind_env_impl(ctx):
                 "containerPath": "/var/lib/containerd",
                 "hostPath": "${DOCKER_VOLUME_PATH}",
             }],
-            "image": kind.node_image,
+            "image": kind_toolchain.kind.node_image,
             "role": "control-plane",
         }],
     }
@@ -31,22 +31,18 @@ def _kind_env_impl(ctx):
     )
 
     # Configure runfiles
-    runfiles = ctx.runfiles(ctx.files.images + [config_file, kind.bin]).merge_all([
-        coreutils_toolchain.default.default_runfiles,
-        docker_toolchain.default.default_runfiles,
-        yq_toolchain.default.default_runfiles,
+    command_path, tools_runfiles = use_runtime_toolchains(ctx, [
+        coreutils_toolchain,
+        docker_toolchain,
+        kind_toolchain,
+        yq_toolchain,
     ])
+    runfiles = ctx.runfiles(ctx.files.images + [config_file]).merge(tools_runfiles)
     if ctx.executable.kustomization:
         runfiles = runfiles.merge(ctx.attr.kustomization[DefaultInfo].default_runfiles)
         kustomization_apply_bin = ctx.executable.kustomization.short_path
     else:
         kustomization_apply_bin = None
-    command_path = join_path(ctx, [
-        coreutils_toolchain.coreutils_info.bin,
-        docker_toolchain.docker.docker,
-        kind.bin,
-        yq_toolchain.yqinfo.bin,
-    ])
 
     # Prepare executable script
     executable = ctx.actions.declare_file(ctx.label.name + ".sh")
