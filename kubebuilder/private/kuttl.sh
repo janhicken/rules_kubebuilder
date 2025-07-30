@@ -15,7 +15,8 @@ readonly -a manifest_files=%manifest_files%
 readonly -a image_archives=%image_archives%
 readonly test_dir=%test_dir%
 
-readonly kind_node_image=%kind_node_image%
+readonly kind_cluster_name=%kind_cluster_name%
+readonly kind_config_file=%kind_config_file%
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                  Prepare                                   ║
@@ -31,8 +32,7 @@ readonly manifest_dir=$TEST_TMPDIR/manifests
 coreutils mkdir "$manifest_dir"
 coreutils ln -s "${manifest_files[@]/#/$PWD/}" "$manifest_dir"
 
-# Configure kind
-readonly kind_cluster_name=bzl${TEST_TARGET//[^a-z0-9.-]/-}
+# Configure kubeconfig
 export KUBECONFIG=$TEST_TMPDIR/kubeconfig.yaml
 
 # Create Docker volume for caching node data
@@ -41,18 +41,10 @@ docker volume create "$volume_name" >/dev/null
 mountpoint=$(docker volume inspect --format '{{ .Mountpoint }}' "$volume_name")
 readonly mountpoint
 
-readonly kind_config_file=$TEST_TMPDIR/kind-config.yaml
-coreutils cat >"$kind_config_file" <<EOF
-apiVersion: kind.x-k8s.io/v1alpha4
-kind: Cluster
-name: "$kind_cluster_name"
-nodes:
-  - role: control-plane
-    image: "$kind_node_image"
-    extraMounts:
-      - hostPath: $mountpoint
-        containerPath: /var/lib/containerd
-EOF
+# Add volume mount to kind config
+readonly final_kind_config_file=$TEST_TMPDIR/kind-config.yaml
+DOCKER_VOLUME_PATH="$mountpoint" yq '(.. | select(tag == "!!str")) |= envsubst' \
+	"$kind_config_file" >"$final_kind_config_file"
 
 # Configure kuttl
 readonly artifacts_dir=$TEST_LOGSPLITTER_OUTPUT_FILE

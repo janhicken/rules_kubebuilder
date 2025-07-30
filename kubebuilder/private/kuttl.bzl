@@ -8,6 +8,27 @@ def _kuttl_test_impl(ctx):
     docker_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain"]
     kind_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"]
     kuttl_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kuttl_toolchain"]
+    yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
+
+    # Configure kind Cluster
+    cluster = {
+        "apiVersion": "kind.x-k8s.io/v1alpha4",
+        "kind": "Cluster",
+        "name": ctx.attr.kind_cluster_name,
+        "nodes": [{
+            "extraMounts": [{
+                "containerPath": "/var/lib/containerd",
+                "hostPath": "${DOCKER_VOLUME_PATH}",
+            }],
+            "image": ctx.attr.kind_node_image or kind_toolchain.kind.node_image,
+            "role": "control-plane",
+        }],
+    }
+    kind_config_file = ctx.actions.declare_file(ctx.label.name + "-kind.json")
+    ctx.actions.write(
+        output = kind_config_file,
+        content = json.encode(cluster),
+    )
 
     executable = ctx.actions.declare_file(ctx.label.name + ".sh")
     command_path = join_path(ctx, [
@@ -15,6 +36,7 @@ def _kuttl_test_impl(ctx):
         docker_toolchain.docker.docker,
         kind_toolchain.kind.bin,
         kuttl_toolchain.kuttl.bin,
+        yq_toolchain.yqinfo.bin,
     ])
     ctx.actions.expand_template(
         template = ctx.file._kuttl_sh,
@@ -23,7 +45,8 @@ def _kuttl_test_impl(ctx):
             "%PATH%": shell.quote(command_path),
             "%crd_files%": runfiles_path_array_literal(ctx.files.crds),
             "%image_archives%": runfiles_path_array_literal(ctx.files.images),
-            "%kind_node_image%": shell.quote(ctx.attr.kind_node_image or kind_toolchain.kind.node_image),
+            "%kind_cluster_name%": shell.quote(ctx.attr.kind_cluster_name),
+            "%kind_config_file%": shell.quote(kind_config_file.short_path),
             "%manifest_files%": runfiles_path_array_literal(ctx.files.manifests),
             "%test_dir%": shell.quote(ctx.label.package),
         },
@@ -31,12 +54,13 @@ def _kuttl_test_impl(ctx):
     )
 
     runfiles = ctx.runfiles(
-        ctx.files.srcs + ctx.files.crds + ctx.files.manifests + ctx.files.images,
+        ctx.files.srcs + ctx.files.crds + ctx.files.manifests + ctx.files.images + [kind_config_file],
     ).merge_all([
         coreutils_toolchain.default.default_runfiles,
         docker_toolchain.default.default_runfiles,
         kind_toolchain.default.default_runfiles,
         kuttl_toolchain.default.default_runfiles,
+        yq_toolchain.default.default_runfiles,
     ])
     return [
         DefaultInfo(executable = executable, runfiles = runfiles),
@@ -59,6 +83,10 @@ kind cluster's logs and shut it down.
             doc = "OCI image tarballs to load into the kind cluster once it is started.",
             allow_files = [".tar"],
         ),
+        "kind_cluster_name": attr.string(
+            doc = "The kind cluster name.",
+            mandatory = True,
+        ),
         "kind_node_image": attr.string(
             doc = "Override the node Docker image to use for booting the kind cluster",
         ),
@@ -78,6 +106,7 @@ kind cluster's logs and shut it down.
     },
     toolchains = [
         "@aspect_bazel_lib//lib:coreutils_toolchain_type",
+        "@aspect_bazel_lib//lib:yq_toolchain_type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kuttl_toolchain",

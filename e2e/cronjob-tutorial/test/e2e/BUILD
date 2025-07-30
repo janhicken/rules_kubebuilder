@@ -11,6 +11,7 @@ kuttl_test(
     ],
     crds = ["//config/crd"],
     images = ["//:manager.tar"],
+    kind_cluster_name = "cronjob-tutorial-e2e",
     manifests = ["//config/local"],
     tags = [
         "requires-network",

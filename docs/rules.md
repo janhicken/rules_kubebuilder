@@ -123,7 +123,7 @@ The stamp variable needs to be referenced using the syntax like `${STABLE_VAR_NA
 <pre>
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kuttl_test")
 
-kuttl_test(<a href="#kuttl_test-name">name</a>, <a href="#kuttl_test-srcs">srcs</a>, <a href="#kuttl_test-crds">crds</a>, <a href="#kuttl_test-images">images</a>, <a href="#kuttl_test-kind_node_image">kind_node_image</a>, <a href="#kuttl_test-manifests">manifests</a>)
+kuttl_test(<a href="#kuttl_test-name">name</a>, <a href="#kuttl_test-srcs">srcs</a>, <a href="#kuttl_test-crds">crds</a>, <a href="#kuttl_test-images">images</a>, <a href="#kuttl_test-kind_cluster_name">kind_cluster_name</a>, <a href="#kuttl_test-kind_node_image">kind_node_image</a>, <a href="#kuttl_test-manifests">manifests</a>)
 </pre>
 
 Define a KuTTL test suite that runs on a kind cluster.
@@ -140,6 +140,7 @@ kind cluster's logs and shut it down.
 | <a id="kuttl_test-srcs"></a>srcs |  Test suite files to run.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | required |  |
 | <a id="kuttl_test-crds"></a>crds |  Custom resource definition manifests to install before running tests.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
 | <a id="kuttl_test-images"></a>images |  OCI image tarballs to load into the kind cluster once it is started.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="kuttl_test-kind_cluster_name"></a>kind_cluster_name |  The kind cluster name.   | String | required |  |
 | <a id="kuttl_test-kind_node_image"></a>kind_node_image |  Override the node Docker image to use for booting the kind cluster   | String | optional |  `""`  |
 | <a id="kuttl_test-manifests"></a>manifests |  Manifests to install before running tests.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
 
