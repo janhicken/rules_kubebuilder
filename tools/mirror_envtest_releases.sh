@@ -12,5 +12,5 @@ printf 'Put this in kubebuilder/private/envtest_releases.bzl:\n\n' >&2
 
 curl --fail --silent --show-error --location "$SOURCE_URL" |
 	yq --output-format=json '.releases' |
-	./transform_envtest_releases.py 1.30 |
+	./transform_envtest_releases.py 1.31 |
 	jq --sort-keys

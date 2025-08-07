@@ -49,7 +49,6 @@ CONTROLLER_GEN_PLATFORMS = {
 }
 
 KUBERNETES_VERSION_MAPPING = {
-    "1.30": "0.16.0",  # FIXME: we should theoretically use 0.15.0, but there are no binaries available for download
     "1.31": "0.16.5",
     "1.32": "0.17.3",
     "1.33": "0.18.0",
