@@ -1,7 +1,7 @@
 "Bazel Rules for creating a local dev environment with kind"
 
 load("@bazel_skylib//lib:shell.bzl", "shell")
-load(":kubectl.bzl", "KustomizeInfo")
+load(":kustomize.bzl", "KustomizeInfo")
 load(":utils.bzl", "runfiles_path_array_literal", "use_runtime_toolchains")
 
 def _kind_env_impl(ctx):

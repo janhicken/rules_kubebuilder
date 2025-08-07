@@ -16,8 +16,11 @@ load(
     "//kubebuilder/private:kubectl.bzl",
     _config_map = "config_map",
     _generic_secret = "generic_secret",
-    _kustomization = "kustomization",
     _tls_secret = "tls_secret",
+)
+load(
+    "//kubebuilder/private:kustomize.bzl",
+    _kustomization = "kustomization",
 )
 load(
     "//kubebuilder/private:kuttl.bzl",
