@@ -9,8 +9,8 @@ sh_binary(
 )
 
 sh_binary(
-    name = "expand_stamp_attrs",
-    srcs = [":expand_stamp_attrs.sh"],
+    name = "configure_kustomization",
+    srcs = [":configure_kustomization.sh"],
 )
 
 sh_binary(

@@ -13,11 +13,15 @@ kustomization(
 
 kustomization(
     name = "local",
-    image_tags = {"controller": "local"},
     patches = {
         ":ns_patch.yaml": json.encode({
             "kind": "Namespace",
             "name": "project-system",
+        }),
+        ":never_pull_patch.yaml": json.encode({
+            "kind": "Deployment",
+            "namespace": "project-system",
+            "name": "project-controller-manager",
         }),
     },
     resources = [

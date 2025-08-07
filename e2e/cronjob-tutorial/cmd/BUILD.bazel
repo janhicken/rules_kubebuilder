@@ -28,20 +28,3 @@ go_binary(
     embed = [":cmd_lib"],
     visibility = ["//visibility:public"],
 )
-
-go_binary(
-    name = "cmd_static_pure",
-    embed = [":cmd_lib"],
-    pure = "on",  # no cgo
-    static = "on",  # no libc
-)
-
-go_cross_binary(
-    name = "cmd_linux",
-    platform = select({
-        "@platforms//cpu:arm64": "//cfg:linux_aarch64",
-        "@platforms//cpu:x86_64": "//cfg:linux_x86_64",
-    }),
-    target = ":cmd_static_pure",
-    visibility = ["//visibility:public"],
-)

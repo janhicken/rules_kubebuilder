@@ -8,6 +8,7 @@ kustomization(
         "app.kubernetes.io/name": "project",
         "control-plane": "controller-manager",
     },
+    oci_image_digests = {"localhost.invalid/cronjob-controller": "//:manager_index.digest"},
     resources = [
         ":deployment.yaml",
         ":ns.yaml",

@@ -176,6 +176,7 @@ KustomizeInfo = provider(
 def _kustomization_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
     envtest_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain"]
+    jq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:jq_toolchain_type"]
     yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
 
     # Build depset of all transformer configurations
@@ -232,22 +233,31 @@ def _kustomization_impl(ctx):
         content = json.encode(kustomization_spec),
     )
 
-    # Expand stamp attributes
-    expand_stamp_attrs_inputs = [raw_kustomization_yaml]
-    expand_stamp_attrs_args = [raw_kustomization_yaml.path, kustomization_yaml.path]
+    # Configure kustomization
+    configure_direct_inputs = [raw_kustomization_yaml]
+    configure_transitive_inputs = []
+    configure_args = ctx.actions.args()
+    configure_args.add("-o", kustomization_yaml.path)
+
+    for image_ref, image_digest_target in ctx.attr.oci_image_digests.items():
+        configure_args.add_all("-i", image_digest_target.files, format_each = image_ref + "=%s")
+        configure_transitive_inputs.append(image_digest_target.files)
+
     stamp = maybe_stamp(ctx)
     if stamp:
-        expand_stamp_attrs_inputs += [stamp.stable_status_file, stamp.volatile_status_file]
-        expand_stamp_attrs_args += [stamp.stable_status_file.path, stamp.volatile_status_file.path]
+        configure_direct_inputs += [stamp.stable_status_file, stamp.volatile_status_file]
+        configure_args.add("-s", stamp.stable_status_file)
+        configure_args.add("-s", stamp.volatile_status_file)
+    configure_args.add(raw_kustomization_yaml)
+
     ctx.actions.run(
         outputs = [kustomization_yaml],
-        inputs = expand_stamp_attrs_inputs,
-        executable = ctx.executable._expand_stamp_attrs,
-        tools = [yq_toolchain.yqinfo.bin],
-        arguments = expand_stamp_attrs_args,
-        mnemonic = "ExpandStampAttrs",
-        env = yq_toolchain.template_variables.variables,
-        toolchain = "@aspect_bazel_lib//lib:yq_toolchain_type",
+        inputs = depset(configure_direct_inputs, transitive = configure_transitive_inputs),
+        executable = ctx.executable._configure_kustomization,
+        tools = [jq_toolchain.jqinfo.bin, yq_toolchain.yqinfo.bin],
+        arguments = [configure_args],
+        mnemonic = "ConfigureKustomization",
+        env = jq_toolchain.template_variables.variables | yq_toolchain.template_variables.variables,
     )
 
     # Run kubectl kustomize
@@ -314,7 +324,7 @@ kustomization = rule(
             doc = "A list of transformer configuration files.",
         ),
         "image_tags": attr.string_dict(
-            doc = "Modify the tags and/or digest for certain images.",
+            doc = "Modify the tags for certain images.",
         ),
         "labels": attr.string_dict(
             doc = "Add labels and optionally selectors to all resources.",
@@ -327,6 +337,10 @@ kustomization = rule(
         ),
         "namespace": attr.string(
             doc = "Adds namespace to all resources. Will override the existing namespace if it is set on a resource, or add it if it is not set on a resource.",
+        ),
+        "oci_image_digests": attr.string_keyed_label_dict(
+            allow_files = [".json.sha256"],
+            doc = "Inject digest references for images (key) based on the OCI images (value).",
         ),
         "patches": attr.label_keyed_string_dict(
             allow_files = [".yml", ".yaml", ".json"],
@@ -345,14 +359,15 @@ kustomization = rule(
             default = Label(":apply.sh"),
             allow_single_file = True,
         ),
-        "_expand_stamp_attrs": attr.label(
-            default = Label(":expand_stamp_attrs"),
+        "_configure_kustomization": attr.label(
+            default = Label(":configure_kustomization"),
             executable = True,
             cfg = "exec",
         ),
     } | STAMP_ATTRS,
     toolchains = [
         "@aspect_bazel_lib//lib:coreutils_toolchain_type",
+        "@aspect_bazel_lib//lib:jq_toolchain_type",
         "@aspect_bazel_lib//lib:yq_toolchain_type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain",
     ],
