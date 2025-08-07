@@ -4161,7 +4161,7 @@ spec:
         - --webhook-cert-path=/tmp/k8s-webhook-server/serving-certs
         command:
         - /manager
-        image: controller:latest
+        image: localhost.invalid/cronjob-controller@sha256:59b5644f12a01fc3ce0927bde8da6c642ef434993b2846edb1f85d0aaa5040aa
         livenessProbe:
           httpGet:
             path: /healthz

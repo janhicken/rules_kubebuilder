@@ -50,6 +50,7 @@ bzl_library(
         "//kubebuilder/private:envtest",
         "//kubebuilder/private:kind_env",
         "//kubebuilder/private:kubectl",
+        "//kubebuilder/private:kustomize",
         "//kubebuilder/private:kuttl",
     ],
 )

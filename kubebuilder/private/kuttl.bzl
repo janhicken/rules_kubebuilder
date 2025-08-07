@@ -8,6 +8,7 @@ def _kuttl_test_impl(ctx):
     docker_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain"]
     kind_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"]
     kuttl_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kuttl_toolchain"]
+    tar_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:tar_toolchain_type"]
     yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
 
     # Configure kind Cluster
@@ -36,6 +37,7 @@ def _kuttl_test_impl(ctx):
         docker_toolchain,
         kind_toolchain,
         kuttl_toolchain,
+        tar_toolchain,
         yq_toolchain,
     ])
     runfiles = ctx.runfiles(
@@ -105,6 +107,7 @@ kind cluster's logs and shut it down.
     },
     toolchains = [
         "@aspect_bazel_lib//lib:coreutils_toolchain_type",
+        "@aspect_bazel_lib//lib:tar_toolchain_type",
         "@aspect_bazel_lib//lib:yq_toolchain_type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain",

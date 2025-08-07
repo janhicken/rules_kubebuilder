@@ -1,20 +1,19 @@
 load("@aspect_bazel_lib//lib:tar.bzl", "tar")
-load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
 load("@container_structure_test//:defs.bzl", "container_structure_test")
 load("@gazelle//:def.bzl", "gazelle")
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kind_env")
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_load")
+load("//config:const.bzl", "CONTAINER_IMAGE_REPOSITORY", "CONTROLLER_NAME")
 
 gazelle(name = "gazelle")
 
 tar(
     name = "cmd_layer",
-    srcs = ["//cmd:cmd_linux"],
+    srcs = ["//cmd"],
     compress = "zstd",
-    mtree = ["manager uid=0 gid=0 mode=0755 time=0 type=file content=$(location //cmd:cmd_linux)"],
+    mtree = ["manager uid=0 gid=0 mode=0755 time=0 type=file content=$(location //cmd)"],
 )
 
-# Image for host platform
 oci_image(
     name = "manager",
     base = "@distroless_static",
@@ -27,23 +26,39 @@ oci_image(
     visibility = ["//visibility:public"],
 )
 
-# Image for x86_64
-platform_transition_filegroup(
-    name = "manager_x86_64",
-    srcs = [":manager"],
-    target_platform = "//cfg:linux_x86_64",
+oci_image_index(
+    name = "manager_index",
+    images = [":manager"],
+    platforms = [
+        "@rules_go//go/toolchain:linux_amd64",
+        "@rules_go//go/toolchain:linux_arm64",
+    ],
     visibility = ["//visibility:public"],
 )
 
 oci_load(
     name = "docker_load",
+    format = "docker",
     image = "//:manager",
-    repo_tags = ["controller:local"],
+    repo_tags = [CONTAINER_IMAGE_REPOSITORY],
 )
 
 filegroup(
     name = "manager.tar",
     srcs = [":docker_load"],
+    output_group = "tarball",
+)
+
+oci_load(
+    name = "oci_load",
+    format = "oci",
+    image = "//:manager_index",
+    repo_tags = [CONTAINER_IMAGE_REPOSITORY],
+)
+
+filegroup(
+    name = "manager_index.tar",
+    srcs = [":oci_load"],
     output_group = "tarball",
     visibility = ["//visibility:public"],
 )
@@ -58,7 +73,7 @@ container_structure_test(
 
 kind_env(
     name = "kind_env",
-    cluster_name = "cronjob-tutorial",
-    images = ["//:manager.tar"],
+    cluster_name = CONTROLLER_NAME,
+    images = ["//:manager_index.tar"],
     kustomization = "//config/local",
 )

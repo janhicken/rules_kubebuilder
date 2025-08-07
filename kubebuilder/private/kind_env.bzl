@@ -1,13 +1,14 @@
 "Bazel Rules for creating a local dev environment with kind"
 
 load("@bazel_skylib//lib:shell.bzl", "shell")
-load(":kubectl.bzl", "KustomizeInfo")
+load(":kustomize.bzl", "KustomizeInfo")
 load(":utils.bzl", "runfiles_path_array_literal", "use_runtime_toolchains")
 
 def _kind_env_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
     docker_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain"]
     kind_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"]
+    tar_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:tar_toolchain_type"]
     yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
 
     # Configure kind Cluster
@@ -35,6 +36,7 @@ def _kind_env_impl(ctx):
         coreutils_toolchain,
         docker_toolchain,
         kind_toolchain,
+        tar_toolchain,
         yq_toolchain,
     ])
     runfiles = ctx.runfiles(ctx.files.images + [config_file]).merge(tools_runfiles)
@@ -90,6 +92,7 @@ kind_env = rule(
     executable = True,
     toolchains = [
         "@aspect_bazel_lib//lib:coreutils_toolchain_type",
+        "@aspect_bazel_lib//lib:tar_toolchain_type",
         "@aspect_bazel_lib//lib:yq_toolchain_type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain",

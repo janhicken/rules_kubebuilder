@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit
 set -o nounset
+set -o pipefail
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                             Template Variables                             ║
@@ -60,8 +61,16 @@ else
 fi
 
 for image_archive in "${image_archives[@]}"; do
-	printf 'Loading image archive %s...\n' "$image_archive" >&2
-	kind load image-archive --name "$kind_cluster_name" "$image_archive"
+	image_ref=$(
+		tar -x --to-stdout --file "$image_archive" index.json |
+			yq '.manifests[0].annotations["org.opencontainers.image.ref.name"]'
+	)
+	printf >&2 'Loading image %s from archive %s...\n' "$image_ref" "$image_archive"
+
+	for node in $(kind get nodes --name "$kind_cluster_name"); do
+		docker exec --interactive "$node" \
+			ctr --namespace k8s.io images import --base-name "$image_ref" --digests --all-platforms --local - <"$image_archive"
+	done
 done
 
 if [[ -n "$kustomization_apply_bin" ]]; then

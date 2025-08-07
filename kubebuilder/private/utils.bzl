@@ -16,9 +16,10 @@ def use_runtime_toolchains(ctx, toolchains):
         for binary in binaries.to_list()
     ])
 
-    runfiles = ctx.runfiles().merge_all([
+    runfiles = ctx.runfiles(transitive_files = binaries).merge_all([
         toolchain.default.default_runfiles
         for toolchain in toolchains
+        if toolchain.default.default_runfiles
     ])
 
     return command_path, runfiles

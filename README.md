@@ -150,6 +150,80 @@ See the `kustomization` rule's [documentation](./docs/rules.md#kustomization) fo
 `kustomization` targets are runnable, causing the manifest to be applied to the currently selected `kubectl` context.
 When applying, CRDs are applied first and awaited to be `Established`, before all other resources get applied.
 
+#### Container Image Digest Pinning
+
+When building container images using [rules_oci](https://github.com/bazel-contrib/rules_oci), building reproducible
+container images for Go applications is easily achievable. The resulting digest of such an image or multi-platform image
+index is static.
+
+_rules_kubebuilder_ provides support for injecting digest references for images in Kubernetes pod specs as part of the
+`kustomization` rule. Using this feature, image references can be pinned to a certain version of an image.
+
+As software development is conducted both on `x86_64` and `aarch64` CPU architectures due to the prevalence of Apple
+Silicon nowadays, it is recommended to always create multi-platform image index for at least those two architectures.
+
+The following example creates such an index for a controller manager as well as a target for creating a tarball of it.
+
+```starlark
+load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_load")
+
+tar(
+    name = "cmd_layer",
+    srcs = ["//cmd"],
+    compress = "zstd",
+    mtree = ["manager uid=0 gid=0 mode=0755 time=0 type=file content=$(location //cmd)"],
+)
+
+oci_image(
+    name = "manager",
+    base = "@distroless_static",
+    entrypoint = ["/manager"],
+    tars = [":cmd_layer"],
+)
+
+oci_image_index(
+    name = "manager_index",
+    images = [":manager"],
+    platforms = [
+        "@rules_go//go/toolchain:linux_amd64",
+        "@rules_go//go/toolchain:linux_arm64",
+    ],
+)
+
+oci_load(
+    name = "oci_load",
+    format = "oci",
+    image = "//:manager_index",
+    repo_tags = ["myrepo.org/manager"],
+)
+
+filegroup(
+    name = "manager_index.tar",
+    srcs = [":oci_load"],
+    output_group = "tarball",
+)
+```
+
+The tarball built with `manager_index.tar` can be easily referenced in `kind_env` and `kuttl_test` targets.
+
+In order to pin an image reference to a specific digest, use the `kustomization` rule's `image_digests` attribute.
+This example pins the image `myrepo.org/manager` to the digest of the index built by `:manager_index`.
+
+> [!NOTE]
+> The `.digest`-suffixed target is created automatically by the `oci_image_index` macro.
+
+```starlark
+kustomization(
+    name = "manager",
+    image_digests = {"myrepo.org/manager": ":manager_index.digest"},
+    resources = ["deployment.yaml"],
+)
+```
+
+See the cronjob tutorial for an example on how to [build the container image](./e2e/cronjob-tutorial/BUILD.bazel)
+and [pin images with digests](./e2e/cronjob-tutorial/config/manager/BUILD).
+
 ### `kind_env`
 
 The [`kind_env`](./docs/rules.md#kind_env) rule can be used to define a local dev environment.

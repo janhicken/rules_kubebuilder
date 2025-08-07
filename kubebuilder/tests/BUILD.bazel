@@ -1,5 +1,5 @@
 load("@aspect_bazel_lib//lib:diff_test.bzl", "diff_test")
-load("//kubebuilder/private:kubectl.bzl", "config_map", "generic_secret", "kustomization", "tls_secret")
+load("//kubebuilder:defs.bzl", "config_map", "generic_secret", "kustomization", "tls_secret")
 load("//tools:linters.bzl", "shellcheck_test")
 
 package(default_testonly = True)
@@ -9,7 +9,7 @@ shellcheck_test(
     size = "small",
     srcs = [
         "//kubebuilder/private:apply",
-        "//kubebuilder/private:expand_stamp_attrs",
+        "//kubebuilder/private:configure_kustomization",
         "//kubebuilder/private:kind_env_sh",
         "//kubebuilder/private:kuttl_runner",
     ],
