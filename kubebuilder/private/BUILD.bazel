@@ -13,20 +13,16 @@ sh_binary(
     srcs = [":configure_kustomization.sh"],
 )
 
-sh_binary(
-    name = "kind_env_sh",
-    srcs = [":kind_env.sh"],
-)
-
-sh_binary(
-    name = "kuttl_runner",
-    srcs = [":kuttl.sh"],
-)
-
 bzl_library(
     name = "controller_gen",
     srcs = ["controller_gen.bzl"],
     deps = ["@rules_go//go:def"],
+)
+
+bzl_library(
+    name = "controller_gen_toolchain",
+    srcs = ["controller_gen_toolchain.bzl"],
+    deps = ["@aspect_bazel_lib//lib:repo_utils"],
 )
 
 bzl_library(
@@ -42,9 +38,18 @@ bzl_library(
 )
 
 bzl_library(
-    name = "controller_gen_toolchain",
-    srcs = ["controller_gen_toolchain.bzl"],
-    deps = ["@aspect_bazel_lib//lib:repo_utils"],
+    name = "kind_env",
+    srcs = ["kind_env.bzl"],
+    deps = [
+        ":kubectl",
+        ":utils",
+        "@bazel_skylib//lib:shell",
+    ],
+)
+
+sh_binary(
+    name = "kind_env_sh",
+    srcs = [":kind_env.sh"],
 )
 
 bzl_library(
@@ -65,22 +70,17 @@ bzl_library(
 )
 
 bzl_library(
-    name = "kind_env",
-    srcs = ["kind_env.bzl"],
-    deps = [
-        ":kubectl",
-        ":utils",
-        "@bazel_skylib//lib:shell",
-    ],
-)
-
-bzl_library(
     name = "kuttl",
     srcs = ["kuttl.bzl"],
     deps = [
         ":utils",
         "@bazel_skylib//lib:shell",
     ],
+)
+
+sh_binary(
+    name = "kuttl_runner",
+    srcs = [":kuttl.sh"],
 )
 
 bzl_library(
