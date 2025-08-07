@@ -1,5 +1,6 @@
 load("@aspect_bazel_lib//lib:diff_test.bzl", "diff_test")
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kustomization")
+load("//config:const.bzl", "CONTAINER_IMAGE_REPOSITORY")
 
 kustomization(
     name = "manager",
@@ -8,7 +9,7 @@ kustomization(
         "app.kubernetes.io/name": "project",
         "control-plane": "controller-manager",
     },
-    oci_image_digests = {"localhost.invalid/cronjob-controller": "//:manager_index.digest"},
+    oci_image_digests = {CONTAINER_IMAGE_REPOSITORY: "//:manager_index.digest"},
     resources = [
         ":deployment.yaml",
         ":ns.yaml",
