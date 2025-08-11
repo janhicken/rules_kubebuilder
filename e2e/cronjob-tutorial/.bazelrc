@@ -14,6 +14,9 @@ common --lockfile_mode=off
 # Forward DOCKER_HOST environment variable to all tests
 test --test_env=DOCKER_HOST
 
+# Repo names are included in built Go binaries. Always use ++ for reproducibility.
+common --incompatible_use_plus_in_repo_names
+
 # Load any settings & overrides specific to the current user from `../../.aspect/bazelrc/user.bazelrc`.
 # This file should appear in `.gitignore` so that settings are not shared with team members. This
 # should be last statement in this config so the user configuration is able to overwrite flags from
