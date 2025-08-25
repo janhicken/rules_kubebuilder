@@ -20,7 +20,7 @@ single_version_override(
 )
 
 bazel_dep(name = "aspect_rules_lint", version = "1.6.0", dev_dependency = True)
-bazel_dep(name = "bazel_skylib_gazelle_plugin", version = "1.4.1", dev_dependency = True)
+bazel_dep(name = "bazel_skylib_gazelle_plugin", version = "1.8.1", dev_dependency = True)
 bazel_dep(name = "buildifier_prebuilt", version = "8.0.3", dev_dependency = True)
 bazel_dep(name = "gazelle", version = "0.42.0", dev_dependency = True)
 
