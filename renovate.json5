@@ -1,0 +1,25 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+  ],
+  ignorePaths: [
+    "e2e/**"
+  ],
+  packageRules: [
+    // Disable updates to non-dev dependencies.
+    // These are just minimum requirements that should go out of the users' ways.
+    {
+      matchDatasources: ["bazel"],
+      matchDepNames: [
+        "aspect_bazel_lib",
+        "bazel_features",
+        "bazel_skylib",
+        "platforms",
+        "rules_go",
+        "rules_shell",
+      ],
+      enabled: false
+    },
+  ],
+}
