@@ -8,6 +8,9 @@ import %workspace%/.aspect/bazelrc/performance.bazelrc
 # Required until this is the default; expected in Bazel 7
 common --enable_bzlmod
 
+# An outdated lock file is an error
+common --lockfile_mode=error
+
 # Configure stamping (https://bazel.build/docs/user-manual#workspace-status)
 build --workspace_status_command=tools/workspace_status.sh
 

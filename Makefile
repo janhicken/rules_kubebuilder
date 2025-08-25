@@ -34,8 +34,12 @@ lintfix:
 gazelle:
 	bazel run //tools:gazelle
 
+.PHONY: lock
+lock:
+	bazel mod deps --lockfile_mode=update
+
 .PHONY: tidy
-tidy: fmt lintfix gazelle
+tidy: fmt lintfix gazelle lock
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                    Test                                    ║

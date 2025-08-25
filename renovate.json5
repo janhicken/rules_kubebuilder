@@ -22,4 +22,8 @@
       enabled: false
     },
   ],
+  postUpgradeTasks: {
+    commands: ["make lock"],
+    executionMode: "branch",
+  }
 }
