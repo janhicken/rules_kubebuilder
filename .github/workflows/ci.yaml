@@ -16,7 +16,7 @@ jobs:
     name: Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: bazel-contrib/setup-bazel@0.15.0
         with:
           bazelisk-cache: true
@@ -27,7 +27,7 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: bazel-contrib/setup-bazel@0.15.0
         with:
           bazelisk-cache: true
@@ -43,7 +43,7 @@ jobs:
         os: ["ubuntu-latest", "macos-latest"]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: bazel-contrib/setup-bazel@0.15.0
         with:
           bazelisk-cache: true
