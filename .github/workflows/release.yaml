@@ -1,21 +1,28 @@
 # Cut a release whenever a new tag is pushed to the repo.
 name: Release
 on:
-  # Can be triggered from the tag.yaml workflow
-  workflow_call:
-    inputs:
-      tag_name:
-        required: true
-        type: string
-  # Or, developers can manually push a tag from their clone
   push:
     tags:
-      - "v*.*.*"
-permissions:
-  contents: write
+      - v*
 jobs:
   release:
-    uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@0b644c3ee5c7cd9a7657f7e782b26a599d9b6d5c # 2025-01-23
+    name: Release
+    uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@v7.2.3
     with:
       release_files: rules_kubebuilder-*.tar.gz
-      tag_name: ${{ inputs.tag_name }}
+      prerelease: false
+    permissions:
+      contents: write
+  publish:
+    name: Publish to BCR
+    uses: bazel-contrib/publish-to-bcr/.github/workflows/publish.yaml@v0.2.2
+    with:
+      tag_name: ${{ github.ref_name }}
+      registry_fork: janhicken/bazel-central-registry
+      attest: false
+    permissions:
+      attestations: write
+      contents: write
+      id-token: write
+    secrets:
+      publish_token: ${{ secrets.BCR_PUBLISH_TOKEN }}
