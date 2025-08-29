@@ -182,7 +182,7 @@ private key.
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_crds")
 
 controller_gen_crds(<a href="#controller_gen_crds-name">name</a>, <a href="#controller_gen_crds-srcs">srcs</a>, <a href="#controller_gen_crds-allow_dangerous_types">allow_dangerous_types</a>, <a href="#controller_gen_crds-header_file">header_file</a>, <a href="#controller_gen_crds-max_description_length">max_description_length</a>, <a href="#controller_gen_crds-year">year</a>,
-                    <a href="#controller_gen_crds-kwargs">kwargs</a>)
+                    <a href="#controller_gen_crds-kwargs">**kwargs</a>)
 </pre>
 
 Generates CustomResourceDefinition objects from Golang struct definitions.
@@ -208,7 +208,7 @@ Generates CustomResourceDefinition objects from Golang struct definitions.
 <pre>
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_objects")
 
-controller_gen_objects(<a href="#controller_gen_objects-name">name</a>, <a href="#controller_gen_objects-srcs">srcs</a>, <a href="#controller_gen_objects-header_file">header_file</a>, <a href="#controller_gen_objects-year">year</a>, <a href="#controller_gen_objects-kwargs">kwargs</a>)
+controller_gen_objects(<a href="#controller_gen_objects-name">name</a>, <a href="#controller_gen_objects-srcs">srcs</a>, <a href="#controller_gen_objects-header_file">header_file</a>, <a href="#controller_gen_objects-year">year</a>, <a href="#controller_gen_objects-kwargs">**kwargs</a>)
 </pre>
 
 Generates code containing DeepCopy, DeepCopyInto and DeepCopyObject method implementations.
@@ -232,7 +232,7 @@ Generates code containing DeepCopy, DeepCopyInto and DeepCopyObject method imple
 <pre>
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_rbac")
 
-controller_gen_rbac(<a href="#controller_gen_rbac-name">name</a>, <a href="#controller_gen_rbac-srcs">srcs</a>, <a href="#controller_gen_rbac-role_name">role_name</a>, <a href="#controller_gen_rbac-header_file">header_file</a>, <a href="#controller_gen_rbac-year">year</a>, <a href="#controller_gen_rbac-kwargs">kwargs</a>)
+controller_gen_rbac(<a href="#controller_gen_rbac-name">name</a>, <a href="#controller_gen_rbac-srcs">srcs</a>, <a href="#controller_gen_rbac-role_name">role_name</a>, <a href="#controller_gen_rbac-header_file">header_file</a>, <a href="#controller_gen_rbac-year">year</a>, <a href="#controller_gen_rbac-kwargs">**kwargs</a>)
 </pre>
 
 Generates RBAC manifests from kubebuilder:rbac markers.
@@ -257,7 +257,7 @@ Generates RBAC manifests from kubebuilder:rbac markers.
 <pre>
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_webhooks")
 
-controller_gen_webhooks(<a href="#controller_gen_webhooks-name">name</a>, <a href="#controller_gen_webhooks-srcs">srcs</a>, <a href="#controller_gen_webhooks-header_file">header_file</a>, <a href="#controller_gen_webhooks-year">year</a>, <a href="#controller_gen_webhooks-kwargs">kwargs</a>)
+controller_gen_webhooks(<a href="#controller_gen_webhooks-name">name</a>, <a href="#controller_gen_webhooks-srcs">srcs</a>, <a href="#controller_gen_webhooks-header_file">header_file</a>, <a href="#controller_gen_webhooks-year">year</a>, <a href="#controller_gen_webhooks-kwargs">**kwargs</a>)
 </pre>
 
 Generates (partial) {Mutating,Validating}WebhookConfiguration objects.
@@ -281,7 +281,7 @@ Generates (partial) {Mutating,Validating}WebhookConfiguration objects.
 <pre>
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "envtest_test")
 
-envtest_test(<a href="#envtest_test-name">name</a>, <a href="#envtest_test-envtest_repo">envtest_repo</a>, <a href="#envtest_test-kwargs">kwargs</a>)
+envtest_test(<a href="#envtest_test-name">name</a>, <a href="#envtest_test-envtest_repo">envtest_repo</a>, <a href="#envtest_test-kwargs">**kwargs</a>)
 </pre>
 
 Configures a go_test with envtest binaries

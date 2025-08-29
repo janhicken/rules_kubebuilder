@@ -16,6 +16,7 @@
         "bazel_features",
         "bazel_skylib",
         "platforms",
+        "rules_cc",
         "rules_go",
         "rules_shell",
       ],
