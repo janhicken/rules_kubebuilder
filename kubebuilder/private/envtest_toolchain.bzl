@@ -76,6 +76,15 @@ ENVTEST_VERSIONS = {
         "linux_s390x": "sha512-ef9dvhPAUfoOnaMEPU9ws2CyItWFPCMAKYvklkrg3M10YJiL3dC1UrMjgsNobG674zVWZV+KqFdJVJfz8WAV/w==",
         "windows_amd64": "sha512-qQ3Wf6ypNGfms9PidZN2gePLUOAOIGpgmEui7nXIwjdiTuVXeuZHc6jurnJr2MixKkXnbZ2hgJ52+vl1/udxkQ==",
     },
+    "1.34.0": {
+        "darwin_amd64": "sha512-6S5BoYPoUE03Y71UhkGBZ85PYgRVbTpTx6vC5TjaY525QPihdkAw2L1cVljLw+yjXhwXSSkLdPwWU9puUX/JlQ==",
+        "darwin_arm64": "sha512-uEHl/6NRsuoXSAk7YSvGPiOjY2LJAwTOxJjx7inChYtjwUYBKlYvOdkgMdumioGaOB1xw0i1Z8nemGwGnt/OBA==",
+        "linux_amd64": "sha512-RFtN1UOWN0SSX//VIlQT2FKCFEKyRNtxAFerw6mM9aHhOaQ7S5eUkBA2Chmo/6tJcduX2rpg1y3fHMJgy/44RA==",
+        "linux_arm64": "sha512-BvO3KxM1lfRjhJ2M3nw2MH4uUeFwm97RZZaUwb05SR0xM9U00zp8ON8RNsMU0eGtSDaExRnAaU9QW3A+0uRO+Q==",
+        "linux_ppc64le": "sha512-U97krbcIsomNQJcykGk0UiGFiOeEhhPpFNQg0zqVD21ruL/MO4eck54pVSAtSq5WddgBvNyzOxpADQwJC82rAg==",
+        "linux_s390x": "sha512-TbqG1KOeGpUG2w39Vij8Lx7ViiDdWizdNB0cRfEvLFLRwQM2R/4prXf4KuIlCFvRGY0nPCnO4uts69Yt41IS2A==",
+        "windows_amd64": "sha512-yM7YP8bQbS5gknsIBhQqhpfcL9PSJeMzdrZdmRNE0JDeFqh6QORJwpJs/Q4ZgaNQXzpTTdtxkPXSbQV2XWozzg==",
+    },
 }
 
 def _envtest_toolchains_repo_impl(rctx):

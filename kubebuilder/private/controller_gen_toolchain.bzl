@@ -52,6 +52,7 @@ KUBERNETES_VERSION_MAPPING = {
     "1.31": "0.16.5",
     "1.32": "0.17.3",
     "1.33": "0.18.0",
+    "1.34": "0.19.0",
 }
 
 CONTROLLER_GEN_VERSIONS = {
@@ -153,6 +154,15 @@ CONTROLLER_GEN_VERSIONS = {
         "linux_ppc64le": "sha384-95LDfZKmZfmZK6pGYkC3aWTAVhk7PStDdAQrHcZTV6zivu9tdozOTmvQDOEtgZq/",
         "linux_s390x": "sha384-qA0zRT0NRmO6N8HhzTxbmTvx/t9SOCoIpxyalYKXIk1zvYFd8br8mJyUJ2XEbbRv",
         "windows_amd64": "sha384-NSGhVYQnN+BdgzvodcWr5fFmMfGUQdotb+4Xxexn8L1P2JJvTMKczLXIWT9ZdEDJ",
+    },
+    "0.19.0": {
+        "darwin_amd64": "sha384-RWp3N0j++AFWbkpocYTXAIcvcFZ4M52rJNrGytiL5UKuSqyxmIiszxnHvJrKX/np",
+        "darwin_arm64": "sha384-iQSDVVU9iiUeDlW1E0gi+EweyZKcCXVO3ABkmvpn7GLRPTmqwMEHILl6eLrwAoA6",
+        "linux_amd64": "sha384-PmbZLpovXiraxmmokhNoZ9XITn2eYqSs2u8erFzq4eX8BJsA+QbBaETREuYP+15+",
+        "linux_arm64": "sha384-GlPisQ9VwsIdZ4hqLSjl+fMRTJm+faUPgTWyyTPa5DNg7nCL1rDDVORn2/esluqG",
+        "linux_ppc64le": "sha384-r50zeAnuCqCB8VgGy7i0LtxxzTSgNlA9lsayxcmNIV+5LMnuP3gqt9TgBHVxw0vz",
+        "linux_s390x": "sha384-vj0KJQB16WsN/FcP9zyX8ucIzus8atuv2jRGnVD7a48BukGzfXMoxtHkF6QiYZBN",
+        "windows_amd64": "sha384-J6ZjXXWtWleEGCokfJc9/JuaDNK/eMdkzeK/rQWvxYqxvwrTjJoBoPjmT3nl0w8C",
     },
 }
 
