@@ -33,7 +33,7 @@ DOCKER_PLATFORMS = {
     ),
 }
 
-DEFAULT_DOCKER_VERSION = "28.3.2"
+DEFAULT_DOCKER_VERSION = "28.3.3"
 
 DOCKER_VERSIONS = {
     "28.3.2": {
@@ -42,6 +42,13 @@ DOCKER_VERSIONS = {
         "mac_aarch64": "sha384-A80cYTLVniH2Qeiin59k94CaU87/EKoezCQwvSPUSboOZpquUTXFZf0XkOUl4MRQ",
         "mac_x86_64": "sha384-DWE1a/Rf1LNx3Sb7vY6TrDSkRgbgOD3l5Gg+liK6mKqteoZKvKLB7zrR5MHu5hX/",
         "win_x86_64": "sha384-Gjf8iJT5tPM0vsLFGJrSK+cDZqDng275BVXtYKHrrtO2Mqk09tWyNcn4YdiTwnvL",
+    },
+    "28.3.3": {
+        "linux_aarch64": "sha384-L9IIs91H6fCaaRo9VzsYeXRJ/ru3nKDgSBF9gGIx/t2QVRo4qPQs8YL331UqwHn5",
+        "linux_x86_64": "sha384-gsYhx683QJnD6LtE3bYjI72HlNOxpgjDFqbVshUvebMnF2PMRsmJCAvGPF8DQKoz",
+        "mac_aarch64": "sha384-bMLO4hEehE4VqnU4JQdkccCjvmrroJ6PIAXOXmXFAjRaY2GMD/6GDh31cpmHAO7A",
+        "mac_x86_64": "sha384-s0yFObqJlEps0eAN2gmgRP24AhvyTgZboQOgo63BFfizGS3j/5ctWUG9tanhLEXA",
+        "win_x86_64": "sha384-HmVQobOkZF6f9cDPT/swUAq5fsj+F9rMsfbYxgvg1ih+2Y/xKUbJEtq7/fQQhMFp",
     },
 }
 
