@@ -15,7 +15,7 @@ jobs:
       contents: write
   publish:
     name: Publish to BCR
-    uses: bazel-contrib/publish-to-bcr/.github/workflows/publish.yaml@v0.2.2
+    uses: bazel-contrib/publish-to-bcr/.github/workflows/publish.yaml@v0.2.3
     with:
       tag_name: ${{ github.ref_name }}
       registry_fork: janhicken/bazel-central-registry
