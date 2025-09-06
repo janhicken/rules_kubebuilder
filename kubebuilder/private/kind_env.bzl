@@ -4,6 +4,13 @@ load("@bazel_skylib//lib:shell.bzl", "shell")
 load(":kustomize.bzl", "KustomizeInfo")
 load(":utils.bzl", "runfiles_path_array_literal", "use_runtime_toolchains")
 
+KindEnvironmentInfo = provider(
+    "Info about a kind environment",
+    fields = {
+        "cluster_name": "the kind cluster name",
+    },
+)
+
 def _kind_env_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
     docker_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain"]
@@ -61,11 +68,16 @@ def _kind_env_impl(ctx):
         is_executable = True,
     )
 
-    return [DefaultInfo(
-        files = depset([config_file, executable]),
-        executable = executable,
-        runfiles = runfiles,
-    )]
+    return [
+        DefaultInfo(
+            files = depset([config_file, executable]),
+            executable = executable,
+            runfiles = runfiles,
+        ),
+        KindEnvironmentInfo(
+            cluster_name = ctx.attr.cluster_name,
+        ),
+    ]
 
 kind_env = rule(
     implementation = _kind_env_impl,
@@ -104,6 +116,8 @@ All clusters with the same name created by this rule will share the same volume.
 This way, container images do not have to be re-downloaded every time the cluster is started.
 
 A kubeconfig for the cluster will be written to a filed named `${cluster_name}-kubeconfig.yaml` in the workspace root.
+If the environment variable `KUBECONFIG` is set, it will be written to that path instead.
 
 Running the rule multiple times is idempotent.""",
+    provides = [DefaultInfo, KindEnvironmentInfo],
 )

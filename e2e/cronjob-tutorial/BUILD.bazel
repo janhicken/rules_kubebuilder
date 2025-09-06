@@ -76,4 +76,5 @@ kind_env(
     cluster_name = CONTROLLER_NAME,
     images = ["//:manager_index.tar"],
     kustomization = "//config/local",
+    visibility = ["//test:__subpackages__"],
 )

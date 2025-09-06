@@ -1,6 +1,10 @@
 "# Kubebuilder Rules"
 
 load(
+    "//kubebuilder/private:chainsaw.bzl",
+    _chainsaw_test = "chainsaw_test",
+)
+load(
     "//kubebuilder/private:controller_gen.bzl",
     _controller_gen_crds = "controller_gen_crds",
     _controller_gen_objects = "controller_gen_objects",
@@ -26,6 +30,8 @@ load(
     "//kubebuilder/private:kuttl.bzl",
     _kuttl_test = "kuttl_test",
 )
+
+chainsaw_test = _chainsaw_test
 
 controller_gen_crds = _controller_gen_crds
 controller_gen_objects = _controller_gen_objects

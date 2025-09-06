@@ -100,6 +100,28 @@ bzl_library(
     ],
 )
 
+sh_binary(
+    name = "chainsaw_test",
+    srcs = [
+        ":chainsaw_test.sh",
+    ],
+)
+
+bzl_library(
+    name = "chainsaw",
+    srcs = ["chainsaw.bzl"],
+    deps = [
+        ":kind_env",
+        ":utils",
+        "@bazel_skylib//lib:shell",
+    ],
+)
+
+bzl_library(
+    name = "chainsaw_toolchain",
+    srcs = ["chainsaw_toolchain.bzl"],
+)
+
 bzl_library(
     name = "docker_toolchain",
     srcs = ["docker_toolchain.bzl"],

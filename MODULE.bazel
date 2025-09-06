@@ -32,6 +32,21 @@ bazel_dep(name = "gazelle", version = "0.45.0", dev_dependency = True)
 
 kubebuilder = use_extension("@io_github_janhicken_rules_kubebuilder//kubebuilder:extensions.bzl", "kubebuilder")
 kubebuilder.for_kubernetes(version = "1.32.0")
-use_repo(kubebuilder, "controller_gen_toolchains", "docker_toolchains", "envtest_toolchains", "kind_toolchains", "kuttl_toolchains")
+use_repo(
+    kubebuilder,
+    "chainsaw_toolchains",
+    "controller_gen_toolchains",
+    "docker_toolchains",
+    "envtest_toolchains",
+    "kind_toolchains",
+    "kuttl_toolchains",
+)
 
-register_toolchains("@controller_gen_toolchains//:all", "@docker_toolchains//:all", "@envtest_toolchains//:all", "@kind_toolchains//:all", "@kuttl_toolchains//:all")
+register_toolchains(
+    "@chainsaw_toolchains//:all",
+    "@controller_gen_toolchains//:all",
+    "@docker_toolchains//:all",
+    "@envtest_toolchains//:all",
+    "@kind_toolchains//:all",
+    "@kuttl_toolchains//:all",
+)
