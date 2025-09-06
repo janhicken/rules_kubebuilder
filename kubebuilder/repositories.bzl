@@ -5,6 +5,14 @@ See https://docs.bazel.build/versions/main/skylark/deploying.html#dependencies
 """
 
 load(
+    "//kubebuilder/private:chainsaw_toolchain.bzl",
+    "CHAINSAW_PLATFORMS",
+    "chainsaw_platform_repo",
+    "chainsaw_toolchains_repo",
+    _CHAINSAW_VERSIONS = "CHAINSAW_VERSIONS",
+    _DEFAULT_CHAINSAW_VERSION = "DEFAULT_CHAINSAW_VERSION",
+)
+load(
     "//kubebuilder/private:controller_gen_toolchain.bzl",
     "CONTROLLER_GEN_PLATFORMS",
     "KUBERNETES_VERSION_MAPPING",
@@ -48,9 +56,11 @@ load(
 
 KUBERNETES_VERSIONS = ENVTEST_VERSIONS.keys()
 DEFAULT_KUBERNETES_VERSION = "1.31.0"
+CHAINSAW_VERSIONS = _CHAINSAW_VERSIONS.keys()
 DOCKER_VERSIONS = _DOCKER_VERSIONS.keys()
 KIND_VERSIONS = _KIND_VERSIONS.keys()
 KUTTL_VERSIONS = _KUTTL_VERSIONS.keys()
+DEFAULT_CHAINSAW_VERSION = _DEFAULT_CHAINSAW_VERSION
 DEFAULT_DOCKER_VERSION = _DEFAULT_DOCKER_VERSION
 DEFAULT_KIND_VERSION = _DEFAULT_KIND_VERSION
 DEFAULT_KUTTL_VERSION = _DEFAULT_KUTTL_VERSION
@@ -58,6 +68,7 @@ DEFAULT_KUTTL_VERSION = _DEFAULT_KUTTL_VERSION
 def register_kubebuilder_repositories_and_toolchains(
         name = "",
         kubernetes_version = DEFAULT_KUBERNETES_VERSION,
+        chainsaw_version = _DEFAULT_CHAINSAW_VERSION,
         docker_version = DEFAULT_DOCKER_VERSION,
         kind_version = _DEFAULT_KIND_VERSION,
         kuttl_version = _DEFAULT_KUTTL_VERSION,
@@ -68,6 +79,7 @@ def register_kubebuilder_repositories_and_toolchains(
     Args:
         name: a common prefix for all generated repositories
         kubernetes_version: the target Kubernetes version to pick toolchain versions for
+        chainsaw_version: the Chainsaw version to use
         docker_version: the Docker version to use
         kind_version: the kind version to use
         kuttl_version: the kuttl version to use
@@ -82,12 +94,38 @@ def register_kubebuilder_repositories_and_toolchains(
             available = KUBERNETES_VERSION_MAPPING.keys(),
         ))
     controller_gen_version = KUBERNETES_VERSION_MAPPING[k8s_version_major_minor]
+    register_chainsaw_toolchains(name + DEFAULT_CHAINSAW_REPOSITORY, chainsaw_version)
     register_controller_gen_toolchains(name + DEFAULT_CONTROLLER_GEN_REPOSITORY, controller_gen_version, register)
     register_docker_repositories(name + DEFAULT_DOCKER_REPOSITORY, docker_version)
     register_envtest_repositories(name + DEFAULT_ENVTEST_REPOSITORY, kubernetes_version)
 
     register_kind_repositories(name + DEFAULT_KIND_REPOSITORY, kind_version, k8s_version_major_minor)
     register_kuttl_repositories(name + DEFAULT_KUTTL_REPOSITORY, kuttl_version)
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
+# ║                                  Chainsaw                                  ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+DEFAULT_CHAINSAW_REPOSITORY = "chainsaw"
+
+def register_chainsaw_toolchains(name, version):
+    """Registers Chainsaw repositories
+
+    Args:
+        name: override the prefix for the generated repositories
+        version: the version of Chainsaw to use (see https://github.com/kyverno/chainsaw/releases)
+    """
+    for platform in CHAINSAW_PLATFORMS.keys():
+        chainsaw_platform_repo(
+            name = "%s_%s" % (name, platform),
+            platform = platform,
+            version = version,
+        )
+
+    chainsaw_toolchains_repo(
+        name = "%s_toolchains" % name,
+        user_repository_name = name,
+    )
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                               controller-gen                               ║
@@ -213,7 +251,7 @@ def register_kuttl_repositories(name, version):
 
     Args:
         name: override the prefix for the generated repositories
-        version: the version of kind to use (see https://github.com/kudobuilder/kuttl/releases)
+        version: the version of kuttl to use (see https://github.com/kudobuilder/kuttl/releases)
     """
     for platform in KUTTL_PLATFORMS.keys():
         kuttl_platform_repo(

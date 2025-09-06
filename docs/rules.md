@@ -2,6 +2,31 @@
 
 # Kubebuilder Rules
 
+<a id="chainsaw_test"></a>
+
+## chainsaw_test
+
+<pre>
+load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "chainsaw_test")
+
+chainsaw_test(<a href="#chainsaw_test-name">name</a>, <a href="#chainsaw_test-srcs">srcs</a>, <a href="#chainsaw_test-kind_env">kind_env</a>)
+</pre>
+
+Define a Chainsaw test that runs on a kind cluster.
+
+Please remember to set the tag `supports-graceful-termination` on the target to allow the test runner to export the
+kind cluster's logs and shut it down.
+
+**ATTRIBUTES**
+
+
+| Name  | Description | Type | Mandatory | Default |
+| :------------- | :------------- | :------------- | :------------- | :------------- |
+| <a id="chainsaw_test-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
+| <a id="chainsaw_test-srcs"></a>srcs |  YAML file(s) that make(s) up the Chainsaw test.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | required |  |
+| <a id="chainsaw_test-kind_env"></a>kind_env |  The kind environment to run the tests in.   | <a href="https://bazel.build/concepts/labels">Label</a> | required |  |
+
+
 <a id="config_map"></a>
 
 ## config_map
@@ -67,6 +92,7 @@ All clusters with the same name created by this rule will share the same volume.
 This way, container images do not have to be re-downloaded every time the cluster is started.
 
 A kubeconfig for the cluster will be written to a filed named `${cluster_name}-kubeconfig.yaml` in the workspace root.
+If the environment variable `KUBECONFIG` is set, it will be written to that path instead.
 
 Running the rule multiple times is idempotent.
 

@@ -9,7 +9,8 @@ This repository provides Bazel rules for the ecosystem of Kubebuilder-style Kube
 * Testing with [envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest)
 * Configuration management using [kustomize](https://kustomize.io/)
 * Creating local dev environments using [kind](https://kind.sigs.k8s.io/)
-* Testing with [kuttl](https://kuttl.dev/) on [kind](https://kind.sigs.k8s.io/) clusters
+* Testing with [kuttl](https://kuttl.dev/) and [Chainsaw](https://kyverno.github.io/chainsaw/)
+  on [kind](https://kind.sigs.k8s.io/) clusters
 
 ## Installation
 
@@ -300,7 +301,32 @@ kuttl_test(
     ],
     crds = ["//config/crd"],
     images = ["//:image.tar"],
+    kind_cluster_name = "e2e-kuttl",
     manifests = ["//config/local"],
     tags = ["supports-graceful-termination"],
+)
+```
+
+### `chainsaw_test`
+
+Similar to KuTTL, you can use `chainsaw_test` to run a [Chainsaw](https://kyverno.github.io/chainsaw/) tests
+hermetically on a kind cluster.
+
+This rule depends on the [`kind_env`](#kind_env) rule for setting up the kind cluster environment.
+The test will re-use any cluster with the same name that is already running.
+
+**IMPORTANT**: The tag `supports-graceful-termination` is required on the target in order to have Bazel allow the test
+to terminate gracefully and clean up the kind cluster when interrupted.
+Pressing Ctrl+C might be a source for such an interruption. See the example below on how to set the tag.
+
+```starlark
+chainsaw_test(
+    name = "e2e",
+    size = "large",
+    srcs = glob(["my-test/*.yaml"]),
+    tags = [
+        "requires-network",
+        "supports-graceful-termination",
+    ],
 )
 ```

@@ -2,6 +2,45 @@
 """
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
+# ║                                  Chainsaw                                  ║
+# ╚════════════════════════════════════════════════════════════════════════════╝
+
+ChainsawInfo = provider(
+    doc = "Information about the Chainsaw toolchain",
+    fields = {"bin": "Executable chainsaw binary"},
+)
+
+def _chainsaw_toolchain_impl(ctx):
+    default = DefaultInfo(
+        files = ctx.attr.bin[DefaultInfo].files,
+        runfiles = ctx.runfiles(files = [ctx.file.bin]),
+    )
+
+    toolchain_info = platform_common.ToolchainInfo(
+        default = default,
+        chainsaw = ChainsawInfo(
+            bin = ctx.executable.bin,
+        ),
+    )
+
+    return [default, toolchain_info]
+
+chainsaw_toolchain = rule(
+    implementation = _chainsaw_toolchain_impl,
+    attrs = {
+        "bin": attr.label(
+            doc = "Executable Chainsaw binary",
+            executable = True,
+            allow_single_file = True,
+            mandatory = True,
+            cfg = "exec",
+        ),
+    },
+    doc = "Defines a Chainsaw toolchain.",
+    provides = [DefaultInfo, platform_common.ToolchainInfo],
+)
+
+# ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                               controller-gen                               ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 

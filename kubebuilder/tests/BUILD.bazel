@@ -9,6 +9,7 @@ shellcheck_test(
     size = "small",
     srcs = [
         "//kubebuilder/private:apply",
+        "//kubebuilder/private:chainsaw_test",
         "//kubebuilder/private:configure_kustomization",
         "//kubebuilder/private:kind_env_sh",
         "//kubebuilder/private:kuttl_runner",

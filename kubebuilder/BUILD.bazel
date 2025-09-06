@@ -9,6 +9,10 @@ exports_files(["defs.bzl"])
 # attribute in order to get a runtime for the correct platform.
 # See https://docs.bazel.build/versions/main/toolchains.html#writing-rules-that-use-toolchains
 toolchain_type(
+    name = "chainsaw_toolchain",
+)
+
+toolchain_type(
     name = "controller_gen_toolchain",
 )
 
@@ -46,6 +50,7 @@ bzl_library(
     name = "defs",
     srcs = ["defs.bzl"],
     deps = [
+        "//kubebuilder/private:chainsaw",
         "//kubebuilder/private:controller_gen",
         "//kubebuilder/private:envtest",
         "//kubebuilder/private:kind_env",
