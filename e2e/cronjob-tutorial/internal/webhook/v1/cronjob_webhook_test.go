@@ -22,6 +22,7 @@ import (
 
 	batchv1 "tutorial.kubebuilder.io/project/api/v1"
 	// TODO (user): Add any additional imports if needed
+	"k8s.io/utils/ptr"
 )
 
 var _ = Describe("CronJob Webhook", func() {
@@ -40,8 +41,8 @@ var _ = Describe("CronJob Webhook", func() {
 			Spec: batchv1.CronJobSpec{
 				Schedule:                   schedule,
 				ConcurrencyPolicy:          batchv1.AllowConcurrent,
-				SuccessfulJobsHistoryLimit: new(int32),
-				FailedJobsHistoryLimit:     new(int32),
+				SuccessfulJobsHistoryLimit: ptr.To(int32(3)),
+				FailedJobsHistoryLimit:     ptr.To(int32(1)),
 			},
 		}
 		*obj.Spec.SuccessfulJobsHistoryLimit = 3
@@ -51,8 +52,8 @@ var _ = Describe("CronJob Webhook", func() {
 			Spec: batchv1.CronJobSpec{
 				Schedule:                   schedule,
 				ConcurrencyPolicy:          batchv1.AllowConcurrent,
-				SuccessfulJobsHistoryLimit: new(int32),
-				FailedJobsHistoryLimit:     new(int32),
+				SuccessfulJobsHistoryLimit: ptr.To(int32(3)),
+				FailedJobsHistoryLimit:     ptr.To(int32(1)),
 			},
 		}
 		*oldObj.Spec.SuccessfulJobsHistoryLimit = 3
@@ -95,34 +96,34 @@ var _ = Describe("CronJob Webhook", func() {
 		It("Should not overwrite fields that are already set", func() {
 			By("setting fields that would normally get a default")
 			obj.Spec.ConcurrencyPolicy = batchv1.ForbidConcurrent
-			obj.Spec.Suspend = new(bool)
-			*obj.Spec.Suspend = true
-			obj.Spec.SuccessfulJobsHistoryLimit = new(int32)
-			*obj.Spec.SuccessfulJobsHistoryLimit = 5
-			obj.Spec.FailedJobsHistoryLimit = new(int32)
-			*obj.Spec.FailedJobsHistoryLimit = 2
+			obj.Spec.Suspend = ptr.To(true)
+			obj.Spec.SuccessfulJobsHistoryLimit = ptr.To(int32(5))
+			obj.Spec.FailedJobsHistoryLimit = ptr.To(int32(2))
 
 			By("calling the Default method to apply defaults")
 			_ = defaulter.Default(ctx, obj)
 
 			By("checking that the fields were not overwritten")
 			Expect(obj.Spec.ConcurrencyPolicy).To(Equal(batchv1.ForbidConcurrent), "Expected ConcurrencyPolicy to retain its set value")
+			Expect(obj.Spec.Suspend).NotTo(BeNil())
 			Expect(*obj.Spec.Suspend).To(BeTrue(), "Expected Suspend to retain its set value")
+			Expect(obj.Spec.SuccessfulJobsHistoryLimit).NotTo(BeNil())
 			Expect(*obj.Spec.SuccessfulJobsHistoryLimit).To(Equal(int32(5)), "Expected SuccessfulJobsHistoryLimit to retain its set value")
+			Expect(obj.Spec.FailedJobsHistoryLimit).NotTo(BeNil())
 			Expect(*obj.Spec.FailedJobsHistoryLimit).To(Equal(int32(2)), "Expected FailedJobsHistoryLimit to retain its set value")
 		})
 	})
 
 	Context("When creating or updating CronJob under Validating Webhook", func() {
 		It("Should deny creation if the name is too long", func() {
-			obj.ObjectMeta.Name = "this-name-is-way-too-long-and-should-fail-validation-because-it-is-way-too-long"
+			obj.Name = "this-name-is-way-too-long-and-should-fail-validation-because-it-is-way-too-long"
 			Expect(validator.ValidateCreate(ctx, obj)).Error().To(
 				MatchError(ContainSubstring("must be no more than 52 characters")),
 				"Expected name validation to fail for a too-long name")
 		})
 
 		It("Should admit creation if the name is valid", func() {
-			obj.ObjectMeta.Name = validCronJobName
+			obj.Name = validCronJobName
 			Expect(validator.ValidateCreate(ctx, obj)).To(BeNil(),
 				"Expected name validation to pass for a valid name")
 		})
@@ -141,11 +142,11 @@ var _ = Describe("CronJob Webhook", func() {
 		})
 
 		It("Should deny update if both name and spec are invalid", func() {
-			oldObj.ObjectMeta.Name = validCronJobName
+			oldObj.Name = validCronJobName
 			oldObj.Spec.Schedule = schedule
 
 			By("simulating an update")
-			obj.ObjectMeta.Name = "this-name-is-way-too-long-and-should-fail-validation-because-it-is-way-too-long"
+			obj.Name = "this-name-is-way-too-long-and-should-fail-validation-because-it-is-way-too-long"
 			obj.Spec.Schedule = "invalid-cron-schedule"
 
 			By("validating an update")
@@ -154,11 +155,11 @@ var _ = Describe("CronJob Webhook", func() {
 		})
 
 		It("Should admit update if both name and spec are valid", func() {
-			oldObj.ObjectMeta.Name = validCronJobName
+			oldObj.Name = validCronJobName
 			oldObj.Spec.Schedule = schedule
 
 			By("simulating an update")
-			obj.ObjectMeta.Name = "valid-cronjob-name-updated"
+			obj.Name = "valid-cronjob-name-updated"
 			obj.Spec.Schedule = "0 0 * * *"
 
 			By("validating an update")
