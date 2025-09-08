@@ -39,7 +39,6 @@ use_repo(
     "docker_toolchains",
     "envtest_toolchains",
     "kind_toolchains",
-    "kuttl_toolchains",
 )
 
 register_toolchains(
@@ -48,5 +47,4 @@ register_toolchains(
     "@docker_toolchains//:all",
     "@envtest_toolchains//:all",
     "@kind_toolchains//:all",
-    "@kuttl_toolchains//:all",
 )

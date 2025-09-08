@@ -26,10 +26,6 @@ load(
     "//kubebuilder/private:kustomize.bzl",
     _kustomization = "kustomization",
 )
-load(
-    "//kubebuilder/private:kuttl.bzl",
-    _kuttl_test = "kuttl_test",
-)
 
 chainsaw_test = _chainsaw_test
 
@@ -46,5 +42,3 @@ config_map = _config_map
 generic_secret = _generic_secret
 kustomization = _kustomization
 tls_secret = _tls_secret
-
-kuttl_test = _kuttl_test

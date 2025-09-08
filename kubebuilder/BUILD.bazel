@@ -28,19 +28,15 @@ toolchain_type(
     name = "kind_toolchain",
 )
 
-toolchain_type(
-    name = "kuttl_toolchain",
-)
-
 bzl_library(
     name = "repositories",
     srcs = ["repositories.bzl"],
     deps = [
+        "//kubebuilder/private:chainsaw_toolchain",
         "//kubebuilder/private:controller_gen_toolchain",
         "//kubebuilder/private:docker_toolchain",
         "//kubebuilder/private:envtest_toolchain",
         "//kubebuilder/private:kind_toolchain",
-        "//kubebuilder/private:kuttl_toolchain",
         "@bazel_tools//tools/build_defs/repo:http.bzl",
         "@bazel_tools//tools/build_defs/repo:utils.bzl",
     ],
@@ -56,7 +52,6 @@ bzl_library(
         "//kubebuilder/private:kind_env",
         "//kubebuilder/private:kubectl",
         "//kubebuilder/private:kustomize",
-        "//kubebuilder/private:kuttl",
     ],
 )
 

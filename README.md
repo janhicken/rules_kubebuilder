@@ -9,8 +9,7 @@ This repository provides Bazel rules for the ecosystem of Kubebuilder-style Kube
 * Testing with [envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest)
 * Configuration management using [kustomize](https://kustomize.io/)
 * Creating local dev environments using [kind](https://kind.sigs.k8s.io/)
-* Testing with [kuttl](https://kuttl.dev/) and [Chainsaw](https://kyverno.github.io/chainsaw/)
-  on [kind](https://kind.sigs.k8s.io/) clusters
+* Testing [Chainsaw](https://kyverno.github.io/chainsaw/) on [kind](https://kind.sigs.k8s.io/) clusters
 
 ## Installation
 
@@ -206,7 +205,7 @@ filegroup(
 )
 ```
 
-The tarball built with `manager_index.tar` can be easily referenced in `kind_env` and `kuttl_test` targets.
+The tarball built with `manager_index.tar` can be easily referenced in `kind_env` targets.
 
 In order to pin an image reference to a specific digest, use the `kustomization` rule's `image_digests` attribute.
 This example pins the image `myrepo.org/manager` to the digest of the index built by `:manager_index`.
@@ -232,7 +231,8 @@ The [`kind_env`](./docs/rules.md#kind_env) rule can be used to define a local de
 When running the rule with `bazel run`, it will
 
 1. create a kind cluster with the given name, if not existing yet,
-2. write a [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file named `${cluster}-kubeconfig.yaml` to the repository root,
+2. write a [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file
+   named `${cluster}-kubeconfig.yaml` to the repository root,
 3. load all OCI container image tarballs specified into the cluster and
 4. apply a kustomization, if given.
 
@@ -255,62 +255,9 @@ The kind cluster can be deleted by giving `delete` as an argument, for example:
 bazel run :kind_env delete
 ```
 
-### `kuttl_test`
-
-The `kuttl_test` rule runs [kuttl](https://kuttl.dev/) tests hermetically.
-Tests are run on a kind cluster created for each `kuttl_test`.
-
-OCI container image tarballs can be loaded into the Kind cluster before test execution.
-[rules_oci](https://github.com/bazel-contrib/rules_oci) is a good fit for building OCI images using Bazel.
-
-**IMPORTANT**: The tag `supports-graceful-termination` is required on the target in order to have Bazel allow the test
-to terminate gracefully and clean up the kind cluster when interrupted.
-Pressing Ctrl+C might be a source for such an interruption. See the example below on how to set the tag.
-
-The rule currently requires the test suite directory structure to be relative to the package containing the `kuttl_test`
-rule, like this:
-
-```
-test/e2e
-├── BUILD <- contains kuttl_test target
-├── case-1
-│   ├── 00-assert.yaml
-│   ├── 00-install.yaml
-│   ├── 01-assert.yaml
-│   └── 01-install.yaml
-└── case-2
-    ├── 00-assert.yaml
-    └── 00-install.yaml
-```
-
-For this directory structure, the `kuttl_test` target might look like this:
-
-```starlark
-load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kuttl_test")
-
-kuttl_test(
-    name = "e2e",
-    size = "large",
-    srcs = [
-        "case-1/00-assert.yaml",
-        "case-1/00-install.yaml",
-        "case-1/01-assert.yaml",
-        "case-1/01-install.yaml",
-        "case-2/00-assert.yaml",
-        "case-2/00-install.yaml",
-    ],
-    crds = ["//config/crd"],
-    images = ["//:image.tar"],
-    kind_cluster_name = "e2e-kuttl",
-    manifests = ["//config/local"],
-    tags = ["supports-graceful-termination"],
-)
-```
-
 ### `chainsaw_test`
 
-Similar to KuTTL, you can use `chainsaw_test` to run a [Chainsaw](https://kyverno.github.io/chainsaw/) tests
-hermetically on a kind cluster.
+The `chainsaw_test` rule runs a [Chainsaw](https://kyverno.github.io/chainsaw/) tests hermetically on a kind cluster.
 
 This rule depends on the [`kind_env`](#kind_env) rule for setting up the kind cluster environment.
 The test will re-use any cluster with the same name that is already running.
