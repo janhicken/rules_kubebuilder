@@ -73,6 +73,8 @@ for image_archive in "${image_archives[@]}"; do
 	printf >&2 'Loading image %s from archive %s...\n' "$image_ref" "$image_archive"
 
 	for node in $(kind get nodes --name "$kind_cluster_name"); do
+		# `kind load image-archive` is missing the --base-name flag, which makes the --digests flag useless.
+		# Apart from that, this `ctr images import` command is semantically equivalent.
 		docker exec --interactive "$node" \
 			ctr --namespace k8s.io images import --base-name "$image_ref" --digests --all-platforms --local - <"$image_archive"
 	done
