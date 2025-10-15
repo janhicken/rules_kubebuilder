@@ -15,6 +15,7 @@ def _kind_env_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
     docker_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain"]
     kind_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"]
+    sh_toolchain = ctx.toolchains["@rules_shell//shell:toolchain_type"]
     tar_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:tar_toolchain_type"]
     yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
 
@@ -59,6 +60,7 @@ def _kind_env_impl(ctx):
         template = ctx.file._kind_env,
         output = executable,
         substitutions = {
+            "#!/usr/bin/env bash": "#!" + sh_toolchain.path,
             "%PATH%": shell.quote(command_path),
             "%image_archives%": runfiles_path_array_literal(ctx.files.images),
             "%kind_cluster_name%": shell.quote(ctx.attr.cluster_name),
@@ -108,6 +110,7 @@ kind_env = rule(
         "@aspect_bazel_lib//lib:yq_toolchain_type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain",
+        "@rules_shell//shell:toolchain_type",
     ],
     doc = """Creates a local dev environment with kind using the given kustomization and images.
 

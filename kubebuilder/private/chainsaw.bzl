@@ -6,6 +6,7 @@ load(":utils.bzl", "runfiles_path_array_literal", "use_runtime_toolchains")
 
 def _chainsaw_test_impl(ctx):
     chainsaw_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:chainsaw_toolchain"]
+    sh_toolchain = ctx.toolchains["@rules_shell//shell:toolchain_type"]
 
     # Configure runfiles
     command_path, tools_runfiles = use_runtime_toolchains(ctx, [chainsaw_toolchain])
@@ -20,6 +21,7 @@ def _chainsaw_test_impl(ctx):
         template = ctx.file._chainsaw_test_sh,
         output = executable,
         substitutions = {
+            "#!/usr/bin/env bash": "#!" + sh_toolchain.path,
             "%PATH%": shell.quote(command_path),
             "%kind_env%": shell.quote(ctx.executable.kind_env.short_path),
             "%srcs%": runfiles_path_array_literal(ctx.files.srcs),
@@ -61,5 +63,6 @@ kind cluster's logs and shut it down.
     },
     toolchains = [
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:chainsaw_toolchain",
+        "@rules_shell//shell:toolchain_type",
     ],
 )

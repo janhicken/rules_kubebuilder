@@ -81,5 +81,5 @@ for image_archive in "${image_archives[@]}"; do
 done
 
 if [[ -n "$kustomization_apply_bin" ]]; then
-	"$BASH" "$kustomization_apply_bin"
+	"$kustomization_apply_bin"
 fi

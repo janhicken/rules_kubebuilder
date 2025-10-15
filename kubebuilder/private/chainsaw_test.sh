@@ -9,7 +9,7 @@ set -o nounset
 readonly PATH=%PATH%
 
 readonly -a srcs=%srcs%
-readonly kind_env=%kind_env%
+readonly kind_env=./%kind_env%
 
 dirname() {
 	case "$1" in
@@ -62,11 +62,11 @@ readonly chainsaw_opts=(
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
 shutdown_kind_cluster() {
-	"$BASH" "$kind_env" export-logs "$TEST_LOGSPLITTER_OUTPUT_FILE" || :
-	"$BASH" "$kind_env" delete
+	"$kind_env" export-logs "$TEST_LOGSPLITTER_OUTPUT_FILE" || :
+	"$kind_env" delete
 }
 
 trap shutdown_kind_cluster EXIT
-"$BASH" "$kind_env"
+"$kind_env"
 
 chainsaw test "${chainsaw_opts[@]}" "${test_dirs[@]}"

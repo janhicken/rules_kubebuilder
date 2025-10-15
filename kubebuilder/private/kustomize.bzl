@@ -16,6 +16,7 @@ def _kustomization_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
     envtest_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain"]
     jq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:jq_toolchain_type"]
+    sh_toolchain = ctx.toolchains["@rules_shell//shell:toolchain_type"]
     yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
 
     # Build depset of all transformer configurations
@@ -135,6 +136,7 @@ def _kustomization_impl(ctx):
         template = ctx.file._apply,
         output = apply_script,
         substitutions = {
+            "#!/usr/bin/env bash": "#!" + sh_toolchain.path,
             "%PATH%": shell.quote(command_path),
             "%manifests_file%": shell.quote(output_file.short_path),
         },
@@ -210,6 +212,7 @@ Values must be labels to a `.digest` target created by _rules_oci_'s `oci_image`
         "@aspect_bazel_lib//lib:jq_toolchain_type",
         "@aspect_bazel_lib//lib:yq_toolchain_type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain",
+        "@rules_shell//shell:toolchain_type",
     ],
     doc = """Build a set of KRM resources similar to a kustomization.yaml.
 
