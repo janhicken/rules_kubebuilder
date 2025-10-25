@@ -33,22 +33,29 @@ DOCKER_PLATFORMS = {
     ),
 }
 
-DEFAULT_DOCKER_VERSION = "28.3.3"
+DEFAULT_DOCKER_VERSION = "28.5.1"
 
 DOCKER_VERSIONS = {
-    "28.3.2": {
-        "linux_aarch64": "sha384-ePUycEZ0qkH6yMvTbODSbyzzcIKRxqCrF4RpSrfA62YfVCHIYW1R389+CHgBwu9N",
-        "linux_x86_64": "sha384-sUoiIXcJluH8tFnMyop1kTeuWvnWJtWzfj7qI6m04StbuiWLN0N3z/SwU65eHALA",
-        "mac_aarch64": "sha384-A80cYTLVniH2Qeiin59k94CaU87/EKoezCQwvSPUSboOZpquUTXFZf0XkOUl4MRQ",
-        "mac_x86_64": "sha384-DWE1a/Rf1LNx3Sb7vY6TrDSkRgbgOD3l5Gg+liK6mKqteoZKvKLB7zrR5MHu5hX/",
-        "win_x86_64": "sha384-Gjf8iJT5tPM0vsLFGJrSK+cDZqDng275BVXtYKHrrtO2Mqk09tWyNcn4YdiTwnvL",
-    },
     "28.3.3": {
         "linux_aarch64": "sha384-L9IIs91H6fCaaRo9VzsYeXRJ/ru3nKDgSBF9gGIx/t2QVRo4qPQs8YL331UqwHn5",
         "linux_x86_64": "sha384-gsYhx683QJnD6LtE3bYjI72HlNOxpgjDFqbVshUvebMnF2PMRsmJCAvGPF8DQKoz",
         "mac_aarch64": "sha384-bMLO4hEehE4VqnU4JQdkccCjvmrroJ6PIAXOXmXFAjRaY2GMD/6GDh31cpmHAO7A",
         "mac_x86_64": "sha384-s0yFObqJlEps0eAN2gmgRP24AhvyTgZboQOgo63BFfizGS3j/5ctWUG9tanhLEXA",
         "win_x86_64": "sha384-HmVQobOkZF6f9cDPT/swUAq5fsj+F9rMsfbYxgvg1ih+2Y/xKUbJEtq7/fQQhMFp",
+    },
+    "28.4.0": {
+        "linux_aarch64": "sha384-stxEMWaCm+jljr/wKEVV/E8RNQp+8MgcwwqnGBZCXsYa7XGGnuWuFq9us3OO7tdI",
+        "linux_x86_64": "sha384-tcElF8zuyOFTKGky6GhpLbW+y54jbl8rX3Tz2hWowmu9ZdibBnPxgwrvhIm4QUaN",
+        "mac_aarch64": "sha384-OZvOLZ1TBK6Zh3mmFqgSNY9QfmESYMU4cC/WOKfCipnXsRMLNkOp98804dCNHT/5",
+        "mac_x86_64": "sha384-5yDK/omNBRrOjd5iZCWtQ7B8HkgNu6ZKr95hPbIkC9kfwsP6NBMoh3morhH7T7wP",
+        "win_x86_64": "sha384-yTvNFx5GKTdz5HindbyFs79WPhVnU7mkiuSnT49b4dOV8Tv9YvdbCAXzlkut3yYS",
+    },
+    "28.5.1": {
+        "linux_aarch64": "sha384-MTrkaXXkKvj2TLCJxZjVSf1ABX49wFLUS+2hQjALBkoG8R+mwSjHx1y0sKpCBw+X",
+        "linux_x86_64": "sha384-2ssUWUV/d/g7HYZUfs5qYCjYjxem8fx1BScVbElzBAFG6dix8lxBzsSkhy+pAjU6",
+        "mac_aarch64": "sha384-tq0NjDgk1W7RWAAhXrLCMyegZd87R5kj6TRikbNFzzgTdLAT3GzhoHqhPlAdZpKY",
+        "mac_x86_64": "sha384-zXVMSt8ooRhXZNtQUup/PcNveds2LKa2XMpoNiKxTWiYl4BSTlMS+yFcXr7FdMYE",
+        "win_x86_64": "sha384-6/ye1wOApsizZztc8jdsIYS8D3WPFEyg+6XwU7OOdskjpbty3Qv1R1YOQMJeAcdf",
     },
 }
 
