@@ -51,12 +51,14 @@ DOCKER_VOLUME_PATH="$mountpoint" yq '(.. | select(tag == "!!str")) |= envsubst' 
 # ║                                    Run                                     ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
-declare -A existing_clusters
 while read -r existing_cluster; do
-	existing_clusters[$existing_cluster]=""
+	if [[ "$existing_cluster" == "$kind_cluster_name" ]]; then
+		cluster_exists=1
+		break
+	fi
 done < <(kind get clusters)
 
-if [[ -v existing_clusters[$kind_cluster_name] ]]; then
+if [[ -v cluster_exists ]]; then
 	printf 'Reusing existing kind cluster named "%s"\n' "$kind_cluster_name"
 	kind export kubeconfig --name "$kind_cluster_name"
 else
