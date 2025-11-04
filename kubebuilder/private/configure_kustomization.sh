@@ -26,7 +26,7 @@ oci_image_digest_transformer() {
 		return 1
 	fi
 
-	digest=$(<"$image_digest_file")
+	read -r digest <"$image_digest_file"
 	# shellcheck disable=SC2016
 	"$JQ_BIN" --arg name "$image_ref" --arg digest "$digest" --null-input '{name: $name, digest: $digest}'
 }
@@ -72,7 +72,7 @@ if [[ $# -ne 1 ]]; then
 	printf >&2 'Missing kustomization.yaml positional argument.\n\n'
 	usage
 	exit 1
-elif [[ -z "${output_file:-}" ]]; then
+elif [[ ! -v output_file ]]; then
 	printf >&2 'Output file (-o) option is mandatory.\n\n'
 	usage
 	exit 1
