@@ -18,7 +18,7 @@ non_crd_resources=$(coreutils mktemp --suffix .yaml)
 trap 'coreutils rm -f "$crd_resources" "$non_crd_resources"' EXIT
 
 # Apply CRDs first and wait for them to be established
-yq 'select(.kind == "CustomResourceDefinition")' "$manifests_file" >"$crd_resources"
+yq 'select(.apiVersion == "apiextensions.k8s.io/v1" and .kind == "CustomResourceDefinition")' "$manifests_file" >"$crd_resources"
 if [[ -s "$crd_resources" ]]; then
 	kubectl apply --filename="$crd_resources" --output=json --server-side=true |
 		yq '.items[].metadata.name // .metadata.name' |
@@ -28,7 +28,7 @@ if [[ -s "$crd_resources" ]]; then
 fi
 
 # Apply other non-CRD resources
-yq 'select(.kind != "CustomResourceDefinition")' "$manifests_file" >"$non_crd_resources"
+yq 'select(.apiVersion != "apiextensions.k8s.io/v1" and .kind != "CustomResourceDefinition")' "$manifests_file" >"$non_crd_resources"
 if [[ -s "$non_crd_resources" ]]; then
 	kubectl apply --filename="$non_crd_resources"
 fi
