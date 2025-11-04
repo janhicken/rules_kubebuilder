@@ -11,10 +11,10 @@ def use_runtime_toolchains(ctx, toolchains):
         toolchain.default.files
         for toolchain in toolchains
     ])
-    command_path = ctx.configuration.host_path_separator.join([
+    command_path = ctx.configuration.host_path_separator.join(set([
         paths.dirname(binary.short_path)
         for binary in binaries.to_list()
-    ])
+    ]))
 
     runfiles = ctx.runfiles(transitive_files = binaries).merge_all([
         toolchain.default.default_runfiles
