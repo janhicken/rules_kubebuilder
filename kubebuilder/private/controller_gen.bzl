@@ -6,21 +6,42 @@ def _get_importpath(label):
     return label[GoInfo].importpath
 
 def _controller_gen_impl(ctx, generator_name, generator_args_dict = None):
+    """
+    Run controller-gen as a Bazel build action.
+
+    In order to run its generators, controller-gen needs to look up Go packages and process their sources.
+    To achieve this, it leverages the gopackagesdriver interface.
+    The default gopackagesdriver implementation uses `go list` CLI calls.
+
+    To make this whole apparatus work inside a Bazel sandbox, we need:
+        * a `controller-gen` binary,
+        * the `go` tool, discoverable through a `$PATH` lookup,
+        * `$GOROOT` to point to the Go SDKs sources and
+        * `$GOPATH` to point to our own and its dependencies' sources.
+
+    The `go list` calls will then search both `$GOROOT` and `$GOPATH` when a package is requested. Setting
+    `GO111MODULE=off` will disable any efforts to detect a Go module.
+
+    Furthermore, `go list` imports but does not actually use the Go cache mechanism. This requires `$GOCACHE` to point
+    to an existing or creatable directory. It will not, however, actually use the cache it required the setup for, in
+    any way.
+
+    The Go CLI also requires all tools of the SDK.
+
+    All controller-gen rules need to use a config transition to make sure cgo is disabled (setting
+    @rules_go//go/config:pure must be True). Otherwise, a cc toolchain would also be required.
+
+    As this all wasn't fun enough already, one may very well ascertain that all these tools have a habit of stubbornly
+    rejecting relative paths. As a result, we need run the action inside a shell make all these used paths absolute.
+    """
     output_file = ctx.actions.declare_file(ctx.label.name)
     controller_gen = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:controller_gen_toolchain"].controller_gen
 
     go = go_context(ctx)
     go_path_dir = ctx.attr.go_path[GoPath].gopath_file
-    go_root_dirname = go.sdk.root_file.dirname
-
-    # Configure environment
-    go.env["GO111MODULE"] = "off"
-    go.env["GODEBUG"] += ",execerrdot=0"  # allow relative path lookups
-    go.env["PATH"] += ":{goroot}/bin".format(goroot = go_root_dirname)
-
-    inputs = [go_path_dir]
 
     # Configure generator args
+    inputs = [go_path_dir]
     generator_args_dict = generator_args_dict or {}
     if ctx.file.header_file:
         inputs.append(ctx.file.header_file)
@@ -34,22 +55,23 @@ def _controller_gen_impl(ctx, generator_name, generator_args_dict = None):
     args.add(output_file.path)
     ctx.actions.run_shell(
         outputs = [output_file],
-        inputs = depset(inputs, transitive = [go.sdk.srcs, go.stdlib.cache_dir]),
+        inputs = depset(inputs, transitive = [go.sdk.srcs]),
         tools = [controller_gen.bin, go.sdk.go, go.sdk.tools],
         mnemonic = "ControllerGen",
-        command = """
-GOCACHE="$PWD/{gocache}" \
+        # `$GOCACHE` will not actually be used. Thus, we can set it to `$PWD` to pacify the cache init process.
+        command = """\
+GOCACHE="$PWD" \
 GOPATH="$PWD/{gopath}" \
 GOROOT="$PWD/{goroot}" \
-"{controller_gen}" "$1" paths="$2" output:stdout >"$3"
+PATH="$PWD/{goroot}/bin" \
+"{controller_gen}" "$1" paths="$2" output:stdout >"$3"\
 """.format(
-            gocache = go.stdlib.cache_dir.to_list()[0].path,
             gopath = go_path_dir.path,
-            goroot = go_root_dirname,
+            goroot = go.sdk.root_file.dirname,
             controller_gen = controller_gen.bin.path,
         ),
         arguments = [generator_args, args],
-        env = go.env,
+        env = go.env | {"GO111MODULE": "off"},
     )
 
     return [DefaultInfo(files = depset([output_file]))]
@@ -120,6 +142,15 @@ _COMMON_TOOLCHAINS = [
     "@io_github_janhicken_rules_kubebuilder//kubebuilder:controller_gen_toolchain",
 ]
 
+def _purify(_settings, _attr):
+    return {"@rules_go//go/config:pure": True}
+
+_purified = transition(
+    implementation = _purify,
+    inputs = [],
+    outputs = ["@rules_go//go/config:pure"],
+)
+
 _controller_gen_crds = rule(
     implementation = _controller_gen_crds_impl,
     attrs = _COMMON_ATTRS | {
@@ -141,6 +172,7 @@ n indicates limit the description to at most n characters and truncate the descr
     },
     toolchains = _COMMON_TOOLCHAINS,
     doc = "generates CustomResourceDefinition objects",
+    cfg = _purified,
 )
 
 _controller_gen_objects = rule(
@@ -148,6 +180,7 @@ _controller_gen_objects = rule(
     attrs = _COMMON_ATTRS,
     toolchains = _COMMON_TOOLCHAINS,
     doc = "Generates code containing DeepCopy, DeepCopyInto and DeepCopyObject method implementations",
+    cfg = _purified,
 )
 
 _controller_gen_rbac = rule(
@@ -160,6 +193,7 @@ _controller_gen_rbac = rule(
     },
     toolchains = _COMMON_TOOLCHAINS,
     doc = "generates ClusterRole objects",
+    cfg = _purified,
 )
 
 _controller_gen_webhooks = rule(
@@ -167,6 +201,7 @@ _controller_gen_webhooks = rule(
     attrs = _COMMON_ATTRS,
     toolchains = _COMMON_TOOLCHAINS,
     doc = "Generates (partial) {Mutating,Validating}WebhookConfiguration objects",
+    cfg = _purified,
 )
 
 def controller_gen_crds(
