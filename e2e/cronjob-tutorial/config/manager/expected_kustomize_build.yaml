@@ -36,7 +36,7 @@ spec:
         - --health-probe-bind-address=:8081
         command:
         - /manager
-        image: localhost.invalid/cronjob-controller@sha256:b8d1f0bd34e677f4581784de815d8530cdd23df15024c968df00344317007eec
+        image: localhost.invalid/cronjob-controller@sha256:1f3c5255a7ec8edc658154d7fd89febaeaf7900ab47476b1d6fb3c0332645c47
         livenessProbe:
           httpGet:
             path: /healthz

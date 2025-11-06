@@ -3,14 +3,6 @@ load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
 
 package(default_visibility = ["//kubebuilder:__subpackages__"])
 
-_RULES_GO_DEFS = [
-    # This is actually an undeclared transitive dependency of @rules_go//go:def.
-    # It is required for compatbility with Bazel 8.x though.
-    # The dependency can be removed once https://github.com/bazel-contrib/rules_go/issues/4394 is fixed.
-    "@rules_cc//cc:find_cc_toolchain_bzl",
-    "@rules_go//go:def",
-]
-
 sh_binary(
     name = "apply",
     srcs = [":apply.sh"],
@@ -24,7 +16,7 @@ sh_binary(
 bzl_library(
     name = "controller_gen",
     srcs = ["controller_gen.bzl"],
-    deps = _RULES_GO_DEFS,
+    deps = ["@rules_go//go:def"],
 )
 
 bzl_library(
@@ -36,7 +28,7 @@ bzl_library(
 bzl_library(
     name = "envtest",
     srcs = ["envtest.bzl"],
-    deps = _RULES_GO_DEFS,
+    deps = ["@rules_go//go:def"],
 )
 
 bzl_library(
