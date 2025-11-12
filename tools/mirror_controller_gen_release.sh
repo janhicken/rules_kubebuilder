@@ -9,7 +9,7 @@ if [[ $# -eq 0 ]]; then
 fi
 
 BASE_URI=https://github.com/kubernetes-sigs/controller-tools/releases/download
-PLATFORMS=(darwin_amd64 darwin_arm64 linux_amd64 linux_arm64 linux_ppc64le linux_s390x windows_amd64)
+PLATFORMS=(darwin-amd64 darwin-arm64 linux-amd64 linux-arm64 linux-ppc64le linux-s390x windows-amd64)
 
 printf 'Put this in kubebuilder/private/controller_gen_toolchain.bzl:\n\n' >&2
 
@@ -25,7 +25,7 @@ for version in "$@"; do
 			;;
 		esac
 		sha384=$(
-			curl --fail --silent --show-error --location "$BASE_URI/v${version}/controller-gen-${platform//_/-}${ext}" |
+			curl --fail --silent --show-error --location "$BASE_URI/v${version}/controller-gen-${platform}${ext}" |
 				openssl dgst -sha384 -binary |
 				openssl base64 -A
 		)

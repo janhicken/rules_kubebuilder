@@ -16,7 +16,6 @@ load(
     "//kubebuilder/private:controller_gen_toolchain.bzl",
     "CONTROLLER_GEN_PLATFORMS",
     "KUBERNETES_VERSION_MAPPING",
-    "controller_gen_host_alias_repo",
     "controller_gen_platform_repo",
     "controller_gen_toolchains_repo",
 )
@@ -39,7 +38,6 @@ load(
 load(
     "//kubebuilder/private:kind_toolchain.bzl",
     "KIND_PLATFORMS",
-    "kind_host_alias_repo",
     "kind_platform_repo",
     "kind_toolchains_repo",
     _DEFAULT_KIND_VERSION = "DEFAULT_KIND_VERSION",
@@ -139,8 +137,6 @@ def register_controller_gen_toolchains(name, version, register = True):
         if register:
             native.register_toolchains("@%s_toolchains//:%s_toolchain" % (name, platform))
 
-    controller_gen_host_alias_repo(name = name)
-
     controller_gen_toolchains_repo(
         name = "%s_toolchains" % name,
         user_repository_name = name,
@@ -219,8 +215,6 @@ def register_kind_repositories(name, version, kubernetes_version):
             version = version,
             kubernetes_version = kubernetes_version,
         )
-
-    kind_host_alias_repo(name = name)
 
     kind_toolchains_repo(
         name = "%s_toolchains" % name,
