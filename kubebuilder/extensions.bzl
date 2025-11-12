@@ -14,9 +14,7 @@ load(
     ":repositories.bzl",
     "CHAINSAW_VERSIONS",
     "DEFAULT_CHAINSAW_VERSION",
-    "DEFAULT_DOCKER_VERSION",
     "DEFAULT_KIND_VERSION",
-    "DOCKER_VERSIONS",
     "KIND_VERSIONS",
     "KUBERNETES_VERSIONS",
     "register_kubebuilder_repositories_and_toolchains",
@@ -27,11 +25,6 @@ kubernetes_target = tag_class(attrs = {
         doc = "The Chainsaw version to use",
         default = DEFAULT_CHAINSAW_VERSION,
         values = CHAINSAW_VERSIONS,
-    ),
-    "docker_version": attr.string(
-        doc = "The Docker version to use",
-        default = DEFAULT_DOCKER_VERSION,
-        values = DOCKER_VERSIONS,
     ),
     "kind_version": attr.string(
         doc = "The kind version to use",
@@ -59,7 +52,6 @@ def _kubebuilder_impl(mctx):
             prefix = k8s_target.prefix
             version = k8s_target.version
             chainsaw_version = k8s_target.chainsaw_version
-            docker_version = k8s_target.docker_version
             kind_version = k8s_target.kind_version
             if prefix and not mod.is_root:
                 fail("Only the root module may provide a prefix for the kubernetes target.")
@@ -80,7 +72,6 @@ def _kubebuilder_impl(mctx):
             else:
                 targets[prefix] = {
                     "chainsaw_version": chainsaw_version,
-                    "docker_version": docker_version,
                     "kind_version": kind_version,
                     "version": version,
                 }
@@ -90,7 +81,6 @@ def _kubebuilder_impl(mctx):
             prefix,
             versions["version"],
             versions["chainsaw_version"],
-            versions["docker_version"],
             versions["kind_version"],
             register = False,
         )
