@@ -58,7 +58,7 @@ while read -r existing_cluster; do
 	fi
 done < <(kind get clusters)
 
-if [[ -v cluster_exists ]]; then
+if [[ -n "${cluster_exists:-}" ]]; then
 	printf 'Reusing existing kind cluster named "%s"\n' "$kind_cluster_name"
 	kind export kubeconfig --name "$kind_cluster_name"
 else

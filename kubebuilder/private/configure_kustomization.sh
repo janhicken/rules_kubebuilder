@@ -72,7 +72,7 @@ if [[ $# -ne 1 ]]; then
 	printf >&2 'Missing kustomization.yaml positional argument.\n\n'
 	usage
 	exit 1
-elif [[ ! -v output_file ]]; then
+elif [[ -z "${output_file:-}" ]]; then
 	printf >&2 'Output file (-o) option is mandatory.\n\n'
 	usage
 	exit 1

@@ -42,7 +42,7 @@ for src in "${srcs[@]}"; do
 		test_dirs+=("$(dirname "$src")")
 	fi
 done
-if [[ ! -v test_dirs ]]; then
+if [[ ${#test_dirs[@]} -eq 0 ]]; then
 	printf >&2 'ERROR: No chainsaw-test.yaml found among srcs.\n'
 	exit 1
 fi
