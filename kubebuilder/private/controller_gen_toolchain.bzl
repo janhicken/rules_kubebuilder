@@ -46,67 +46,12 @@ CONTROLLER_GEN_PLATFORMS = {
 }
 
 KUBERNETES_VERSION_MAPPING = {
-    "1.31": "0.16.5",
     "1.32": "0.17.3",
     "1.33": "0.18.0",
     "1.34": "0.19.0",
 }
 
 CONTROLLER_GEN_VERSIONS = {
-    "0.16.0": {
-        "darwin-amd64": "sha384-1GolNKX0qjngLeqdLBaODbpZv4GsBI0qeP8rXVI860CPEF3caDPkkbC79UrgnI2w",
-        "darwin-arm64": "sha384-5NbaQi9u1hku0rHvPEP+NgTmSUx1Trn6ENjFMxauU73g516+Jqyib7ePT0lJk3+0",
-        "linux-amd64": "sha384-TDpGGbimakbVttTRUxgNBs8H2ffrKIFnNCLtNT6pTSM/G4YmzS2j5uGgpUQhcDvo",
-        "linux-arm64": "sha384-bvj3k76SgccJpLoi5uEJuhZRowAHEQC5TeM4WQKGSPBFIogQjoWIrtYtfB1ji68Z",
-        "linux-ppc64le": "sha384-lhYH9nX9mxU3qYlcpkXY18QtiBYlZhUcnPkPHrxm6xOf2LOdoTMhAXmmtH0lm0NY",
-        "linux-s390x": "sha384-BzDrP1TKhRrO4ATsr1q+5Ke71rGzMZsAID/hFrFqck5uDUasClkbMhClfdc8a/OW",
-        "windows-amd64": "sha384-ZhGY74P3AKFDUuCCEB0w/xh/wrTO9fDMpTY6NqjWuVXqX0JKvY7O6g/77opzjQBm",
-    },
-    "0.16.1": {
-        "darwin-amd64": "sha384-YDY52HhY9MNmFdpKHCPbD9MCCPqBSCCaW3M7VyaSiAFlximroKtqQLnLeRfuZoxr",
-        "darwin-arm64": "sha384-sGxfSJVNzRoUtzI0OppeQ6sjS/E6RCtArPWBz3d3dEVdOt7+mPYbENbtpI2k+UnW",
-        "linux-amd64": "sha384-GS3twpNXAoo1ntt+KLs8+7DrtV2cUM9oIevPQ081Werj1HYtf6hqtHDC8A4kDUsY",
-        "linux-arm64": "sha384-1H/KBWyrHGjrs4jQok6Lo1nTWw6a32S5ywIDk3mwMFxcMxbquK8+JGJ1b8uEbzuC",
-        "linux-ppc64le": "sha384-glnDElGpVoFMCcDyVf+JzDB/YB6r7tHCT6z7zuwBUykOWtCFItsgpf7/HLXF6b++",
-        "linux-s390x": "sha384-pqNTYT1VW2III3x263yIb5hJ4RNbOnGXIYuZtiw1NuMz/5c20eHfWJPqE8QvvKgl",
-        "windows-amd64": "sha384-lA60lndcgzeTFWsR0ic/tSoQhACfBuppJUs2e+jw40OjdtcP7Mgjl0VZ0VvWlIf7",
-    },
-    "0.16.2": {
-        "darwin-amd64": "sha384-er+f8EpZ+pvRvmfOwif+uxyoyS6kaohxufclvUmgI4w4LuIIbluMAENgOTErPx/K",
-        "darwin-arm64": "sha384-UIUcsW6BHZn6SihBeGuVhtH2UcoZZo1YXrM/FNgPfen45vORW8QcwXGh5mhmUvgs",
-        "linux-amd64": "sha384-LUBDM5k+UB3bNg4nzEA4M7QW09pywWlJVOV3k+rE4b840wDHp38njLn/jEGE/7Qr",
-        "linux-arm64": "sha384-dePqpwGEKYXlS5fG5n1DiURCbNw8W6ayBy+gCvR/eIaMFgSufOGkq8l0T6cXFvgQ",
-        "linux-ppc64le": "sha384-i66PAT+ekzCvzxGtgkUvK81D2nF75cyeM/MnmRl0pZ2wXz9A4e0l9lEpPq8cbB0k",
-        "linux-s390x": "sha384-DE54dXDviaxJKdmiczbfXUAQeJsAgX45H4L07z4yh+aiAEGYu35zQc5MRfrCafUL",
-        "windows-amd64": "sha384-UxSO2p2R7b60n9ZOKVHP+3umNXQPWyDp7iH5CU50XCXApohZZjiPa0zIMERGMld/",
-    },
-    "0.16.3": {
-        "darwin-amd64": "sha384-6j1c6darVyqiGtuHH/2IcORJJfEcP8368tkoJgZMbD+fFlQkIo00odcTj0jt/kOw",
-        "darwin-arm64": "sha384-4CpO+dUBuxvlXbOZV+Ide/SqLTBzNfx0DANlBCKASvNeJRJku0HAQGv2d2Dtb/2p",
-        "linux-amd64": "sha384-IJi0NsNaFLdjen5+7MWA3MWMFInoOgwAHip3gOe+bCl0Wh5kxDFjFjeoE3Gke75/",
-        "linux-arm64": "sha384-Ts+f8CWbPSU7ODMOJCqHDnkl+OzZcq1P38wxDqdS8seHn0Z4Lo7Xvl2aa62V6a8x",
-        "linux-ppc64le": "sha384-d1Q32ryw8aUS9jVljNr30btCvoxQgiARS5+iUla2RktsA/xHJBiJN5whdFwfJ9Kn",
-        "linux-s390x": "sha384-ZMmNNRq74fNIvfJR4zpPGC5sl4FhXArrgQ+IHlWNeTXMroA0c2AjdwaUeLfcMgkP",
-        "windows-amd64": "sha384-YrfIRriB2+Z8FZ/wGq8Ym+Gnjcq7Bz9rhP7cchsu44Pzvpr2iTulb6qqtOB0Y6Jl",
-    },
-    "0.16.4": {
-        "darwin-amd64": "sha384-x6lLNgN7KL9zTw0meQCMbzpAWk3Jiubgcgf1yCkBWzu+BXt1kGB/adsCH4rnMe2v",
-        "darwin-arm64": "sha384-O0bj+51vcQXlhXHuzJ8RXcMps34P6y9Ci42nFlBlIS18A1CyLRqN9x0HejlK4p+k",
-        "linux-amd64": "sha384-AMi4b+NqyLLBSZvUHR0PiIRXVNcQ9hzzVVw0ebYZanwM0D6uSHGPBLZAoOaJAb9D",
-        "linux-arm64": "sha384-72GbRXgMEL36ltNEwZ/8WJOfZKYx5RGPo8nEHzNXRc1dHIKJpmcbPNtS2G4EdQha",
-        "linux-ppc64le": "sha384-ATIqFxtX6WQf5fWqL+vXBRRdQmRlVGGKtLDZNJLvjfrAV8NS+YknxOWL/z0CbwfG",
-        "linux-s390x": "sha384-pjlPya4LCmvfoyZw378tWXfE95IrJ08ZUaxOuMsXPjCo7WnHhpryZmp/KJnCP9v0",
-        "windows-amd64": "sha384-+SL+gvVDWTSsCz7PpboZWYWwnsbHq6FB2tXudxcsUVZh6qdI76RonFhk/DP/5qY3",
-    },
-    "0.16.5": {
-        "darwin-amd64": "sha384-/9X/O3XMXLbYB1FO1XYT6UT+GfFLay9OO4dU1ZYRbc1OobBa3tflRSPGQUsnk+/y",
-        "darwin-arm64": "sha384-q+yrD976MQwr57/0qvYqwtfiTyhfepfqE5fDCXZrYDdlZ1RuGhpWdmQFCTRpO0CH",
-        "linux-amd64": "sha384-xV/oIYLKRSvR5BTj/zkigEix03tBKrECPw/PQzt5DkSBFgh0eK7N39zzBfUpAfbH",
-        "linux-arm64": "sha384-Lrai+xyneYBGhruVb6m4frVKwReO5Ec1D/3BDF0x/4ntH8zIeMCmEvwa0aNXDX2c",
-        "linux-ppc64le": "sha384-7iCXJZ4Szf0kQ3tn3CFPgld+r0wEtlQrbZIu3iBwl+jQbCLmZgdKMdo4+20uZ6CQ",
-        "linux-s390x": "sha384-dm/3xzU1H9g2JwAak6ryOygclbyYfSGvCgHWUksNwjIqK7eXBRivAus4mKrogIWU",
-        "windows-amd64": "sha384-sPlvok0ML9brrVXu6jLMy4hjBkNphmFN8zqOYJM8zCrnQ/zQCW/41Qn++0m5AMCs",
-    },
     "0.17.0": {
         "darwin-amd64": "sha384-7MqW8VMm/BTuPpTD5tZQhMf0FhqPln86k7eGGA4D8gHli78rYA3TMugLioOj3iOP",
         "darwin-arm64": "sha384-5KvFlhvTW9DFjfjuYAboc8ZbCSEpza442N/72Id5rxttqADvB2zMmHGHUmWdfngF",
