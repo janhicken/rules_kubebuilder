@@ -71,6 +71,7 @@ bzl_library(
     name = "utils",
     srcs = ["utils.bzl"],
     deps = [
+        "@bazel_skylib//lib:new_sets",
         "@bazel_skylib//lib:paths",
         "@bazel_skylib//lib:shell",
     ],
