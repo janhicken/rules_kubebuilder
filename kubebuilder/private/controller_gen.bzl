@@ -51,7 +51,7 @@ def _controller_gen_impl(ctx, generator_name, generator_args_dict = None):
     generator_args = _generator_args_from_dict(ctx, generator_name, generator_args_dict)
 
     args = ctx.actions.args()
-    args.add_joined(ctx.attr.srcs, join_with = ",", map_each = _get_importpath)
+    args.add_joined(ctx.attr.srcs, join_with = ",", map_each = _get_importpath, format_joined = "{%s}")
     args.add(output_file.path)
     ctx.actions.run_shell(
         outputs = [output_file],
