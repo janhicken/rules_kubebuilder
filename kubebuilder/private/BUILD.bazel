@@ -20,11 +20,6 @@ bzl_library(
 )
 
 bzl_library(
-    name = "controller_gen_toolchain",
-    srcs = ["controller_gen_toolchain.bzl"],
-)
-
-bzl_library(
     name = "envtest",
     srcs = ["envtest.bzl"],
     deps = ["@rules_go//go:def"],
@@ -49,11 +44,6 @@ bzl_library(
 sh_binary(
     name = "kind_env_sh",
     srcs = [":kind_env.sh"],
-)
-
-bzl_library(
-    name = "kind_toolchain",
-    srcs = ["kind_toolchain.bzl"],
 )
 
 bzl_library(
@@ -100,8 +90,18 @@ bzl_library(
 )
 
 bzl_library(
+    name = "controller_gen_toolchain",
+    srcs = ["controller_gen_toolchain.bzl"],
+)
+
+bzl_library(
     name = "docker_toolchain",
     srcs = ["docker_toolchain.bzl"],
+)
+
+bzl_library(
+    name = "kind_toolchain",
+    srcs = ["kind_toolchain.bzl"],
 )
 
 bzl_library(

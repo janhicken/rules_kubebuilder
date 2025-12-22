@@ -35,6 +35,16 @@ def _kustomization_impl(ctx):
     kustomization_spec = {
         "apiVersion": "kustomize.config.k8s.io/v1beta1",
         "commonAnnotations": ctx.attr.annotations,
+        "configMapGenerator": [
+            {
+                "files": [
+                    relative_file(file.path, kustomization_yaml.path)
+                    for file in files_target.files.to_list()
+                ],
+                "name": name,
+            }
+            for name, files_target in ctx.attr.config_maps.items()
+        ],
         "configurations": [
             relative_file(configuration.path, kustomization_yaml.path)
             for configuration in configuration_deps.to_list()
@@ -117,7 +127,9 @@ def _kustomization_impl(ctx):
         outputs = [output_file],
         inputs = depset(
             direct = [kustomization_yaml] + ctx.files.resources + ctx.files.configurations + ctx.files.replacements,
-            transitive = [patch_target.files for patch_target in ctx.attr.patches.keys()] + transitive_configuration_deps,
+            transitive = transitive_configuration_deps +
+                         [patch_target.files for patch_target in ctx.attr.patches.keys()] +
+                         [config_map_files_target.files for config_map_files_target in ctx.attr.config_maps.values()],
         ),
         executable = envtest_toolchain.envtest.kubectl,
         arguments = [args],
@@ -159,6 +171,10 @@ kustomization = rule(
     attrs = {
         "annotations": attr.string_dict(
             doc = "Add annotations to add all resources.",
+        ),
+        "config_maps": attr.string_keyed_label_dict(
+            allow_files = True,
+            doc = "Create ConfigMaps from files. The key will be the config map's name, the value is a set of files from which the data shall be sourced.",
         ),
         "configurations": attr.label_list(
             allow_files = [".yml", ".yaml"],
