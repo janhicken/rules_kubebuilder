@@ -50,6 +50,13 @@ KIND_VERSIONS = {
         "linux-arm64": "7ea2de9d2d190022ed4a8a4e3ac0636c8a455e460b9a13ccf19f15d07f4f00eb",
         "windows-amd64": "a75fed2b6964d877461cc145b37e997ac0f59a63bd02a750134ac25378f78ce7",
     },
+    "0.31.0": {
+        "darwin-amd64": "a8b3cf77b2ad77aec5bf710d1a2589d9117576132af812885cad41e9dede4d4e",
+        "darwin-arm64": "88bf554fe9da6311c9f8c2d082613c002911a476f6b5090e9420b35d84e70c5c",
+        "linux-amd64": "eb244cbafcc157dff60cf68693c14c9a75c4e6e6fedaf9cd71c58117cb93e3fa",
+        "linux-arm64": "8e1014e87c34901cc422a1445866835d1e666f2a61301c27e722bdeab5a1f7e4",
+        "windows-amd64": "2c3a9ff954de16244380778683cf99e271bfc2fac9c6c4e797e4623c45e59d9d",
+    },
 }
 
 KIND_NODE_IMAGES = {
@@ -61,6 +68,12 @@ KIND_NODE_IMAGES = {
         "1.32": "kindest/node:v1.32.8@sha256:abd489f042d2b644e2d033f5c2d900bc707798d075e8186cb65e3f1367a9d5a1",
         "1.33": "kindest/node:v1.33.4@sha256:25a6018e48dfcaee478f4a59af81157a437f15e6e140bf103f85a2e7cd0cbbf2",
         "1.34": "kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a",
+    },
+    "0.31.0": {
+        "1.32": "kindest/node:v1.32.11@sha256:5fc52d52a7b9574015299724bd68f183702956aa4a2116ae75a63cb574b35af8",
+        "1.33": "kindest/node:v1.33.7@sha256:d26ef333bdb2cbe9862a0f7c3803ecc7b4303d8cea8e814b481b09949d353040",
+        "1.34": "kindest/node:v1.34.3@sha256:08497ee19eace7b4b5348db5c6a1591d7752b164530a36f855cb0f2bdcbadd48",
+        "1.35": "kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f",
     },
 }
 
