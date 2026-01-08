@@ -67,6 +67,7 @@ else
 	kind create cluster --config "$final_kind_config_file"
 fi
 
+declare -a import_jobs
 for image_archive in "${image_archives[@]}"; do
 	image_ref=$(
 		tar -x --to-stdout --file "$image_archive" index.json |
@@ -78,8 +79,12 @@ for image_archive in "${image_archives[@]}"; do
 		# `kind load image-archive` is missing the --base-name flag, which makes the --digests flag useless.
 		# Apart from that, this `ctr images import` command is semantically equivalent.
 		docker exec --interactive "$node" \
-			ctr --namespace k8s.io images import --base-name "$image_ref" --digests --all-platforms --local - <"$image_archive"
+			ctr --namespace k8s.io images import --base-name "$image_ref" --digests --all-platforms --local - <"$image_archive" &
+		import_jobs+=($!)
 	done
+done
+for import_job in "${import_jobs[@]}"; do
+	wait "$import_job"
 done
 
 if [[ -n "$kustomization_apply_bin" ]]; then
