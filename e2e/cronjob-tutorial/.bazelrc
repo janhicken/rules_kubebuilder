@@ -1,9 +1,5 @@
-# Import Aspect bazelrc presets
-import %workspace%/../../.aspect/bazelrc/bazel7.bazelrc
-import %workspace%/../../.aspect/bazelrc/convenience.bazelrc
-import %workspace%/../../.aspect/bazelrc/correctness.bazelrc
-import %workspace%/../../.aspect/bazelrc/debug.bazelrc
-import %workspace%/../../.aspect/bazelrc/performance.bazelrc
+# Import bazelrc preset
+import %workspace%/../../tools/preset.bazelrc
 
 # Required until this is the default; expected in Bazel 7
 common --enable_bzlmod
@@ -16,9 +12,3 @@ test --test_env=DOCKER_HOST
 
 # Repo names are included in built Go binaries. Always use ++ for reproducibility.
 common --incompatible_use_plus_in_repo_names
-
-# Load any settings & overrides specific to the current user from `../../.aspect/bazelrc/user.bazelrc`.
-# This file should appear in `.gitignore` so that settings are not shared with team members. This
-# should be last statement in this config so the user configuration is able to overwrite flags from
-# this file. See https://bazel.build/configure/best-practices#bazelrc-file.
-try-import %workspace%/../../.aspect/bazelrc/user.bazelrc

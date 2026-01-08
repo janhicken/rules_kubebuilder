@@ -28,7 +28,7 @@ bzl_library(
 bzl_library(
     name = "envtest_toolchain",
     srcs = ["envtest_toolchain.bzl"],
-    deps = ["@aspect_bazel_lib//lib:repo_utils"],
+    deps = ["@bazel_lib//lib:repo_utils"],
 )
 
 bzl_library(
@@ -51,8 +51,8 @@ bzl_library(
     srcs = ["kustomize.bzl"],
     deps = [
         ":utils",
-        "@aspect_bazel_lib//lib:paths",
-        "@aspect_bazel_lib//lib:stamping",
+        "@bazel_lib//lib:paths",
+        "@bazel_lib//lib:stamping",
         "@bazel_skylib//lib:shell",
     ],
 )

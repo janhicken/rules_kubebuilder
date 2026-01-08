@@ -1,7 +1,7 @@
 "Bazel Rules for kustomize"
 
-load("@aspect_bazel_lib//lib:paths.bzl", "relative_file")
-load("@aspect_bazel_lib//lib:stamping.bzl", "STAMP_ATTRS", "maybe_stamp")
+load("@bazel_lib//lib:paths.bzl", "relative_file")
+load("@bazel_lib//lib:stamping.bzl", "STAMP_ATTRS", "maybe_stamp")
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load(":utils.bzl", "use_runtime_toolchains")
 
@@ -13,11 +13,11 @@ KustomizeInfo = provider(
 )
 
 def _kustomization_impl(ctx):
-    coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
+    coreutils_toolchain = ctx.toolchains["@bazel_lib//lib:coreutils_toolchain_type"]
     envtest_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain"]
-    jq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:jq_toolchain_type"]
+    jq_toolchain = ctx.toolchains["@jq.bzl//jq/toolchain:type"]
     sh_toolchain = ctx.toolchains["@rules_shell//shell:toolchain_type"]
-    yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
+    yq_toolchain = ctx.toolchains["@yq.bzl//yq/toolchain:type"]
 
     # Build depset of all transformer configurations
     transitive_configuration_deps = [
@@ -224,9 +224,9 @@ Values must be labels to a `.digest` target created by _rules_oci_'s `oci_image`
         ),
     } | STAMP_ATTRS,
     toolchains = [
-        "@aspect_bazel_lib//lib:coreutils_toolchain_type",
-        "@aspect_bazel_lib//lib:jq_toolchain_type",
-        "@aspect_bazel_lib//lib:yq_toolchain_type",
+        "@bazel_lib//lib:coreutils_toolchain_type",
+        "@jq.bzl//jq/toolchain:type",
+        "@yq.bzl//yq/toolchain:type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:envtest_toolchain",
         "@rules_shell//shell:toolchain_type",
     ],

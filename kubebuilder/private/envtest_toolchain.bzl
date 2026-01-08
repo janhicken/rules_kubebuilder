@@ -1,8 +1,8 @@
 "Setup envtest repositories and rules"
 
-load("@aspect_bazel_lib//lib:repo_utils.bzl", "repo_utils")
+load("@bazel_lib//lib:repo_utils.bzl", "repo_utils")
 
-# Platform names follow the platform naming convention in @aspect_bazel_lib//lib:repo_utils.bzl
+# Platform names follow the platform naming convention in @bazel_lib//lib:repo_utils.bzl
 ENVTEST_PLATFORMS = {
     "darwin_amd64": struct(
         compatible_with = [

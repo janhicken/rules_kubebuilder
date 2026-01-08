@@ -12,7 +12,7 @@
     {
       matchDatasources: ["bazel"],
       matchDepNames: [
-        "aspect_bazel_lib",
+        "bazel_lib",
         "bazel_features",
         "bazel_skylib",
         "platforms",

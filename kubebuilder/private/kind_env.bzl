@@ -12,12 +12,12 @@ KindEnvironmentInfo = provider(
 )
 
 def _kind_env_impl(ctx):
-    coreutils_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:coreutils_toolchain_type"]
+    coreutils_toolchain = ctx.toolchains["@bazel_lib//lib:coreutils_toolchain_type"]
     docker_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain"]
     kind_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain"]
     sh_toolchain = ctx.toolchains["@rules_shell//shell:toolchain_type"]
-    tar_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:tar_toolchain_type"]
-    yq_toolchain = ctx.toolchains["@aspect_bazel_lib//lib:yq_toolchain_type"]
+    tar_toolchain = ctx.toolchains["@tar.bzl//tar/toolchain:type"]
+    yq_toolchain = ctx.toolchains["@yq.bzl//yq/toolchain:type"]
 
     # Configure kind Cluster
     cluster = {
@@ -105,9 +105,9 @@ kind_env = rule(
     },
     executable = True,
     toolchains = [
-        "@aspect_bazel_lib//lib:coreutils_toolchain_type",
-        "@aspect_bazel_lib//lib:tar_toolchain_type",
-        "@aspect_bazel_lib//lib:yq_toolchain_type",
+        "@bazel_lib//lib:coreutils_toolchain_type",
+        "@tar.bzl//tar/toolchain:type",
+        "@yq.bzl//yq/toolchain:type",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain",
         "@io_github_janhicken_rules_kubebuilder//kubebuilder:kind_toolchain",
         "@rules_shell//shell:toolchain_type",

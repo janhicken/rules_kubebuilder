@@ -68,7 +68,7 @@ The [`write_source_file`](https://github.com/bazel-contrib/bazel-lib/blob/main/d
 used to achieve that and have a diff test for the file:
 
 ```starlark
-load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
+load("@bazel_lib//lib:write_source_files.bzl", "write_source_files")
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "controller_gen_objects")
 load("@rules_go//go:def.bzl", "go_library")
 
@@ -165,7 +165,7 @@ Silicon nowadays, it is recommended to always create multi-platform image index 
 The following example creates such an index for a controller manager as well as a target for creating a tarball of it.
 
 ```starlark
-load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@bazel_lib//lib:tar.bzl", "tar")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_load")
 
 tar(

@@ -1,7 +1,12 @@
 load("@aspect_rules_lint//format:defs.bzl", "format_multirun")
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load("@bazelrc-preset.bzl", "bazelrc_preset")
 load("@buildifier_prebuilt//:rules.bzl", "buildifier")
 load("@gazelle//:def.bzl", "gazelle", "gazelle_binary")
+
+bazelrc_preset(
+    name = "preset",
+)
 
 buildifier(
     name = "buildifier",

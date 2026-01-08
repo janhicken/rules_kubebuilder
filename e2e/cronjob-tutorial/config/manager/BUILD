@@ -1,4 +1,4 @@
-load("@aspect_bazel_lib//lib:diff_test.bzl", "diff_test")
+load("@bazel_lib//lib:diff_test.bzl", "diff_test")
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kustomization")
 load("//config:const.bzl", "CONTAINER_IMAGE_REPOSITORY")
 

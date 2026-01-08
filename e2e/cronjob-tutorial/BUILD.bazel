@@ -1,8 +1,8 @@
-load("@aspect_bazel_lib//lib:tar.bzl", "tar")
 load("@container_structure_test//:defs.bzl", "container_structure_test")
 load("@gazelle//:def.bzl", "gazelle")
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kind_env")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_load")
+load("@tar.bzl", "tar")
 load("//config:const.bzl", "CONTAINER_IMAGE_REPOSITORY", "CONTROLLER_NAME")
 
 gazelle(name = "gazelle")

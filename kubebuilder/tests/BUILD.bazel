@@ -1,4 +1,4 @@
-load("@aspect_bazel_lib//lib:diff_test.bzl", "diff_test")
+load("@bazel_lib//lib:diff_test.bzl", "diff_test")
 load("//kubebuilder:defs.bzl", "config_map", "generic_secret", "kustomization", "tls_secret")
 load("//tools:linters.bzl", "shellcheck_test")
 
