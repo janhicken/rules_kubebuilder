@@ -114,8 +114,8 @@ Running the rule multiple times is idempotent.
 <pre>
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kustomization")
 
-kustomization(<a href="#kustomization-name">name</a>, <a href="#kustomization-resources">resources</a>, <a href="#kustomization-annotations">annotations</a>, <a href="#kustomization-config_maps">config_maps</a>, <a href="#kustomization-configurations">configurations</a>, <a href="#kustomization-image_digests">image_digests</a>, <a href="#kustomization-image_tags">image_tags</a>,
-              <a href="#kustomization-labels">labels</a>, <a href="#kustomization-name_prefix">name_prefix</a>, <a href="#kustomization-name_suffix">name_suffix</a>, <a href="#kustomization-namespace">namespace</a>, <a href="#kustomization-patches">patches</a>, <a href="#kustomization-replacements">replacements</a>, <a href="#kustomization-stamp">stamp</a>)
+kustomization(<a href="#kustomization-name">name</a>, <a href="#kustomization-resources">resources</a>, <a href="#kustomization-annotations">annotations</a>, <a href="#kustomization-config_maps">config_maps</a>, <a href="#kustomization-configurations">configurations</a>, <a href="#kustomization-image_digests">image_digests</a>, <a href="#kustomization-image_names">image_names</a>,
+              <a href="#kustomization-image_tags">image_tags</a>, <a href="#kustomization-labels">labels</a>, <a href="#kustomization-name_prefix">name_prefix</a>, <a href="#kustomization-name_suffix">name_suffix</a>, <a href="#kustomization-namespace">namespace</a>, <a href="#kustomization-patches">patches</a>, <a href="#kustomization-replacements">replacements</a>, <a href="#kustomization-stamp">stamp</a>)
 </pre>
 
 Build a set of KRM resources similar to a kustomization.yaml.
@@ -134,6 +134,7 @@ The stamp variable needs to be referenced using the syntax like `${STABLE_VAR_NA
 | <a id="kustomization-config_maps"></a>config_maps |  Create ConfigMaps from files. The key will be the config map's name, the value is a set of files from which the data shall be sourced.   | Dictionary: String -> Label | optional |  `{}`  |
 | <a id="kustomization-configurations"></a>configurations |  A list of transformer configuration files.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
 | <a id="kustomization-image_digests"></a>image_digests |  Inject digest references for images (key) based on the OCI image digests (value). Values must be labels to a `.digest` target created by _rules_oci_'s `oci_image` or `oci_image_index` macros.   | Dictionary: String -> Label | optional |  `{}`  |
+| <a id="kustomization-image_names"></a>image_names |  Modify the names for certain images.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  `{}`  |
 | <a id="kustomization-image_tags"></a>image_tags |  Modify the tags for certain images.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  `{}`  |
 | <a id="kustomization-labels"></a>labels |  Add labels and optionally selectors to all resources.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  `{}`  |
 | <a id="kustomization-name_prefix"></a>name_prefix |  Prepends the value to the names of all resources and references. As namePrefix is self explanatory, it helps adding prefix to names in the defined yaml files.   | String | optional |  `""`  |

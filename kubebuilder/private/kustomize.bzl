@@ -50,8 +50,12 @@ def _kustomization_impl(ctx):
             for configuration in configuration_deps.to_list()
         ],
         "images": [
-            {"name": name, "newTag": new_tag}
-            for name, new_tag in ctx.attr.image_tags.items()
+            {
+                "name": name,
+                "newName": ctx.attr.image_names.get(name),
+                "newTag": ctx.attr.image_tags.get(name),
+            }
+            for name in (ctx.attr.image_names | ctx.attr.image_tags).keys()
         ],
         "kind": "Kustomization",
         "labels": [{"pairs": ctx.attr.labels}],
@@ -184,6 +188,9 @@ kustomization = rule(
             allow_files = [".json.sha256"],
             doc = """Inject digest references for images (key) based on the OCI image digests (value).
 Values must be labels to a `.digest` target created by _rules_oci_'s `oci_image` or `oci_image_index` macros.""",
+        ),
+        "image_names": attr.string_dict(
+            doc = "Modify the names for certain images.",
         ),
         "image_tags": attr.string_dict(
             doc = "Modify the tags for certain images.",
