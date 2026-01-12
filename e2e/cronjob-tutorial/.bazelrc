@@ -1,5 +1,5 @@
 # Import bazelrc preset
-import %workspace%/../../tools/preset.bazelrc
+import %workspace%/preset.bazelrc
 
 # Required until this is the default; expected in Bazel 7
 common --enable_bzlmod
