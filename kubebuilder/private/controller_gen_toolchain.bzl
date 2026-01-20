@@ -139,7 +139,6 @@ def _resolved_toolchain_impl(ctx):
 resolved_toolchain = rule(
     implementation = _resolved_toolchain_impl,
     toolchains = ["@io_github_janhicken_rules_kubebuilder//kubebuilder:controller_gen_toolchain"],
-    incompatible_use_toolchain_transition = True,
 )
 """
     rctx.file("defs.bzl", defs_bzl)
