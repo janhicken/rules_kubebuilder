@@ -19,7 +19,7 @@ jobs:
     with:
       tag_name: ${{ github.ref_name }}
       registry_fork: janhicken/bazel-central-registry
-      attest: false
+      attest: true
     permissions:
       attestations: write
       contents: write
