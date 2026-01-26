@@ -15,8 +15,6 @@ jobs:
     with:
       release_files: rules_kubebuilder-*.tar.gz
       prerelease: false
-    permissions:
-      contents: write
   publish:
     name: Publish to BCR
     uses: bazel-contrib/publish-to-bcr/.github/workflows/publish.yaml@v1.0.0
@@ -24,9 +22,5 @@ jobs:
       tag_name: ${{ github.ref_name }}
       registry_fork: janhicken/bazel-central-registry
       attest: true
-    permissions:
-      attestations: write
-      contents: write
-      id-token: write
     secrets:
       publish_token: ${{ secrets.BCR_PUBLISH_TOKEN }}
