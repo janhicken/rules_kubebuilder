@@ -96,7 +96,7 @@ kind_env = rule(
             doc = "Kustomization to apply to the cluster.",
             executable = True,
             providers = [KustomizeInfo],
-            cfg = "exec",
+            cfg = "target",
         ),
         "_kind_env": attr.label(
             default = Label(":kind_env.sh"),
