@@ -28,6 +28,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"testing"
 
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -141,7 +142,8 @@ var _ = BeforeSuite(func() {
 		available when talking directly to the API server.
 	*/
 	k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
-		Scheme: scheme.Scheme,
+		Scheme:  scheme.Scheme,
+		Metrics: metricsserver.Options{BindAddress: "0"},
 	})
 	Expect(err).ToNot(HaveOccurred())
 
