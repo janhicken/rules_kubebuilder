@@ -12,13 +12,16 @@
     {
       matchDatasources: ["bazel"],
       matchDepNames: [
-        "bazel_lib",
         "bazel_features",
+        "bazel_lib",
         "bazel_skylib",
+        "jq.bzl",
         "platforms",
-        "rules_cc",
         "rules_go",
         "rules_shell",
+        "stardoc",
+        "tar.bzl",
+        "yq.bzl",
       ],
       enabled: false
     },
