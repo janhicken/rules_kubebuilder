@@ -10,6 +10,19 @@ bazel_dep(name = "tar.bzl", version = "0.7.0")
 bazel_dep(name = "gazelle", version = "0.42.0", dev_dependency = True)
 bazel_dep(name = "platforms", version = "1.0.0", dev_dependency = True)
 
+# Include https://github.com/bazelbuild/rules_android/commit/913f7c05218a2faede0c09458f44eac07cecf42b
+# This is required for compatibility with Bazel 9.
+single_version_override(
+    module_name = "rules_android",
+    version = "0.7.0",
+)
+
+# A newer version of aspect_bazel_lib is required for compatibility with Bazel 9.
+single_version_override(
+    module_name = "aspect_bazel_lib",
+    version = "2.22.0",
+)
+
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║                                 Manifests                                  ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
