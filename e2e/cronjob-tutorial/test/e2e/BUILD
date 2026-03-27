@@ -9,6 +9,7 @@ chainsaw_test(
     srcs = glob(["manager/*.yaml"]),
     kind_env = "//:kind_env",
     tags = [
+        "manual",
         "requires-network",
         "supports-graceful-termination",
     ],

@@ -19,8 +19,8 @@ tidy:
 
 .PHONY: test
 test:
-	bazel test --test_size_filters=small //...
+	bazel test //...
 
 .PHONY: e2e-test
 e2e-test:
-	bazel test --test_size_filters=medium,large,enormous //...
+	bazel test //test/e2e
