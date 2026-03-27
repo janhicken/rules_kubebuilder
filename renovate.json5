@@ -25,8 +25,4 @@
   ],
   // Disable hourly limits. Renovate is run as a batch job.
   prHourlyLimit: 0,
-  postUpgradeTasks: {
-    commands: ["make lock"],
-    executionMode: "branch",
-  }
 }
