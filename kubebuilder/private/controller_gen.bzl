@@ -97,6 +97,8 @@ def _controller_gen_crds_impl(ctx):
 
     if ctx.attr.allow_dangerous_types:
         generator_args["allowDangerousTypes"] = "true"
+    if ctx.attr.generate_embedded_object_meta:
+        generator_args["generateEmbeddedObjectMeta"] = "true"
     if ctx.attr.max_description_length >= 0:
         generator_args["maxDescLen"] = ctx.attr.max_description_length
 
@@ -162,6 +164,10 @@ Currently the following additional types are allowed when this is true:
     float64
 """,
         ),
+        "generate_embedded_object_meta": attr.bool(
+            default = False,
+            doc = "Generate embedded ObjectMeta for the CRD.",
+        ),
         "max_description_length": attr.int(
             default = -1,
             doc = """Specifies the maximum description length for fields in CRD's OpenAPI schema.
@@ -208,6 +214,7 @@ def controller_gen_crds(
         name,
         srcs,
         allow_dangerous_types = False,
+        generate_embedded_object_meta = False,
         header_file = None,
         max_description_length = -1,
         year = 0,
@@ -218,6 +225,7 @@ def controller_gen_crds(
         name: Name of the rule.
         srcs: A list of targets that build Go packages used as a source for the generator.
         allow_dangerous_types: Allows types which are usually omitted from CRD generation because they are not recommended.
+        generate_embedded_object_meta: Generate embedded ObjectMeta for the CRD.
         header_file: Specifies the header text (e.g. license) to prepend to generated files
         year: Specifies the year to substitute for " YEAR" in the header file
 
@@ -240,6 +248,7 @@ def controller_gen_crds(
         srcs = srcs,
         go_path = go_path_name,
         allow_dangerous_types = allow_dangerous_types,
+        generate_embedded_object_meta = generate_embedded_object_meta,
         header_file = header_file,
         max_description_length = max_description_length,
         year = year,
