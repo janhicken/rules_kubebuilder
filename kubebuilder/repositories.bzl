@@ -22,7 +22,6 @@ load(
 load(
     "//kubebuilder/private:docker_toolchain.bzl",
     "DOCKER_PLATFORMS",
-    "DOCKER_VERSION",
     "docker_platform_repo",
     "docker_toolchains_repo",
 )
@@ -152,7 +151,6 @@ def register_docker_repositories(name):
         docker_platform_repo(
             name = "%s_%s" % (name, platform),
             platform = platform,
-            version = DOCKER_VERSION,
         )
 
     docker_toolchains_repo(
