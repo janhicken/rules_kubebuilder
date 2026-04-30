@@ -44,7 +44,6 @@ load(
 )
 
 KUBERNETES_VERSIONS = ENVTEST_VERSIONS.keys()
-DEFAULT_KUBERNETES_VERSION = "1.32.0"
 CHAINSAW_VERSIONS = _CHAINSAW_VERSIONS.keys()
 KIND_VERSIONS = _KIND_VERSIONS.keys()
 DEFAULT_CHAINSAW_VERSION = _DEFAULT_CHAINSAW_VERSION
@@ -52,7 +51,7 @@ DEFAULT_KIND_VERSION = _DEFAULT_KIND_VERSION
 
 def register_kubebuilder_repositories_and_toolchains(
         name = "",
-        kubernetes_version = DEFAULT_KUBERNETES_VERSION,
+        kubernetes_version = None,
         chainsaw_version = _DEFAULT_CHAINSAW_VERSION,
         kind_version = _DEFAULT_KIND_VERSION,
         register = True):

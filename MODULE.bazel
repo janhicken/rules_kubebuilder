@@ -30,7 +30,7 @@ bazel_dep(name = "buildifier_prebuilt", version = "8.5.1", dev_dependency = True
 bazel_dep(name = "gazelle", version = "0.48.0", dev_dependency = True)
 
 kubebuilder = use_extension("@io_github_janhicken_rules_kubebuilder//kubebuilder:extensions.bzl", "kubebuilder")
-kubebuilder.for_kubernetes(version = "1.32.0")
+kubebuilder.for_kubernetes(version = "1.34.0")
 use_repo(
     kubebuilder,
     "chainsaw_toolchains",
