@@ -12,8 +12,6 @@ effectively overriding the default named toolchain due to toolchain resolution p
 load("@bazel_features//:features.bzl", "bazel_features")
 load(
     ":repositories.bzl",
-    "CHAINSAW_VERSIONS",
-    "DEFAULT_CHAINSAW_VERSION",
     "DEFAULT_KIND_VERSION",
     "KIND_VERSIONS",
     "KUBERNETES_VERSIONS",
@@ -21,11 +19,6 @@ load(
 )
 
 kubernetes_target = tag_class(attrs = {
-    "chainsaw_version": attr.string(
-        doc = "The Chainsaw version to use",
-        default = DEFAULT_CHAINSAW_VERSION,
-        values = CHAINSAW_VERSIONS,
-    ),
     "kind_version": attr.string(
         doc = "The kind version to use",
         default = DEFAULT_KIND_VERSION,
@@ -51,7 +44,6 @@ def _kubebuilder_impl(mctx):
         for k8s_target in mod.tags.for_kubernetes:
             prefix = k8s_target.prefix
             version = k8s_target.version
-            chainsaw_version = k8s_target.chainsaw_version
             kind_version = k8s_target.kind_version
             if prefix and not mod.is_root:
                 fail("Only the root module may provide a prefix for the kubernetes target.")
@@ -71,7 +63,6 @@ def _kubebuilder_impl(mctx):
                 ))
             else:
                 targets[prefix] = {
-                    "chainsaw_version": chainsaw_version,
                     "kind_version": kind_version,
                     "version": version,
                 }
@@ -80,7 +71,6 @@ def _kubebuilder_impl(mctx):
         register_kubebuilder_repositories_and_toolchains(
             prefix,
             versions["version"],
-            versions["chainsaw_version"],
             versions["kind_version"],
             register = False,
         )

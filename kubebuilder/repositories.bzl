@@ -9,8 +9,6 @@ load(
     "CHAINSAW_PLATFORMS",
     "chainsaw_platform_repo",
     "chainsaw_toolchains_repo",
-    _CHAINSAW_VERSIONS = "CHAINSAW_VERSIONS",
-    _DEFAULT_CHAINSAW_VERSION = "DEFAULT_CHAINSAW_VERSION",
 )
 load(
     "//kubebuilder/private:controller_gen_toolchain.bzl",
@@ -43,15 +41,12 @@ load(
 )
 
 KUBERNETES_VERSIONS = ENVTEST_VERSIONS.keys()
-CHAINSAW_VERSIONS = _CHAINSAW_VERSIONS.keys()
 KIND_VERSIONS = _KIND_VERSIONS.keys()
-DEFAULT_CHAINSAW_VERSION = _DEFAULT_CHAINSAW_VERSION
 DEFAULT_KIND_VERSION = _DEFAULT_KIND_VERSION
 
 def register_kubebuilder_repositories_and_toolchains(
         name = "",
         kubernetes_version = None,
-        chainsaw_version = _DEFAULT_CHAINSAW_VERSION,
         kind_version = _DEFAULT_KIND_VERSION,
         register = True):
     """
@@ -60,7 +55,6 @@ def register_kubebuilder_repositories_and_toolchains(
     Args:
         name: a common prefix for all generated repositories
         kubernetes_version: the target Kubernetes version to pick toolchain versions for
-        chainsaw_version: the Chainsaw version to use
         kind_version: the kind version to use
         register: whether to call through to native.register_toolchains.
             Should be True for WORKSPACE users, but false when used under bzlmod extension
@@ -73,7 +67,7 @@ def register_kubebuilder_repositories_and_toolchains(
             available = KUBERNETES_VERSION_MAPPING.keys(),
         ))
     controller_gen_version = KUBERNETES_VERSION_MAPPING[k8s_version_major_minor]
-    register_chainsaw_toolchains(name + DEFAULT_CHAINSAW_REPOSITORY, chainsaw_version)
+    register_chainsaw_toolchains(name + DEFAULT_CHAINSAW_REPOSITORY)
     register_controller_gen_toolchains(name + DEFAULT_CONTROLLER_GEN_REPOSITORY, controller_gen_version, register)
     register_docker_repositories(name + DEFAULT_DOCKER_REPOSITORY)
     register_envtest_repositories(name + DEFAULT_ENVTEST_REPOSITORY, kubernetes_version)
@@ -86,18 +80,16 @@ def register_kubebuilder_repositories_and_toolchains(
 
 DEFAULT_CHAINSAW_REPOSITORY = "chainsaw"
 
-def register_chainsaw_toolchains(name, version):
+def register_chainsaw_toolchains(name):
     """Registers Chainsaw repositories
 
     Args:
         name: override the prefix for the generated repositories
-        version: the version of Chainsaw to use (see https://github.com/kyverno/chainsaw/releases)
     """
     for platform in CHAINSAW_PLATFORMS.keys():
         chainsaw_platform_repo(
             name = "%s_%s" % (name, platform),
             platform = platform,
-            version = version,
         )
 
     chainsaw_toolchains_repo(
