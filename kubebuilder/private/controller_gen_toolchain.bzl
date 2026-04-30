@@ -48,7 +48,7 @@ CONTROLLER_GEN_PLATFORMS = {
 KUBERNETES_VERSION_MAPPING = {
     "1.33": "0.18.0",
     "1.34": "0.19.0",
-    "1.35": "0.20.0",
+    "1.35": "0.20.1",
 }
 
 CONTROLLER_GEN_VERSIONS = {
@@ -70,14 +70,14 @@ CONTROLLER_GEN_VERSIONS = {
         "linux-s390x": "sha384-vj0KJQB16WsN/FcP9zyX8ucIzus8atuv2jRGnVD7a48BukGzfXMoxtHkF6QiYZBN",
         "windows-amd64": "sha384-J6ZjXXWtWleEGCokfJc9/JuaDNK/eMdkzeK/rQWvxYqxvwrTjJoBoPjmT3nl0w8C",
     },
-    "0.20.0": {
-        "darwin-amd64": "sha384-9/yeZSggLpKECGCfMfHsD38Yfu36py0sl/UOLePZHOqJDVkz80oNUP+r9cbiDf6N",
-        "darwin-arm64": "sha384-GCgErBqDkQ8pF/UKnZR9L2P2ZeSEwIx4PiwAd4ZHasMkGAnvQfWAJuZtSXMWQvBR",
-        "linux-amd64": "sha384-qrRBvv/fhcrGbDN6uPBozdhJ/V7KvlseJzRkAnfGMnOI7iywRhtxVZIymz7bucIL",
-        "linux-arm64": "sha384-zQmuQ4CvbfU4oWAanhtbZ0uqs/5Az0EBMyuVwChCjAyhqJ6RxMvvzKk4aBFCuCZA",
-        "linux-ppc64le": "sha384-F/AD3v1nRToFk8K4dgPKkefpUIN04SbqGEpJyBVkAUMD0pn3MZghLsE/v+0t6cZt",
-        "linux-s390x": "sha384-pHmAPTbFmiUdu/gc55UYmugAgqPTcqt1+aiV64CZSlK4vEUvOOI6rwnoejPAwgj8",
-        "windows-amd64": "sha384-v/mSIOIKedg/1Upa1VlWkg/hy/zG+ADTGeNm/JnJJbacKG611EwF0M/QQ/USiDI8",
+    "0.20.1": {
+        "darwin-amd64": "sha384-rDXgY8UfdeqJy+k0Kh83urGNHohi92Apj7TrzYSqmxlYp7TnDhT+qq7cgk418v1n",
+        "darwin-arm64": "sha384-MId/MpDmEHcjtLoNFVTrOVfScnNaSsjUa9BevccV/0BEw+QoA1ORf/rySDoC0YEq",
+        "linux-amd64": "sha384-9VpHbjQCMaawHQkLsJcN4K0NKjfRmabIz7ZJuAp3cbiqQJYE2l9hsD4AjUJ40Xgs",
+        "linux-arm64": "sha384-sZcpsXQSZvgb2C0f3d6EIe/G0AtnLZtS9Ewz35XA0+hRhzh1keuuScxba84H52gD",
+        "linux-ppc64le": "sha384-K9tZLA1zhjEL0O7LFnkByid9Ws2qpB3teBn9oDN1qJv03v0b49WQ9VdO6SYXWjzQ",
+        "linux-s390x": "sha384-ee7FTawinmX3cDOlTgObJAvCYiXsCXOfL0GzHLagevqefy1oT0NgyvmoQ49GYfTn",
+        "windows-amd64": "sha384-1qjr+I9W6/c6JOUriXmfFPpc1OrPGWHcsmOfrfD7Br28V/IhH+CnhhOpQVR5VEvQ",
     },
 }
 
