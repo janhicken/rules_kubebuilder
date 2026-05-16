@@ -33,7 +33,7 @@ DOCKER_PLATFORMS = {
     ),
 }
 
-DOCKER_VERSION = "v29.4.1"
+DOCKER_VERSION = "29.4.1"
 DOCKER_ASSETS = {
     "linux_aarch64": "sha384-CV5kB+kjfcNy7mRJUnPhI69vYC7ZMvzqqI7rJpeLxeJk8NkSHlFyTUlu2/i3/pdq",
     "linux_x86_64": "sha384-vuqneXSQpGZLc1+mk1JLWWSRASzEGsEx4rb7T8vEMIbKXjvVBr5vj3sWRPTFdQ0+",
