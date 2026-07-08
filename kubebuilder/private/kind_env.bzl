@@ -30,6 +30,7 @@ def _kind_env_impl(ctx):
                 "hostPath": "${DOCKER_VOLUME_PATH}",
             }],
             "image": kind_toolchain.kind.node_image,
+            "labels": ctx.attr.node_labels,
             "role": "control-plane",
         }],
     }
@@ -97,6 +98,9 @@ kind_env = rule(
             executable = True,
             providers = [KustomizeInfo],
             cfg = "target",
+        ),
+        "node_labels": attr.string_dict(
+            doc = "Labels to apply to the node.",
         ),
         "_kind_env": attr.label(
             default = Label(":kind_env.sh"),
