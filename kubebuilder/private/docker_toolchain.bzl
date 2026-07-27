@@ -33,13 +33,13 @@ DOCKER_PLATFORMS = {
     ),
 }
 
-DOCKER_VERSION = "29.4.1"
+DOCKER_VERSION = "29.6.2"
 DOCKER_ASSETS = {
-    "linux_aarch64": "sha384-CV5kB+kjfcNy7mRJUnPhI69vYC7ZMvzqqI7rJpeLxeJk8NkSHlFyTUlu2/i3/pdq",
-    "linux_x86_64": "sha384-vuqneXSQpGZLc1+mk1JLWWSRASzEGsEx4rb7T8vEMIbKXjvVBr5vj3sWRPTFdQ0+",
-    "mac_aarch64": "sha384-EogooET42UpJDWWuCGACDOyUD9WONinW8qr2nQ+71U4kz/oB87MxD39RZB+/WQia",
-    "mac_x86_64": "sha384-58+OxFDKb8IXY2+tOrivwyYunqvNikA4jJn0Umsoh28CcZU5S74iU4QXnK2Y1YLI",
-    "win_x86_64": "sha384-x06MB0/DaEancQAJc2YIoMDgmHnIDBkC52quiTm15wSQQH9RaiGTOMdjFa75lWCD",
+    "linux_aarch64": "sha384-UmcdeOoodwQsxSRN04oExBqGQ7GCzN06QR53+Ow9nzrdIzxb/nGBATqowxU0AiDy",
+    "linux_x86_64": "sha384-espC/nqTgKvdZuXhyJxTESYiMCcAmBz9BSoQCFZBq2LwueoOQ/d3A7Kt0JN6j8Ul",
+    "mac_aarch64": "sha384-GI5nI69INldPk0cy4R6OKNQZzMfp5Wxzqd/4q3HMeP5sf0bvYR7OtFuDSQyCuhjL",
+    "mac_x86_64": "sha384-vvwYdEmdzxi0gdtMWsvF7hhWuf1xZecA+Tdbk370aa0SsWw/kZxlTMPRdUXVxWHA",
+    "win_x86_64": "sha384-7hjytyNcXFCV4BCNJ3Wl80xgGOUOKyTmvzTPAS3/3NitMIiR6mRCHEXr6nA+v3KV",
 }
 
 def _docker_toolchains_repo_impl(rctx):
