@@ -17,7 +17,7 @@ jobs:
       prerelease: false
   publish:
     name: Publish to BCR
-    uses: bazel-contrib/publish-to-bcr/.github/workflows/publish.yaml@v1.1.0
+    uses: bazel-contrib/publish-to-bcr/.github/workflows/publish.yaml@v1.4.2
     needs:
       - release
     with:
