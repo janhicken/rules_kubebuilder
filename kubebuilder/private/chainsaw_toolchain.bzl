@@ -65,44 +65,44 @@ CHAINSAW_PLATFORMS = {
 
 CHAINSAW_ASSETS = {
     "darwin_amd64": {
-        "sha256": "983ce0e4ff32a2112481833d7be4e0a0f0530fadba630fa93d3a635539bc1db0",
-        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.14/chainsaw_darwin_amd64.tar.gz",
+        "sha256": "ddb56002ff8c6265f55ec40c82eb0ef0dddec5127dd12d4fc5e7953453481f4b",
+        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.15/chainsaw_darwin_amd64.tar.gz",
     },
     "darwin_arm64": {
-        "sha256": "ff806554a15e12faca08b54d373a61e27808f40c34208248924f7b71a301f786",
-        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.14/chainsaw_darwin_arm64.tar.gz",
+        "sha256": "502bef17dd822217e82590e9ccf01c1e26a56b3fa34a835789b9af73e82a169a",
+        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.15/chainsaw_darwin_arm64.tar.gz",
     },
     "linux_386": {
-        "sha256": "deb994d4e176d39c981e39a2f36afe647c73273c441b93d155094bff10b07ff7",
-        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.14/chainsaw_linux_386.tar.gz",
+        "sha256": "50c27d859c7f4624e53560af3f8e1a53c3ceb961755f3876ef497569cb5f097c",
+        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.15/chainsaw_linux_386.tar.gz",
     },
     "linux_amd64": {
-        "sha256": "f2f4a3f9a541d65db12f5c910950758f7d56fae20ad5b1272cdc271c9568443e",
-        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.14/chainsaw_linux_amd64.tar.gz",
+        "sha256": "295d226c89f126c0a97775d364be149f47a810c8a3f9829ee410583d0c1abe3c",
+        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.15/chainsaw_linux_amd64.tar.gz",
     },
     "linux_arm64": {
-        "sha256": "b6494b71e490ab825890fc12cc575de7f59bfa637d5cfe73c66987e4454e397c",
-        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.14/chainsaw_linux_arm64.tar.gz",
+        "sha256": "fecf5f3ea74d11da2cd5d95a4c016d5d2543cbc4844ce21adf5e727e7ffd9e44",
+        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.15/chainsaw_linux_arm64.tar.gz",
     },
     "linux_ppc64le": {
-        "sha256": "c7aa4af8133df4138c3d3c92c9f8cb2ae54aa08ec356c6583722150b678a8c23",
-        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.14/chainsaw_linux_ppc64le.tar.gz",
+        "sha256": "6f3164ac567ec59a4e529af8f10e03bbf7442b71918ec85666e4533355a272c7",
+        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.15/chainsaw_linux_ppc64le.tar.gz",
     },
     "linux_s390x": {
-        "sha256": "6087c6e93dd0a9d25c91a4932d4d18b1e32615835794380da7849b3eec3e61a5",
-        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.14/chainsaw_linux_s390x.tar.gz",
+        "sha256": "29d7985b510f3f96396b795b2681e60bc27ff68baf6c38aafeb12eaa61d74021",
+        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.15/chainsaw_linux_s390x.tar.gz",
     },
     "windows_386": {
-        "sha256": "8f4b766541f51703ea6ed40890ff9dda099d464e0f5f18667f28704aa8b00ae6",
-        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.14/chainsaw_windows_386.tar.gz",
+        "sha256": "05c679f655d8d74a2a7cf69e8fb618bc6111f930379783bc8265cacde7465ba7",
+        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.15/chainsaw_windows_386.tar.gz",
     },
     "windows_amd64": {
-        "sha256": "ec037c11fba6a971d986153f2c35b98db04f878ee9b3e112bb105b4aca9fff60",
-        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.14/chainsaw_windows_amd64.tar.gz",
+        "sha256": "02e7d519c4e815c89dc8a4b14e2b70474d5301f514e721c0e5b3062f67294229",
+        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.15/chainsaw_windows_amd64.tar.gz",
     },
     "windows_arm64": {
-        "sha256": "ab91d495f12f9895b6c66eef18fb2cf3229a90b49fdcb144adfb2a2af9300c3d",
-        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.14/chainsaw_windows_arm64.tar.gz",
+        "sha256": "d580cbfc17fc5fc3cd7fbdaf5ab6246dcbe33799f2a79284af8eb6ebdb861b8a",
+        "url": "https://github.com/kyverno/chainsaw/releases/download/v0.2.15/chainsaw_windows_arm64.tar.gz",
     },
 }
 
