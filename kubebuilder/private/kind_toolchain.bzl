@@ -36,13 +36,6 @@ KIND_PLATFORMS = {
 DEFAULT_KIND_VERSION = "0.32.0"
 
 KIND_VERSIONS = {
-    "0.29.0": {
-        "darwin-amd64": "3eb0d4de25b854f34ea8ce8a3cbe15054fc03bc962b03e96fd10664b829fb6ed",
-        "darwin-arm64": "314d8f1428842fd1ba2110fd0052a0f0b3ab5773ab1bdcdad1ff036e913310c9",
-        "linux-amd64": "c72eda46430f065fb45c5f70e7c957cc9209402ef309294821978677c8fb3284",
-        "linux-arm64": "03d45095dbd9cc1689f179a3e5e5da24b77c2d1b257d7645abf1b4174bebcf2a",
-        "windows-amd64": "7ea3e9af902ddc4ed773704ab932175bfec8eafffff27c4cad6c2f397cd6e4ee",
-    },
     "0.30.0": {
         "darwin-amd64": "4f0b6e3b88bdc66d922c08469f05ef507d4903dd236e6319199bb9c868eed274",
         "darwin-arm64": "ceaf40df1d1551c481fb50e3deb5c3deecad5fd599df5469626b70ddf52a1518",
@@ -67,20 +60,14 @@ KIND_VERSIONS = {
 }
 
 KIND_NODE_IMAGES = {
-    "0.29.0": {
-        "1.33": "kindest/node:v1.33.1@sha256:050072256b9a903bd914c0b2866828150cb229cea0efe5892e2b644d5dd3b34f",
-    },
     "0.30.0": {
-        "1.33": "kindest/node:v1.33.4@sha256:25a6018e48dfcaee478f4a59af81157a437f15e6e140bf103f85a2e7cd0cbbf2",
         "1.34": "kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a",
     },
     "0.31.0": {
-        "1.33": "kindest/node:v1.33.7@sha256:d26ef333bdb2cbe9862a0f7c3803ecc7b4303d8cea8e814b481b09949d353040",
         "1.34": "kindest/node:v1.34.3@sha256:08497ee19eace7b4b5348db5c6a1591d7752b164530a36f855cb0f2bdcbadd48",
         "1.35": "kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f",
     },
     "0.32.0": {
-        "1.33": "kindest/node:v1.33.12@sha256:3f5c8443c620245e4d355cfe09e96a91ead32ceaa569d3f1ca9edf0cb2fe2ff4",
         "1.34": "kindest/node:v1.34.8@sha256:02722c2dedddcfc00febf5d27fbeb9b7b2c14294c82109ff4a85d89ac9ba3256",
         "1.35": "kindest/node:v1.35.5@sha256:ce977ae6d65918d0b58a5f8b5e940429c2ce42fa3a5619ec2bbc60b949c0ac95",
         "1.36": "kindest/node:v1.36.1@sha256:3489c7674813ba5d8b1a9977baea8a6e553784dab7b84759d1014dbd78f7ebd5",

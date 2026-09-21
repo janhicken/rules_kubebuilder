@@ -49,15 +49,6 @@ ENVTEST_PLATFORMS = {
 }
 
 ENVTEST_VERSIONS = {
-    "1.33.0": {
-        "darwin_amd64": "sha512-caOHpMrDKxfiIEbfWUCQtlA/wHS+jKrni8gO+DlJ4pKhKQ7v5yWs1Bzkvscw90QgBvKp6xnY4tTZ3y/rZ9oEug==",
-        "darwin_arm64": "sha512-Yj3AJDKQXlhzjFYRuLCAhDd2J1UAPbruJm3tJ9/po31ade1leKxPuyYcfNGcAZmnQo3ne0Cy+IGRKkRoxNmNYQ==",
-        "linux_amd64": "sha512-LLf1Ro7XzqFJL5cbcVvMJwaegkz31ZJ7fxJ/Hox1zwhu6gUFQ82195+u4KK/d18WCt8nRDqn7oRdli0E6dQ6yQ==",
-        "linux_arm64": "sha512-NmujKyFUwW4M6VLtaXMf7v7Rh8iAMPdqFL2lkhpJjQqiVShin8QcIlz3jJH9SkJKRy447+yR6Py9JU+sDhUKVA==",
-        "linux_ppc64le": "sha512-Xf8VnIkXaDPDxsWO08Tm5cy5oUtp0YAAOL02a6y98oo4LOqrF9Xu1XOVBI1FX09rN6r1oxos1bL+lnrYVZJ0Jg==",
-        "linux_s390x": "sha512-ef9dvhPAUfoOnaMEPU9ws2CyItWFPCMAKYvklkrg3M10YJiL3dC1UrMjgsNobG674zVWZV+KqFdJVJfz8WAV/w==",
-        "windows_amd64": "sha512-qQ3Wf6ypNGfms9PidZN2gePLUOAOIGpgmEui7nXIwjdiTuVXeuZHc6jurnJr2MixKkXnbZ2hgJ52+vl1/udxkQ==",
-    },
     "1.34.0": {
         "darwin_amd64": "sha512-6S5BoYPoUE03Y71UhkGBZ85PYgRVbTpTx6vC5TjaY525QPihdkAw2L1cVljLw+yjXhwXSSkLdPwWU9puUX/JlQ==",
         "darwin_arm64": "sha512-uEHl/6NRsuoXSAk7YSvGPiOjY2LJAwTOxJjx7inChYtjwUYBKlYvOdkgMdumioGaOB1xw0i1Z8nemGwGnt/OBA==",

@@ -46,22 +46,12 @@ CONTROLLER_GEN_PLATFORMS = {
 }
 
 KUBERNETES_VERSION_MAPPING = {
-    "1.33": "0.18.0",
     "1.34": "0.19.0",
     "1.35": "0.20.1",
     "1.36": "0.21.0",
 }
 
 CONTROLLER_GEN_VERSIONS = {
-    "0.18.0": {
-        "darwin-amd64": "sha384-bVVHwzMOh+lrzMpteNYSBV7Mq5MSYSPQ4M2j/adLV0rVxkqVV/nhpAvV48aQVS6V",
-        "darwin-arm64": "sha384-Gjfse8ifYVHoqYIwh+OmQXN/KdOjQHr3O0e6gfgIBQXB50OtZntEs7JSHDLDReRj",
-        "linux-amd64": "sha384-jMZzGpPYGU55fclPofAqHxyd37yXFAB4u5S/7yiH6VuBwFY22nMFY7kqfnsDoLXv",
-        "linux-arm64": "sha384-NiC4boKh0iY8nFqIUdLpSJY4qwN5dXmWSPVWeMF2UJmj3HHGRA8fUnnjiZVQoTDT",
-        "linux-ppc64le": "sha384-95LDfZKmZfmZK6pGYkC3aWTAVhk7PStDdAQrHcZTV6zivu9tdozOTmvQDOEtgZq/",
-        "linux-s390x": "sha384-qA0zRT0NRmO6N8HhzTxbmTvx/t9SOCoIpxyalYKXIk1zvYFd8br8mJyUJ2XEbbRv",
-        "windows-amd64": "sha384-NSGhVYQnN+BdgzvodcWr5fFmMfGUQdotb+4Xxexn8L1P2JJvTMKczLXIWT9ZdEDJ",
-    },
     "0.19.0": {
         "darwin-amd64": "sha384-RWp3N0j++AFWbkpocYTXAIcvcFZ4M52rJNrGytiL5UKuSqyxmIiszxnHvJrKX/np",
         "darwin-arm64": "sha384-iQSDVVU9iiUeDlW1E0gi+EweyZKcCXVO3ABkmvpn7GLRPTmqwMEHILl6eLrwAoA6",
