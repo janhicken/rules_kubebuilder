@@ -1,4 +1,5 @@
 .aspect/bazelrc/user.bazelrc
+.bazelbsp/
 .idea/
 .ijwb/
 bazel-*

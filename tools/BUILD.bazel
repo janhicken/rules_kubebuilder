@@ -11,6 +11,7 @@ bazelrc_preset(
 buildifier(
     name = "buildifier",
     exclude_patterns = [
+        "./.bazelbsp/*",
         "./.git/*",
         "./.ijwb/*",
         "./e2e/*",
@@ -23,6 +24,7 @@ buildifier(
 buildifier(
     name = "buildifier.check",
     exclude_patterns = [
+        "./.bazelbsp/*",
         "./.git/*",
         "./.ijwb/*",
         "./e2e/*",
