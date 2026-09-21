@@ -33,7 +33,7 @@ KIND_PLATFORMS = {
     ),
 }
 
-DEFAULT_KIND_VERSION = "0.32.0"
+DEFAULT_KIND_VERSION = "0.33.0"
 
 KIND_VERSIONS = {
     "0.30.0": {
@@ -57,6 +57,13 @@ KIND_VERSIONS = {
         "linux-arm64": "b92cd615e97585de8ddade28ed5cd7feb4248d717c233eea5b03c37298900f5d",
         "windows-amd64": "0bcb2d1cfedc1912d664014db716937e8a0e843e91c6807b4db2025dbc8989fa",
     },
+    "0.33.0": {
+        "darwin-amd64": "5a99f26f57246dc9319dd294803313197a0f34d33c525b3ea8b655db5916ece0",
+        "darwin-arm64": "0c8c7dbe5e23594a198b786c4bc13dacc101fa6196b0cb0b23a1ca44e61f4b4f",
+        "linux-amd64": "aee6151561422756b764a4ae28e7f44cda5af5a9eead3cc9985112b1de8d8e0d",
+        "linux-arm64": "20022bee6cfcd5086cb7234d218e3454e6090022f2a8f55d1fa7fcf42c3867a2",
+        "windows-amd64": "4b22adaa135368c5a465d56bbd8e520cbea87272a06ca00b6078e7b81515c9fc",
+    },
 }
 
 KIND_NODE_IMAGES = {
@@ -71,6 +78,12 @@ KIND_NODE_IMAGES = {
         "1.34": "kindest/node:v1.34.8@sha256:02722c2dedddcfc00febf5d27fbeb9b7b2c14294c82109ff4a85d89ac9ba3256",
         "1.35": "kindest/node:v1.35.5@sha256:ce977ae6d65918d0b58a5f8b5e940429c2ce42fa3a5619ec2bbc60b949c0ac95",
         "1.36": "kindest/node:v1.36.1@sha256:3489c7674813ba5d8b1a9977baea8a6e553784dab7b84759d1014dbd78f7ebd5",
+    },
+    "0.33.0": {
+        "1.34": "kindest/node:v1.34.11@sha256:44e222ee2132dab25ff87301682f89eb82c7880ea3a1bf543bfe9708fd08d67d",
+        "1.35": "kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0",
+        "1.36": "kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed",
+        "1.37": "kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5",
     },
 }
 
