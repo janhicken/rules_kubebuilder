@@ -11,8 +11,7 @@ kustomization(
         "control-plane": "controller-manager",
     },
     resources = [
-        ":deployment.yaml",
-        ":ns.yaml",
+        ":manager.yaml",
     ],
     visibility = ["//visibility:public"],
 )

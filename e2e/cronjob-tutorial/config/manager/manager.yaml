@@ -1,8 +1,21 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    control-plane: controller-manager
+    app.kubernetes.io/name: project
+    app.kubernetes.io/managed-by: kustomize
+  name: system
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: controller-manager
   namespace: system
+  labels:
+    control-plane: controller-manager
+    app.kubernetes.io/name: project
+    app.kubernetes.io/managed-by: kustomize
 spec:
   selector:
     matchLabels:
@@ -52,7 +65,10 @@ spec:
           - --health-probe-bind-address=:8081
         image: localhost.invalid/cronjob-controller
         name: manager
-        ports: []
+        ports:
+        - containerPort: 8081
+          name: health
+          protocol: TCP
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false

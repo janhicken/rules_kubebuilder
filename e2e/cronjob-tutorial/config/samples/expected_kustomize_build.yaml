@@ -18,6 +18,17 @@ spec:
             - date; echo Hello from the Kubernetes cluster
             image: busybox
             name: hello
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              readOnlyRootFilesystem: false
           restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
   schedule: '*/1 * * * *'
   startingDeadlineSeconds: 60

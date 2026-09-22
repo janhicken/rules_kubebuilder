@@ -36,7 +36,7 @@ spec:
         - --health-probe-bind-address=:8081
         command:
         - /manager
-        image: localhost.invalid/cronjob-controller@sha256:1f3c5255a7ec8edc658154d7fd89febaeaf7900ab47476b1d6fb3c0332645c47
+        image: localhost.invalid/cronjob-controller@sha256:7dee8b46328879bc150753fc51a2bbd07eadf9502f183b975f17cf0650ca5f8c
         livenessProbe:
           httpGet:
             path: /healthz
@@ -44,7 +44,10 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 20
         name: manager
-        ports: []
+        ports:
+        - containerPort: 8081
+          name: health
+          protocol: TCP
         readinessProbe:
           httpGet:
             path: /readyz

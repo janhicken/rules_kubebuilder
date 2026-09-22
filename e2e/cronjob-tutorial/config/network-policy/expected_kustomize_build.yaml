@@ -32,12 +32,8 @@ metadata:
   namespace: system
 spec:
   ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          webhook: enabled
-    ports:
-    - port: 443
+  - ports:
+    - port: 9443
       protocol: TCP
   podSelector:
     matchLabels:

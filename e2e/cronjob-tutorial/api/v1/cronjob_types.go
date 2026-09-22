@@ -1,5 +1,5 @@
 /*
-Copyright 2025 The Kubernetes authors.
+Copyright 2026 The Kubernetes authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import (
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -192,7 +193,7 @@ type CronJob struct {
 
 	// metadata is a standard object metadata
 	// +optional
-	metav1.ObjectMeta `json:"metadata,omitempty,omitzero"`
+	metav1.ObjectMeta `json:"metadata,omitzero"`
 
 	// spec defines the desired state of CronJob
 	// +required
@@ -200,7 +201,7 @@ type CronJob struct {
 
 	// status defines the observed state of CronJob
 	// +optional
-	Status CronJobStatus `json:"status,omitempty,omitzero"`
+	Status CronJobStatus `json:"status,omitzero"`
 }
 
 // +kubebuilder:object:root=true
@@ -208,12 +209,15 @@ type CronJob struct {
 // CronJobList contains a list of CronJob
 type CronJobList struct {
 	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty"`
+	metav1.ListMeta `json:"metadata,omitzero"`
 	Items           []CronJob `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&CronJob{}, &CronJobList{})
+	SchemeBuilder.Register(func(s *runtime.Scheme) error {
+		s.AddKnownTypes(SchemeGroupVersion, &CronJob{}, &CronJobList{})
+		return nil
+	})
 }
 
 // +kubebuilder:docs-gen:collapse=Root Object Definitions

@@ -1,5 +1,5 @@
 /*
-Copyright 2025 The Kubernetes authors.
+Copyright 2026 The Kubernetes authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import (
 	"context"
 	"os"
 	"path/filepath"
-	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"testing"
 
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -142,8 +141,7 @@ var _ = BeforeSuite(func() {
 		available when talking directly to the API server.
 	*/
 	k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
-		Scheme:  scheme.Scheme,
-		Metrics: metricsserver.Options{BindAddress: "0"},
+		Scheme: scheme.Scheme,
 	})
 	Expect(err).ToNot(HaveOccurred())
 
