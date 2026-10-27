@@ -38,6 +38,10 @@ gazelle:
 lock:
 	bazel mod deps --lockfile_mode=update
 
+.PHONY: generate
+generate:
+	bazel run //tools:preset.update
+
 .PHONY: tidy
 tidy: fmt lintfix gazelle lock
 
