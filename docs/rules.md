@@ -82,7 +82,7 @@ Creates a secret manifest based on files.
 <pre>
 load("@io_github_janhicken_rules_kubebuilder//kubebuilder:defs.bzl", "kind_env")
 
-kind_env(<a href="#kind_env-name">name</a>, <a href="#kind_env-cluster_name">cluster_name</a>, <a href="#kind_env-images">images</a>, <a href="#kind_env-kustomization">kustomization</a>, <a href="#kind_env-node_labels">node_labels</a>)
+kind_env(<a href="#kind_env-name">name</a>, <a href="#kind_env-cluster_name">cluster_name</a>, <a href="#kind_env-images">images</a>, <a href="#kind_env-kustomization">kustomization</a>, <a href="#kind_env-node_labels">node_labels</a>, <a href="#kind_env-ports">ports</a>)
 </pre>
 
 Creates a local dev environment with kind using the given kustomization and images.
@@ -106,6 +106,7 @@ Running the rule multiple times is idempotent.
 | <a id="kind_env-images"></a>images |  OCI image tarballs to load into the kind cluster.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
 | <a id="kind_env-kustomization"></a>kustomization |  Kustomization to apply to the cluster.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `None`  |
 | <a id="kind_env-node_labels"></a>node_labels |  Labels to apply to the node.   | <a href="https://bazel.build/rules/lib/core/dict">Dictionary: String -> String</a> | optional |  `{}`  |
+| <a id="kind_env-ports"></a>ports |  Extra port mappings to apply to the node. Syntax: [host_addr:]host_port:container_port[/protocol] Example: "127.0.0.1:40000:50000/TCP"   | List of strings | optional |  `[]`  |
 
 
 <a id="kustomization"></a>

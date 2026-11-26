@@ -11,6 +11,21 @@ KindEnvironmentInfo = provider(
     },
 )
 
+def _parse_port_mapping(spec):
+    addrs, _, protocol = spec.partition("/")
+    host_addr_port, _, container_port = addrs.rpartition(":")
+    host_addr, _, host_port = host_addr_port.rpartition(":")
+
+    if not container_port or not host_port:
+        fail("Cannot parse port mapping:", spec)
+
+    return {
+        "containerPort": container_port,
+        "hostPort": host_port,
+        "listenAddress": host_addr or "127.0.0.1",
+        "protocol": protocol.upper() if protocol else "TCP"
+    }
+
 def _kind_env_impl(ctx):
     coreutils_toolchain = ctx.toolchains["@bazel_lib//lib:coreutils_toolchain_type"]
     docker_toolchain = ctx.toolchains["@io_github_janhicken_rules_kubebuilder//kubebuilder:docker_toolchain"]
@@ -25,6 +40,10 @@ def _kind_env_impl(ctx):
         "kind": "Cluster",
         "name": ctx.attr.cluster_name,
         "nodes": [{
+            "extraPortMappings": [
+              _parse_port_mapping(port)
+              for port in ctx.attr.ports
+            ],
             "extraMounts": [{
                 "containerPath": "/var/lib/containerd",
                 "hostPath": "${DOCKER_VOLUME_PATH}",
@@ -101,6 +120,12 @@ kind_env = rule(
         ),
         "node_labels": attr.string_dict(
             doc = "Labels to apply to the node.",
+        ),
+        "ports": attr.string_list(
+            doc = """Extra port mappings to apply to the node.
+Syntax: [host_addr:]host_port:container_port[/protocol]
+Example: "127.0.0.1:40000:50000/TCP"
+"""
         ),
         "_kind_env": attr.label(
             default = Label(":kind_env.sh"),
