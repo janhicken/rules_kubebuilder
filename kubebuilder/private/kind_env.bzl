@@ -23,7 +23,7 @@ def _parse_port_mapping(spec):
         "containerPort": container_port,
         "hostPort": host_port,
         "listenAddress": host_addr or "127.0.0.1",
-        "protocol": protocol.upper() if protocol else "TCP"
+        "protocol": protocol.upper() if protocol else "TCP",
     }
 
 def _kind_env_impl(ctx):
@@ -41,8 +41,8 @@ def _kind_env_impl(ctx):
         "name": ctx.attr.cluster_name,
         "nodes": [{
             "extraPortMappings": [
-              _parse_port_mapping(port)
-              for port in ctx.attr.ports
+                _parse_port_mapping(port)
+                for port in ctx.attr.ports
             ],
             "extraMounts": [{
                 "containerPath": "/var/lib/containerd",
@@ -125,7 +125,7 @@ kind_env = rule(
             doc = """Extra port mappings to apply to the node.
 Syntax: [host_addr:]host_port:container_port[/protocol]
 Example: "127.0.0.1:40000:50000/TCP"
-"""
+""",
         ),
         "_kind_env": attr.label(
             default = Label(":kind_env.sh"),
