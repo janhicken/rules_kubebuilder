@@ -40,14 +40,14 @@ def _kind_env_impl(ctx):
         "kind": "Cluster",
         "name": ctx.attr.cluster_name,
         "nodes": [{
-            "extraPortMappings": [
-                _parse_port_mapping(port)
-                for port in ctx.attr.ports
-            ],
             "extraMounts": [{
                 "containerPath": "/var/lib/containerd",
                 "hostPath": "${DOCKER_VOLUME_PATH}",
             }],
+            "extraPortMappings": [
+                _parse_port_mapping(port)
+                for port in ctx.attr.ports
+            ],
             "image": kind_toolchain.kind.node_image,
             "labels": ctx.attr.node_labels,
             "role": "control-plane",
