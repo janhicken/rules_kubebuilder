@@ -20,8 +20,8 @@ def _parse_port_mapping(spec):
         fail("Cannot parse port mapping:", spec)
 
     return {
-        "containerPort": container_port,
-        "hostPort": host_port,
+        "containerPort": int(container_port),
+        "hostPort": int(host_port),
         "listenAddress": host_addr or "127.0.0.1",
         "protocol": protocol.upper() if protocol else "TCP",
     }
